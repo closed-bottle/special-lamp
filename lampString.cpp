@@ -4,66 +4,108 @@
 #include <string.h>
 
 Lamp::String::String() {
-    data = nullptr;
-    length = 0;
-    capacity = 0;
+    data_ = nullptr;
+    length_ = 0;
+    capacity_ = 0;
 }
 
 Lamp::String::String(const char * _cstr) {
-    length = 0;
-    while (_cstr[length] != '\0') {
-        ++length;
+    length_ = 0;
+    while (_cstr[length_] != '\0') {
+        ++length_;
     }
-    capacity = length;
-    data = new char[capacity];
+    ++length_; // for 'null' char.
+    capacity_ = length_;
+    data_ = new char[capacity_];
 
-    for (int i = 0; i < length; ++i) {
-        data[i] = _cstr[i];
+    for (int i = 0; i < length_; ++i) {
+        data_[i] = _cstr[i];
     }
 }
 
-Lamp::String::String(const String & _rhs) :length(_rhs.length), capacity(_rhs.length)
+Lamp::String::String(const String & _rhs) :length_(_rhs.length_), capacity_(_rhs.length_)
 {
-    data = new char[capacity];
-    memcpy(data, _rhs.data, length);
+    data_ = new char[capacity_];
+    memcpy(data_, _rhs.data_, length_);
 }
 
 Lamp::String::~String() {
-    if (data != nullptr) {
-        delete[] data;
+    if (data_ != nullptr) {
+        delete[] data_;
     }
 
-    length = 0;
-    capacity = 0;
+    length_ = 0;
+    capacity_ = 0;
 }
 
-Lamp::String & Lamp::String::operator=(const String & _rhs) {
-    if (capacity < _rhs.length) {
-        capacity = _rhs.length;
-        delete[] data;
-        data = new char[capacity];
+inline Lamp::String & Lamp::String::operator=(const String & _rhs) {
+    if (capacity_ < _rhs.length_) {
+        capacity_ = _rhs.length_;
+        delete[] data_;
+        data_ = new char[capacity_];
     }
 
-    length = _rhs.length;
+    length_ = _rhs.length_;
 
-    memcpy(data, _rhs.data, length);
+    memcpy(data_, _rhs.data_, length_);
 
     return *this;
 }
 
-Lamp::String & Lamp::String::operator=(const char * _rhs) {
+inline Lamp::String & Lamp::String::operator=(const char * _rhs) {
     uint32_t count = 0;
     while (_rhs[count] != '\0') {
         ++count;
     }
+    ++count; // include null
 
-    if (capacity < count) {
-        capacity = count;
-        delete[] data;
-        data = new char[capacity];
+    if (capacity_ < count) {
+        capacity_ = count;
+        delete[] data_;
+        data_ = new char[capacity_];
     }
 
-    memcpy(data, _rhs, count);
+    memcpy(data_, _rhs, count);
 
     return *this;
+}
+
+inline bool Lamp::String::operator==(const String & _rhs) const {
+    if (length_ != _rhs.length_) {
+        return false;
+    }
+
+    for (int i = 0; i < length_; ++i) {
+        if (data_[i] != _rhs.data_[i])
+            return false;
+    }
+
+    return true;
+}
+
+inline bool Lamp::String::operator!=(const String & _rhs) const {
+    return !(*this == _rhs);
+}
+
+inline bool Lamp::String::operator==(const char * _rhs) const {
+    uint32_t i = 0;
+
+    while (_rhs[i] != '\0') {
+        if (data_[i] != _rhs[i])
+            return false;
+    }
+
+    return true;
+}
+
+inline bool Lamp::String::operator!=(const char * _rhs) const {
+    return !(*this == _rhs);
+}
+
+inline char & Lamp::String::operator[](const uint32_t & _rhs) const {
+    return data_[_rhs];
+}
+
+const char * Lamp::String::c_str() const {
+    return data_;
 }

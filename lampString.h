@@ -8,9 +8,9 @@ namespace Lamp {
 
 class String {
     private:
-        char* data;
-        uint32_t length;
-        uint32_t capacity;
+        char* data_;
+        uint32_t length_;
+        uint32_t capacity_;
 
     public:
 
@@ -21,7 +21,12 @@ class String {
 
         String& operator=(const String&);
         String& operator=(const char*);
-        const char* c_str() const;
+        bool operator==(const String&) const;
+        bool operator!=(const String&) const;
+        bool operator==(const char*) const;
+        bool operator!=(const char*) const;
+        char& operator[](const uint32_t&) const;
+        [[nodiscard]] const char* c_str() const;
 };
 
 }
