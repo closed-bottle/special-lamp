@@ -1,26 +1,28 @@
 ﻿#include <iostream>
 
 #include "../lampString.h"
+#include "../lampVector.h++"
+
+#include <vector>
+#include <chrono>
 
 int main(int argc, const char * argv[]) {
     std::cout << "Hello World!\n";
 
-    Lamp::String lampString = Lamp::String("Hello World!");
+    {
+        Lamp::Vector<Lamp::String> lampVector1 = Lamp::Vector<Lamp::String>();
 
-    std::cout << lampString.c_str() << std::endl;
-    Lamp::String lampString1 = lampString;
-    lampString1 = Lamp::String("Refresh");
-    lampString1 = "C style string";
-    std::cout << "Same or not : " << (lampString1 == "C style string") << std::endl;
-    //Lamp::String lampString2 = Lamp::String("First");
-    //Lamp::String lampString3 = Lamp::String("Seocnd");
-    //Lamp::String lampString4 = Lamp::String("Third");
+        {
+            Lamp::String lampString1 = Lamp::String("First");
+            lampString1 = Lamp::String("Second");
+            lampVector1.push_back(std::move(lampString1));
+        }
 
-    //Lamp::Vector<Lamp::String> lampVector1 = Lamp::Vector<Lamp::String>();
 
-    //lampVector1.push_back(lampString2);
-    //lampVector1.push_back(lampString3);
-    //lampVector1.push_back(lampString4);
+        std::cout << "----" << std::endl;
+
+        std::cout << lampVector1[0].c_str() << std::endl;
+    }
 
     return 0;
 }

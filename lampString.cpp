@@ -29,11 +29,13 @@ Lamp::String::String(String const & _rhs) :length_(_rhs.length_), capacity_(_rhs
     memcpy(data_, _rhs.data_, length_);
 }
 
+String::String(String && _rhs) noexcept  :length_(_rhs.length_), capacity_(_rhs.length_) {
+    data_ = _rhs.data_;
+    _rhs.data_ = nullptr;
+}
+
 Lamp::String::~String() {
-    if (data_ != nullptr) {
-        delete[] data_;
-    }
-    std::cout << "Deleted." << std::endl;
+    delete[] data_;
     length_ = 0;
     capacity_ = 0;
 }
@@ -48,6 +50,17 @@ Lamp::String & Lamp::String::operator=(Lamp::String const &_rhs) {
     length_ = _rhs.length_;
 
     memcpy(data_, _rhs.data_, length_);
+
+    return *this;
+}
+
+String & String::operator=(String && _rhs) {
+    delete[] data_;
+    length_ = _rhs.length_;
+    capacity_ = _rhs.capacity_;
+    data_ = _rhs.data_;
+    _rhs.data_ = nullptr;
+
 
     return *this;
 }

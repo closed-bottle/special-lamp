@@ -16,10 +16,12 @@ class String {
 
         String();
         explicit String(const char*);
-        String(const String&);
+        String(String const &);
+        String(String&&) noexcept;
         ~String();
 
         String& operator=(String const &);
+        String& operator=(String&&);
         String& operator=(const char*);
 
         bool operator==(String const &) const;
