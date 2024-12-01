@@ -36,6 +36,10 @@ class Vector {
         }
 
         Vector & operator=(const Vector & _rhs) {
+            if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
+                return *this;
+            }
+
             size_ = _rhs.size_;
 
             if (capacity_ < _rhs.capacity_) {
@@ -50,8 +54,19 @@ class Vector {
             return *this;
         }
 
+        bool operator==(const Vector & _rhs) const {
+            if (size_ != _rhs.size_ || capacity_ != _rhs.capacity_) {
+                return false;
+            }
+            return true;
+        }
+
         T& operator[](const uint64_t& _index) {
             return data_[_index];
+        }
+
+        uint64_t size() const {
+            return size_;
         }
 
         void push_back(T const& _value) {
@@ -83,6 +98,52 @@ class Vector {
 
         void pop_back() {
             size_--;
+        }
+
+        T* data() const {
+            return data_;
+        }
+
+        bool if_contain(Vector<T> const& _rhs) {
+            if (*this == _rhs) {
+                return true;
+            }
+            else if (size_ < _rhs.size_) {
+                return false;
+            }
+
+            uint64_t count = 0;
+
+            for (uint64_t i = 0; i < size_; i++) {
+                for (uint64_t j = 0; j < _rhs.size_; j++) {
+                    if (data_[i] == _rhs.data_[j]) {
+                        ++count;
+                    }
+                }
+            }
+
+            return count == _rhs.size_;
+        }
+
+    bool if_contain(Vector<T> const& _rhs, bool(*_if_same)(T const &, T const &)) {
+            if (*this == _rhs) {
+                return true;
+            }
+            else if (size_ < _rhs.size_) {
+                return false;
+            }
+
+            uint64_t count = 0;
+
+            for (uint64_t i = 0; i < size_; i++) {
+                for (uint64_t j = 0; j < _rhs.size_; j++) {
+                    if (_if_same(data_[i], _rhs.data_[j])) {
+                        ++count;
+                    }
+                }
+            }
+
+            return count == _rhs.size_;
         }
 };
 }
