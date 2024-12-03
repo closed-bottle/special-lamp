@@ -165,6 +165,14 @@ class Vector {
                 data_ = new_data;
             }
         }
+    void clear() {
+            if (data_) {
+                delete[] data_;
+            }
+
+            size_ = 0;
+            capacity_ = 0;
+        }
 };
 }
 #endif //LAMPVECTOR_H
