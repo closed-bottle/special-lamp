@@ -145,6 +145,24 @@ class Vector {
 
             return count == _rhs.size_;
         }
+
+    void reserve(uint64_t _size) {
+            if (capacity_ > _size) {
+                if (size_ < _size) {
+                    size_ = _size;
+                }
+            }
+            else {
+                capacity_ = _size;
+                size_ = _size;
+
+                T* new_data = new T[capacity_];
+                memcpy(new_data, data_, size_ * sizeof(T));
+
+                delete[] data_;
+                data_ = new_data;
+            }
+        }
 };
 }
 #endif //LAMPVECTOR_H
