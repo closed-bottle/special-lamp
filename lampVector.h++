@@ -157,7 +157,9 @@ class Vector {
                 size_ = _size;
 
                 T* new_data = new T[capacity_];
-                memcpy(new_data, data_, size_ * sizeof(T));
+                if (data_) {
+                    memcpy(new_data, data_, size_ * sizeof(T));
+                }
 
                 delete[] data_;
                 data_ = new_data;
