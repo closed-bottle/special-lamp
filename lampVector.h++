@@ -94,7 +94,7 @@ class Vector {
                 data_ = new_data;
             }
 
-            data_[size_] = std::move(_value);
+            data_[size_] = _value;
             size_++;
         }
 
