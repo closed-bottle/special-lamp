@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <cstring>
 
-#include <iostream>
-
 namespace Lamp {
 
 template <typename T>

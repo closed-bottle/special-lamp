@@ -15,7 +15,7 @@ class String {
     public:
 
         String();
-        explicit String(const char*);
+        String(const char*);
         String(String const &);
         String(String&&) noexcept;
         ~String();
