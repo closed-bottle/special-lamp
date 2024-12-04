@@ -65,6 +65,10 @@ class Vector {
             return data_[_index];
         }
 
+        T const & operator[](const uint64_t& _index) const {
+        return data_[_index];
+        }
+
         uint64_t size() const {
             return size_;
         }
