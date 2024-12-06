@@ -16,14 +16,10 @@ namespace Lamp {
     public:
         list() : head_(nullptr), tail_(nullptr), count_(0) {}
         ~list() {
-            if (head_) {
+            while (!empty()) {
+                node* new_head = head_->next_;
                 delete head_;
-                head_ = nullptr;
-            }
-
-            if (tail_) {
-                delete tail_;
-                tail_ = nullptr;
+                head_ = new_head;
             }
         }
 
