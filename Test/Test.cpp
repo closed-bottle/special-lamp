@@ -5,6 +5,7 @@
 #include "../lampCRC32.h++"
 #include "../lampMurmur3.h++"
 #include "../lampList.h++"
+#include "../lampUnordered_map.h++"
 
 #include <vector>
 #include <chrono>
@@ -51,6 +52,7 @@ int main(int argc, const char * argv[]) {
     std::cout << std::hex << crc32.GetCRC32(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1) << std::endl;
     std::cout << std::hex << murmur_result[0] << murmur_result[1] << std::endl;
 
+    /*
     Lamp::list<uint32_t> list;
 
     list.push_back(1);
@@ -74,6 +76,21 @@ int main(int argc, const char * argv[]) {
     list.insert(2, 4);
     list.insert(2, 5);
     PrintList(list);
+    */
+    auto str1 = Lamp::String("First");
+    auto str2 = Lamp::String("Second");
+    auto str3 = Lamp::String("Third");
+    auto strtest = Lamp::String("First");
+    auto str123 = Lamp::String("123456789");
+
+
+    Lamp::unordered_map<Lamp::String, uint32_t> map;
+    map[str123] = 123;
+
+    map[str1] = 1;
+    map[str2] = 2;
+    map[str3] = 3;
+    map["??"] = 88;
 
 
 

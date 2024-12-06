@@ -1,13 +1,22 @@
 ﻿#ifndef LAMPLIST_H
 #define LAMPLIST_H
 
-namespace Lamp {
 
+
+namespace Lamp {
     template <typename T>
     class list {
+        template<typename, typename> friend class unordered_map;
+
         struct node {
+            template<typename, typename> friend class unordered_map;
+
             T data_;
             node* next_;
+
+            node* next() {
+                return next_;
+            }
         };
 
         node* head_;
@@ -20,6 +29,7 @@ namespace Lamp {
                 node* new_head = head_->next_;
                 delete head_;
                 head_ = new_head;
+                --count_;
             }
         }
 
@@ -29,6 +39,10 @@ namespace Lamp {
 
         T& front() {
             return head_->data_;
+        }
+
+        T& back() {
+            return tail_->data_;
         }
 
         const T & front() const {
@@ -54,8 +68,7 @@ namespace Lamp {
         }
 
         void push_back(const T & _value) {
-            node* new_node = new node();
-            new_node->data_ = _value;
+            node* new_node = new node(_value, nullptr);
 
             if (tail_) {
                 tail_->next_ = new_node;
@@ -142,6 +155,18 @@ namespace Lamp {
 
 
             ++count_;
+        }
+
+        bool find(const T & _rhs, bool(*is_same)(const T &, const T &)) {
+            node* curr = head_;
+            while (curr) {
+                if (is_same(curr, _rhs)) {
+                    return true;
+                }
+                curr = curr->next_;
+            }
+
+            return false;
         }
     };
 
