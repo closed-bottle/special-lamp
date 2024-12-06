@@ -59,7 +59,11 @@ namespace Lamp {
         void GenerateCRC32LUT();
 #endif
 
-        uint32_t GetCRC32(const uint8_t * _data, size_t _size);
+        uint32_t GetCRC32(const uint8_t * _data, size_t _size)
+#ifdef LAMP_LUT_CRC32
+        const
+#endif
+        ;
 
 
         template <typename T>
@@ -90,7 +94,11 @@ namespace Lamp {
     }
 
 #ifdef LAMP_NORMAL_CRC32
-    inline uint32_t CRC32::GetCRC32(const uint8_t *_data, size_t _size) {
+    inline uint32_t CRC32::GetCRC32(const uint8_t *_data, size_t _size)
+#ifdef LAMP_LUT_CRC32
+    const
+#endif
+    {
 #ifdef LAMP_LUT_CRC32
         uint32_t crc = 0xFFFFFFFF;
         while (_size--) {
@@ -143,7 +151,11 @@ namespace Lamp {
 #endif
 #endif
 #ifdef LAMP_REVERSED_CRC32
-    inline uint32_t CRC32::GetCRC32(const uint8_t *_data, size_t _size) {
+    inline uint32_t CRC32::GetCRC32(const uint8_t *_data, size_t _size)
+#ifdef LAMP_LUT_CRC32
+    const
+#endif
+    {
 #ifdef LAMP_LUT_CRC32
         uint32_t crc = 0xFFFFFFFF;
         while (_size--) {
