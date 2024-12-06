@@ -24,6 +24,9 @@
  * I'm not sure why we have to reverse CRC before return, but it might be part of specification or
  * just to avoid returning all 0s since we started with all 1s.
  */
+
+// These macros are intended to use
+
 #ifndef LAMP_NORMAL_CRC32
 #ifndef LAMP_REVERSED_CRC32
 #define LAMP_REVERSED_CRC32
@@ -32,15 +35,33 @@
 
 #define LAMP_LUT_CRC32
 
+#define LAMP_PRECOMPILED_LUT_CRC32
+
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
+#include <iostream>
+#endif
 
 
 namespace Lamp {
     class CRC32 {
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
         uint32_t* crc32_table_ = nullptr;
+#else
+#include "lampCRC32LUT.inl"
+#endif
         public:
-        ~CRC32() {if (crc32_table_) delete[] crc32_table_;}
-        uint32_t GetCRC32(const uint8_t * _data, size_t _size);
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
+        ~CRC32() {
+            if (crc32_table_)
+                delete[] crc32_table_;
+        }
+        void OutputTable();
         void GenerateCRC32LUT();
+#endif
+
+        uint32_t GetCRC32(const uint8_t * _data, size_t _size);
+
+
         template <typename T>
         static T ReverseBits(T _rhs);
 #ifdef LAMP_NORMAL_CRC32
@@ -98,6 +119,7 @@ namespace Lamp {
 #endif
     }
 #ifdef LAMP_LUT_CRC32
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
     inline void CRC32::GenerateCRC32LUT() {
         uint32_t crc = 0xFFFFFFFF;
         crc32_table_ = new uint32_t[256];
@@ -117,6 +139,7 @@ namespace Lamp {
             crc32_table_[i] = crc;
         }
     }
+#endif
 #endif
 #endif
 #ifdef LAMP_REVERSED_CRC32
@@ -149,8 +172,10 @@ namespace Lamp {
 #endif
     }
 #ifdef LAMP_LUT_CRC32
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
     inline void CRC32::GenerateCRC32LUT() {
         uint32_t crc = 0xFFFFFFFF;
+
         crc32_table_ = new uint32_t[256];
 
         for (uint16_t i = 0; i < 256; i++) {
@@ -169,6 +194,23 @@ namespace Lamp {
         }
     }
 #endif
+#endif
+#endif
+
+#ifndef LAMP_PRECOMPILED_LUT_CRC32
+    inline void CRC32::OutputTable() {
+        std::cout << "constexpr uint32_t crc32_table_[256] = {" << std::endl;
+
+        for (uint16_t i = 0; i < 256; i++) {
+            std::cout << std::hex << "0x" << crc32_table_[i] << ", ";
+
+            if (i % 5 == 0) {
+                std::cout << std::endl;
+            }
+        }
+
+        std::cout << "};" << std::endl;
+    }
 #endif
 
 
