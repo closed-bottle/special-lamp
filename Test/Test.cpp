@@ -4,9 +4,18 @@
 #include "../lampVector.h++"
 #include "../lampCRC32.h++"
 #include "../lampMurmur3.h++"
+#include "../lampList.h++"
 
 #include <vector>
 #include <chrono>
+
+template<typename T>
+void PrintList(Lamp::list<T> & _list) {
+    while (!_list.empty()) {
+        std::cout << _list.front() << ", ";
+        _list.pop_front();
+    }
+}
 
 int main(int argc, const char * argv[]) {
     std::cout << "Hello World!\n";
@@ -41,6 +50,32 @@ int main(int argc, const char * argv[]) {
     murmur.Murmur3(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1, &murmur_result);
     std::cout << std::hex << crc32.GetCRC32(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1) << std::endl;
     std::cout << std::hex << murmur_result[0] << murmur_result[1] << std::endl;
+
+    Lamp::list<uint32_t> list;
+
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.push_back(4);
+    list.push_back(5);
+    list.push_back(6);
+    list.push_back(7);
+    list.push_back(8);
+    list.push_back(9);
+
+    std::cout << "--------------" << std::endl;
+    PrintList(list);
+    std::cout << "--------------" << std::endl;
+
+    list.insert(0, 0);
+    list.insert(1, 1);
+    list.insert(2, 2);
+    list.insert(2, 3);
+    list.insert(2, 4);
+    list.insert(2, 5);
+    PrintList(list);
+
+
 
     return 0;
 }
