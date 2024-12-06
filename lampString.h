@@ -41,6 +41,10 @@ class String {
         inline const char * c_str() const {
             return data_;
         }
+
+        inline uint32_t length() const {
+            return length_; // Include null.
+        }
 };
 
 }
