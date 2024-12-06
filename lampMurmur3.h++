@@ -10,6 +10,7 @@
  * Released under public domain
  * */
 
+namespace {
 #define	FORCE_INLINE inline __attribute__((always_inline))
 
 inline uint32_t rotl32 ( uint32_t x, int8_t r )
@@ -42,7 +43,7 @@ FORCE_INLINE uint64_t fmix64 ( uint64_t k )
 
     return k;
 }
-
+}
 
 namespace Lamp {
 
