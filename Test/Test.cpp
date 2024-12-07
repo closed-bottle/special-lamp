@@ -214,6 +214,65 @@ int main(int argc, const char * argv[]) {
         std::cout << "map[Test5] : " << map["Test5"] << std::endl;
     }
 
+    {
+        Lamp::Vector<Lamp::String> test_v1;
+        Lamp::Vector<Lamp::String> test_v2;
+
+        Lamp::Vector<Lamp::String> test_v3;
+        Lamp::Vector<Lamp::String> test_v4;
+
+        Lamp::String testerv1 = "teester1";
+        Lamp::String testerv2 = "teester2";
+
+        test_v1.push_back("1");
+        test_v1.push_back("2");
+        test_v1.push_back("3");
+        test_v1.push_back("4");
+        test_v1.push_back("5");
+        test_v1.push_back("6");
+
+        test_v2.push_back("100");
+        test_v2.push_back("101");
+        test_v2.push_back("102");
+        test_v2.push_back("103");
+        test_v2.push_back("104");
+        test_v2.push_back("105");
+
+        test_v1 = test_v2;
+
+        for (int i = 0; i < test_v1.size(); ++i) {
+            std::cout << "v1 : " << test_v1[i].c_str() << std::endl;
+        }
+
+        test_v3.push_back(testerv1);
+
+        test_v4.push_back(testerv2);
+        test_v4.push_back(testerv2);
+
+        test_v3 = test_v4;
+
+        for (int i = 0; i < test_v3.size(); ++i) {
+            std::cout << "v3 : " << test_v3[i].c_str() << std::endl;
+        }
+
+
+        test_v3.push_back("Inplace");
+        test_v3.push_back("Inplace");
+        test_v3.push_back("Inplace");
+        test_v3.push_back("Inplace");
+        test_v3.push_back("Inplace");
+
+        test_v4.push_back(Lamp::String("Inplace2"));
+        test_v4.push_back(Lamp::String("Inplace2"));
+        test_v4.push_back(Lamp::String("Inplace2"));
+
+        test_v4 = test_v3;
+
+        for (int i = 0; i < test_v4.size(); ++i) {
+            std::cout << "v4 : " << test_v4[i].c_str() << std::endl;
+        }
+    }
+
     std::cout << std::endl;
     return 0;
 
