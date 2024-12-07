@@ -247,16 +247,16 @@ namespace Lamp {
             ++count_;
         }
 
-        bool find(const T & _rhs, bool(*is_same)(const T &, const T &)) {
+        T* find(const T & _rhs, bool(*is_same)(const T &, const T &)) {
             node* curr = head_;
             while (curr) {
                 if (is_same(curr, _rhs)) {
-                    return true;
+                    return curr->data_;
                 }
                 curr = curr->next_;
             }
 
-            return false;
+            return nullptr;
         }
     };
 
