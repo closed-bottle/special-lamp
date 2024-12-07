@@ -160,6 +160,60 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    {
+        Lamp::list<int> erase_test;
+        for (int i = 0; i < 100; ++i) {
+            erase_test.push_back(i);
+        }
+
+        for (int i = 0; i < 100; ++i) {
+            if (*erase_test.at(i) != i) {
+                std::cout << "mistmatch found at : " << i << std::endl;
+            }
+        }
+
+        erase_test.erase(101);
+        erase_test.erase(0);
+        erase_test.erase(0, 90);
+
+        PrintList(erase_test);
+    }
+
+    {
+        Lamp::unordered_map<Lamp::String, int> map;
+        map["Test1"] = 1;
+        map["Test2"] = 2;
+        map["Test3"] = 3;
+        map["Test4"] = 4;
+        map["Test5"] = 5;
+        std::cout << std::endl;
+        std::cout << "map[Test1] : " << map["Test1"] << std::endl;
+        std::cout << "map[Test2] : " << map["Test2"] << std::endl;
+        std::cout << "map[Test3] : " << map["Test3"] << std::endl;
+        std::cout << "map[Test4] : " << map["Test4"] << std::endl;
+        std::cout << "map[Test5] : " << map["Test5"] << std::endl;
+
+        map.erase("Test6");
+        map.erase("Test7");
+        map.erase("Test7");
+        map.erase("Test7");
+        map.erase("Test7");
+
+        map.erase("Test5");
+        map.erase("Test5");
+        map.erase("Test5");
+        map.erase("Test5");
+        map.erase("Test5");
+        map.erase("Test3");
+        map.erase("Test4");
+
+        std::cout << "map[Test1] : " << map["Test1"] << std::endl;
+        std::cout << "map[Test2] : " << map["Test2"] << std::endl;
+        std::cout << "map[Test3] : " << map["Test3"] << std::endl;
+        std::cout << "map[Test4] : " << map["Test4"] << std::endl;
+        std::cout << "map[Test5] : " << map["Test5"] << std::endl;
+    }
+
     std::cout << std::endl;
     return 0;
 
