@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <io.h>
 
 #include "../lampString.h"
 #include "../lampVector.h++"
@@ -9,6 +10,8 @@
 
 #include <vector>
 #include <chrono>
+#include <random>
+
 
 template<typename T>
 void PrintList(Lamp::list<T> & _list) {
@@ -19,8 +22,9 @@ void PrintList(Lamp::list<T> & _list) {
 }
 
 int main(int argc, const char * argv[]) {
-    std::cout << "Hello World!\n";
 
+    std::cout << "Hello World!\n";
+    /*
     {
         Lamp::Vector<Lamp::String> lampVector1 = Lamp::Vector<Lamp::String>();
 
@@ -35,64 +39,128 @@ int main(int argc, const char * argv[]) {
 
         std::cout << lampVector1[0].c_str() << std::endl;
     }
-
-    char c[] = "123456jkjpj30223l789";
-    Lamp::CRC32 crc32;
-    Lamp::LampMurmur3 murmur;
-
-
-    // 1 should be 0x83DCEFB7
-    // 123456789 should be 89A1897F (Normal)
-    // 0xCBF43926 (Reflected)
-
-    //crc32.GenerateCRC32LUT();
-    //crc32.OutputTable();
-    uint64_t murmur_result[2] = {0,0};
-    murmur.Murmur3(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1, &murmur_result);
-    std::cout << std::hex << crc32.GetCRC32(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1) << std::endl;
-    std::cout << std::hex << murmur_result[0] << murmur_result[1] << std::endl;
-
-    /*
-    Lamp::list<uint32_t> list;
-
-    list.push_back(1);
-    list.push_back(2);
-    list.push_back(3);
-    list.push_back(4);
-    list.push_back(5);
-    list.push_back(6);
-    list.push_back(7);
-    list.push_back(8);
-    list.push_back(9);
-
-    std::cout << "--------------" << std::endl;
-    PrintList(list);
-    std::cout << "--------------" << std::endl;
-
-    list.insert(0, 0);
-    list.insert(1, 1);
-    list.insert(2, 2);
-    list.insert(2, 3);
-    list.insert(2, 4);
-    list.insert(2, 5);
-    PrintList(list);
     */
-    auto str1 = Lamp::String("First");
-    auto str2 = Lamp::String("Second");
-    auto str3 = Lamp::String("Third");
-    auto strtest = Lamp::String("First");
-    auto str123 = Lamp::String("123456789");
+
+    {
+        char c[] = "123456jkjpj30223l789";
+        Lamp::CRC32 crc32;
+        Lamp::LampMurmur3 murmur;
 
 
-    Lamp::unordered_map<Lamp::String, uint32_t> map;
-    map[str123] = 123;
+        // 1 should be 0x83DCEFB7
+        // 123456789 should be 89A1897F (Normal)
+        // 0xCBF43926 (Reflected)
 
-    map[str1] = 1;
-    map[str2] = 2;
-    map[str3] = 3;
-    map["??"] = 88;
+        //crc32.GenerateCRC32LUT();
+        //crc32.OutputTable();
+        uint64_t murmur_result[2] = {0,0};
+        murmur.Murmur3(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1, &murmur_result);
+        std::cout << std::hex << crc32.GetCRC32(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1) << std::endl;
+        std::cout << std::hex << murmur_result[0] << murmur_result[1] << std::endl;
 
 
+        Lamp::list<uint32_t> list;
 
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+        list.push_back(4);
+        list.push_back(5);
+        list.push_back(6);
+        list.push_back(7);
+        list.push_back(8);
+        list.push_back(9);
+
+        std::cout << "--------------" << std::endl;
+        PrintList(list);
+        std::cout << "--------------" << std::endl;
+
+        list.insert(0, 0);
+        list.insert(1, 1);
+        list.insert(2, 2);
+        list.insert(2, 3);
+        list.insert(2, 4);
+        list.insert(2, 5);
+        PrintList(list);
+
+
+        auto str1 = Lamp::String("First");
+        auto str2 = Lamp::String("Second");
+        auto str3 = Lamp::String("Third");
+        auto strtest = Lamp::String("First");
+        auto str123 = Lamp::String("123456789");
+
+        std::cout << str1.c_str() << std::endl;
+        std::cout << str2.c_str() << std::endl;
+        std::cout << str3.c_str() << std::endl;
+        std::cout << strtest.c_str() << std::endl;
+        std::cout << str123.c_str() << std::endl;
+
+        Lamp::unordered_map<Lamp::String, uint32_t> map;
+        map[str123] = 123;
+
+        map[str1] = 1;
+        map[str2] = 2;
+        map[str3] = 3;
+        map["??"] = 88;
+
+        std::cout << std::dec;
+        std::cout << "str123 = " << map[str123] << std::endl;
+        std::cout << "str1   = " << map[str1] << std::endl;
+        std::cout << "str2   = " << map[str2] << std::endl;
+        std::cout << "str3   = " << map[str3] << std::endl;
+        std::cout << "??     = " << map["??"] << std::endl;
+        std::cout << "random = " << map["random"] << std::endl;
+
+        Lamp::Vector<uint32_t> rand_number_collection;
+        Lamp::Vector<Lamp::String> rand_str_collection;
+
+
+        // Initially tried to use C++11 random, but it causes too many issues to external debugger.
+
+        const char rand_str[27] = "acdefghijklmnopqrstuvwxyz";
+
+        uint64_t t = 0xFFFF;
+
+
+        for (int i = 0; i < t; ++i) {
+            uint32_t uu = (uint32_t)rand() * 123456;
+            rand_number_collection.push_back(uu);
+        }
+
+
+        for (int i = 0; i < t; ++i) {
+
+            Lamp::String rng = "12345";
+            rng[0] = rand_str[rand() % 27];
+            rng[1] = rand_str[rand() % 27];
+            rng[2] = rand_str[rand() % 27];
+            rng[3] = rand_str[rand() % 27];
+            rng[4] = rand_str[rand() % 27];
+
+            rand_str_collection.push_back(rng);
+        }
+
+
+        for (int i = 0; i < t; ++i) {
+            if (map.find(rand_str_collection[i])) {
+                rand_number_collection[i] = map[rand_str_collection[i]];
+            }
+            else {
+                map[rand_str_collection[i]] = rand_number_collection[i];
+            }
+
+        }
+
+        for (int i = 0; i < t; ++i) {
+            uint32_t left = map[rand_str_collection[i]];
+            uint32_t right = rand_number_collection[i];
+            if (left != right)
+                std::cout << "mismatch found at : " << i << std::endl;
+        }
+    }
+
+    std::cout << std::endl;
     return 0;
+
 }
