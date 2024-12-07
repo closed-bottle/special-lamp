@@ -83,6 +83,96 @@ namespace Lamp {
             ++count_;
         }
 
+        T* at(uint64_t _pos) {
+            node* n = head_;
+
+            while (n && _pos) {
+                n = n->next_;
+                --_pos;
+            }
+
+            return &n->data_;
+        }
+
+        // _start == _end will erase single element.
+        // Implementing this way so it's not confusing in case T == uint64
+        void erase(uint64_t _start, uint64_t _size) {
+            // Do not handle _start + _count > count_.
+            if (_start == 0 && count_) {
+
+                if (head_ == tail_) {
+                    tail_ = nullptr;
+                }
+
+                while (_size) {
+                    node* n = head_->next_;
+
+                    delete head_;
+                    head_ = n;
+                    --_size;
+                    --count_;
+                }
+
+                return;
+            }
+
+            node* prev = head_;
+
+            while (prev && (_start - 1)) {
+                prev = prev->next_;
+                --_start;
+            }
+
+
+            node* curr = prev->next_;
+            while (_size) {
+                node* n = curr->next_;
+
+                delete curr;
+                curr = n;
+
+                --_size;
+                --count_;
+            }
+            prev->next_ = curr;
+
+            if (!prev->next_) {
+                tail_ = prev;
+            }
+        }
+
+        void erase(const T & _value) {
+            node * curr = head_;
+            node * prev = nullptr;
+
+            while (curr && curr->data_ != _value) {
+                prev = curr;
+                curr = curr->next_;
+            }
+
+            if (curr == head_) {
+                if (head_ == tail_) {
+                    tail_ = nullptr; // count_ == 0 edge case.
+                }
+                head_ = head_->next_;
+                --count_;
+                delete curr;
+            }
+            else if (curr == tail_) {
+                if (head_ == tail_) {
+                    head_ = nullptr;
+                }
+                tail_ = prev;
+                --count_;
+                delete curr;
+            }
+            else if (curr != nullptr) {
+                prev->next_ = curr->next_;
+                --count_;
+                delete curr;
+            }
+        }
+
         void pop_front() {
             // if (!head_)
             // TODO: runtime error
