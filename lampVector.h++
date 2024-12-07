@@ -15,7 +15,7 @@ class Vector {
         Vector(const uint64_t& _size, const T& _value) {
             size_ = _size;
             capacity_ = _size;
-            data_ = new T[size_];
+            data_ = new T[capacity_];
 
             for (uint64_t i = 0; i < size_; i++) {
                 data_[i] = _value;
@@ -29,8 +29,11 @@ class Vector {
         Vector(const Vector &_rhs) {
             size_ = _rhs.size_;
             capacity_ = _rhs.capacity_;
-            data_ = new T[size_];
-            memcpy(data_, _rhs.data_, size_ * sizeof(T));
+            data_ = new T[capacity_];
+
+            for (uint64_t i = 0; i < size_; ++i) {
+                data_[i] = _rhs.data_[i];
+            }
         }
 
         Vector & operator=(const Vector & _rhs) {
@@ -38,17 +41,18 @@ class Vector {
                 return *this;
             }
 
-            size_ = _rhs.size_;
-
-            if (capacity_ < _rhs.capacity_) {
+            if (capacity_ < _rhs.size_) {
                 delete[] data_;
 
-                data_ = new T[size_];
+                capacity_ = _rhs.size_;
+                data_ = new T[capacity_];
             }
 
-            capacity_ = _rhs.capacity_;
+            size_ = _rhs.size_;
 
-            memcpy(data_, _rhs.data_, size_ * sizeof(T));
+            for (uint64_t i = 0; i < size_; ++i) {
+                data_[i] = _rhs.data_[i];
+            }
             return *this;
         }
 
@@ -94,11 +98,15 @@ class Vector {
                 capacity_ = (capacity_ + 1) * 2;
 
                 T* new_data = new T[capacity_];
-                memcpy(new_data, data_, size_ * sizeof(T));
+
+                for (uint64_t i = 0; i < size_; ++i) {
+                    new_data[i] = std::move(data_[i]);
+                }
+
                 data_ = new_data;
             }
 
-            data_[size_] = _value;
+            data_[size_] = std::move(_value);
             size_++;
         }
 
@@ -164,7 +172,9 @@ class Vector {
 
                 T* new_data = new T[capacity_];
                 if (data_) {
-                    memcpy(new_data, data_, size_ * sizeof(T));
+                    for (uint64_t i = 0; i < size_; ++i) {
+                        new_data[i] = std::move(data_[i]);
+                    }
                 }
 
                 delete[] data_;
