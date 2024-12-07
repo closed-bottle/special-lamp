@@ -76,7 +76,11 @@ class Vector {
                 capacity_ = (capacity_ + 1) * 2;
 
                 T* new_data = new T[capacity_];
-                memcpy(new_data, data_, size_ * sizeof(T));
+                for (uint64_t i = 0; i < size_; ++i) {
+                    new_data[i] = std::move(data_[i]);
+                }
+
+                delete[] data_;
                 data_ = new_data;
             }
 
@@ -168,9 +172,7 @@ class Vector {
             }
         }
     void clear() {
-            if (data_) {
-                delete[] data_;
-            }
+            delete[] data_;
 
             size_ = 0;
             capacity_ = 0;
