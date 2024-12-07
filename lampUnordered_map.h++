@@ -115,7 +115,7 @@ namespace Lamp {
 
     template<typename T1, typename T2>
     void unordered_map<T1, T2>::RehashIfNeeded() {
-        if ((float)size_ / capacity_ <= max_load_) {
+        if (static_cast<float>(size_) / capacity_ <= max_load_) {
             return;
         }
 
