@@ -1,7 +1,7 @@
 ﻿#ifndef LAMPVECTOR_H
 #define LAMPVECTOR_H
 #include <cstdint>
-#include <cstring>
+#include <utility>
 
 namespace Lamp {
 
