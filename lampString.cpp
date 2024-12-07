@@ -60,6 +60,8 @@ String & String::operator=(String && _rhs) {
     capacity_ = _rhs.capacity_;
     data_ = _rhs.data_;
     _rhs.data_ = nullptr;
+    _rhs.capacity_ = 0;
+    _rhs.length_ = 0;
 
 
     return *this;

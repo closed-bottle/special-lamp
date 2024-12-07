@@ -19,8 +19,8 @@ namespace Lamp {
             }
         };
 
-        node* head_;
-        node* tail_;
+        node* head_ = nullptr;
+        node* tail_ = nullptr;
         uint64_t count_ = 0;
     public:
         list() : head_(nullptr), tail_(nullptr), count_(0) {}
@@ -94,7 +94,7 @@ namespace Lamp {
             if (count_ == 1) {
                 tail_ = head_;
             }
-            if (count_ == 0) {
+            else if (count_ == 0) {
                 tail_ = nullptr;
             }
         }
@@ -118,7 +118,7 @@ namespace Lamp {
             if (count_ == 1) {
                 head_ = tail_;
             }
-            if (count_ == 0) {
+            else if (count_ == 0) {
                 head_ = nullptr;
             }
         }
