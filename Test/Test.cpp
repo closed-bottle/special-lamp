@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <io.h>
 
-#include "../lampString.h"
+#include "../lampString.h++"
 #include "../lampVector.h++"
 #include "../lampCRC32.h++"
 #include "../lampMurmur3.h++"

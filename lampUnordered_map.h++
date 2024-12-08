@@ -3,7 +3,7 @@
 
 #include "lampList.h++"
 #include "lampPair.h++"
-#include "lampString.h"
+#include "lampString.h++"
 
 //TODO: Maybe remove murmur3, its not worth and 128bit is too much for simple unordered_map.
 
