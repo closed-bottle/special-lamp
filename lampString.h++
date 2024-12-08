@@ -24,7 +24,7 @@ namespace {
         String_t(String_t&&) noexcept;
         ~String_t();
 
-        String_t&& operator+(String_t const & _rhs);
+        String_t operator+(String_t const & _rhs);
         String_t& operator=(String_t const &);
         String_t& operator=(String_t&&);
         String_t& operator=(const char*);
@@ -102,12 +102,18 @@ namespace {
     }
 
     template <typename T>
-    Lamp::String_t<T>&& Lamp::String_t<T>::operator+(Lamp::String_t<T> const & _rhs) {
+    Lamp::String_t<T> Lamp::String_t<T>::operator+(Lamp::String_t<T> const & _rhs) {
         String_t new_string;
 
+        new_string.length_ = length_ + _rhs.length_ - 1; // -1 since it have 2 null character.
+        new_string.capacity_ = new_string.length_;
+        new_string.data_ = new char[new_string.capacity_];
+
+        memcpy(new_string.data_, data_, length_ -1);
+        memcpy(&new_string.data_[length_  -1], _rhs.data_, _rhs.length_);
 
 
-        return std::move(new_string);
+        return new_string;
     }
 
     template <typename T>
