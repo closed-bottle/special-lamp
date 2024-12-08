@@ -121,19 +121,19 @@ namespace {
 
     template <typename T>
     Lamp::String_t<T> & Lamp::String_t<T>::operator=(const char * _rhs) {
-        uint32_t count = 0;
-        while (_rhs[count] != '\0') {
-            ++count;
+        length_ = 0;
+        while (_rhs[length_] != '\0') {
+            ++length_;
         }
-        ++count; // include null
+        ++length_; // include null
 
-        if (capacity_ < count) {
-            capacity_ = count;
+        if (capacity_ < length_) {
+            capacity_ = length_;
             delete[] data_;
             data_ = new char[capacity_];
         }
 
-        memcpy(data_, _rhs, count);
+        memcpy(data_, _rhs, length_);
 
         return *this;
     }
