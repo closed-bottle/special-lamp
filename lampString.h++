@@ -20,9 +20,11 @@ namespace {
         String_t();
         String_t(const char*);
         String_t(String_t const &);
+        String_t(const char *, uint32_t);
         String_t(String_t&&) noexcept;
         ~String_t();
 
+        String_t&& operator+(String_t const & _rhs);
         String_t& operator=(String_t const &);
         String_t& operator=(String_t&&);
         String_t& operator=(const char*);
@@ -77,6 +79,15 @@ namespace {
         memcpy(data_, _rhs.data_, length_);
     }
 
+    template<typename T>
+    String_t<T>::String_t(const char * _data, uint32_t _size) {
+        length_ = _size;
+        capacity_ = _size;
+        data_ = new char[capacity_];
+
+        memcpy(data_, _data, length_);
+    }
+
     template <typename T>
     String_t<T>::String_t(String_t && _rhs) noexcept  :length_(_rhs.length_), capacity_(_rhs.length_) {
         data_ = _rhs.data_;
@@ -88,6 +99,15 @@ namespace {
         delete[] data_;
         length_ = 0;
         capacity_ = 0;
+    }
+
+    template <typename T>
+    Lamp::String_t<T>&& Lamp::String_t<T>::operator+(Lamp::String_t<T> const & _rhs) {
+        String_t new_string;
+
+
+
+        return std::move(new_string);
     }
 
     template <typename T>
