@@ -11,11 +11,13 @@ class Vector {
         uint64_t capacity_ = 0;
         T* data_ = nullptr;
     public:
-        Vector() = default;
+        Vector() : size_(0), capacity_(0), data_(nullptr) {};
         Vector(const uint64_t& _size, const T& _value) {
             size_ = _size;
             capacity_ = _size;
-            data_ = new T[capacity_];
+            if (capacity_) {
+                data_ = new T[capacity_];
+            }
 
             for (uint64_t i = 0; i < size_; i++) {
                 data_[i] = _value;
@@ -24,17 +26,64 @@ class Vector {
 
         ~Vector() {
             delete[] data_;
+            data_ = nullptr;
+            size_ = 0;
+            capacity_ = 0;
         }
 
         Vector(const Vector &_rhs) {
             size_ = _rhs.size_;
             capacity_ = _rhs.capacity_;
-            data_ = new T[capacity_];
+            if (capacity_) {
+                data_ = new T[capacity_];
+            }
 
             for (uint64_t i = 0; i < size_; ++i) {
                 data_[i] = _rhs.data_[i];
             }
         }
+
+        Vector(Vector && _rhs) {
+            size_ = _rhs.size_;
+            capacity_ = _rhs.capacity_;
+            data_ = _rhs.data_;
+
+
+            _rhs.data_ = nullptr;
+            _rhs.capacity_ = 0;
+            _rhs.size_ = 0;
+        }
+
+
+        Vector (const uint8_t* _data_stream, uint64_t _byte_size) {
+            // Dangerous constructor...
+            const uint16_t stride = sizeof(T);
+            const uint64_t count = _byte_size / stride;
+
+            if (_byte_size % stride) {
+                size_ = 0;
+                capacity_ = 0;
+                data_ = nullptr;
+                return;
+            }
+
+            size_ = count;
+            capacity_ = count;
+            if (capacity_) {
+                data_ = new T[capacity_];
+            }
+
+
+            for (uint64_t i = 0; i < _byte_size; i += stride) {
+                T curr = 0;
+                for (uint16_t j = 0; j < stride; ++j) {
+                    curr |= _data_stream[i + j] << ((stride - 1 - j) * 8);
+                }
+
+                data_[i / stride] = curr;
+            }
+        }
+
 
         Vector & operator=(const Vector & _rhs) {
             if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
@@ -45,14 +94,32 @@ class Vector {
                 delete[] data_;
 
                 capacity_ = _rhs.size_;
-                data_ = new T[capacity_];
-            }
+                if (capacity_) {
+                    data_ = new T[capacity_];
+                }            }
 
             size_ = _rhs.size_;
 
             for (uint64_t i = 0; i < size_; ++i) {
                 data_[i] = _rhs.data_[i];
             }
+            return *this;
+        }
+
+        Vector & operator=(Vector && _rhs) {
+            if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
+                return *this;
+            }
+
+
+            size_ = _rhs.size_;
+            capacity_ = _rhs.capacity_;
+            data_ = _rhs.data_;
+
+            _rhs.data_ = nullptr;
+            _rhs.capacity_ = 0;
+            _rhs.size_ = 0;
+
             return *this;
         }
 
@@ -161,6 +228,10 @@ class Vector {
         }
 
     void reserve(uint64_t _size) {
+            if (_size == 0) {
+                return;
+            }
+
             if (capacity_ > _size) {
                 if (size_ < _size) {
                     size_ = _size;
