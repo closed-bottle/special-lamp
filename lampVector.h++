@@ -1,7 +1,7 @@
 ﻿#ifndef LAMPVECTOR_H
 #define LAMPVECTOR_H
 #include <cstdint>
-#include <utility>
+#include "lampUtility.h++"
 
 namespace Lamp {
 
@@ -73,14 +73,27 @@ class Vector {
                 data_ = new T[capacity_];
             }
 
+            if (Lamp::CheckEndianness<T>() == Lamp::LittleEndian) {
+                for (uint64_t i = 0; i < _byte_size; i += stride) {
+                    // First byte to LSB.
+                    T curr = 0;
+                    for (uint16_t j = 0; j < stride; ++j) {
+                        curr |= _data_stream[i + j] << (j * 8);
+                    }
 
-            for (uint64_t i = 0; i < _byte_size; i += stride) {
-                T curr = 0;
-                for (uint16_t j = 0; j < stride; ++j) {
-                    curr |= _data_stream[i + j] << ((stride - 1 - j) * 8);
+                    data_[i / stride] = curr;
                 }
+            }
+            else {
+                for (uint64_t i = 0; i < _byte_size; i += stride) {
+                    // First byte to MSB.
+                    T curr = 0;
+                    for (uint16_t j = 0; j < stride; ++j) {
+                        curr |= _data_stream[i + j] << ((stride - 1 - j) * 8);
+                    }
 
-                data_[i / stride] = curr;
+                    data_[i / stride] = curr;
+                }
             }
         }
 
@@ -96,7 +109,8 @@ class Vector {
                 capacity_ = _rhs.size_;
                 if (capacity_) {
                     data_ = new T[capacity_];
-                }            }
+                }
+            }
 
             size_ = _rhs.size_;
 
@@ -255,6 +269,7 @@ class Vector {
     void clear() {
             delete[] data_;
 
+            data_ = nullptr;
             size_ = 0;
             capacity_ = 0;
         }
