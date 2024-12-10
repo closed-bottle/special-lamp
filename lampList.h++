@@ -1,7 +1,7 @@
 ﻿#ifndef LAMPLIST_H
 #define LAMPLIST_H
 
-
+#include <stdexcept>
 
 namespace Lamp {
     template <typename T>
@@ -174,8 +174,11 @@ namespace Lamp {
         }
 
         void pop_front() {
-            // if (!head_)
-            // TODO: runtime error
+            if (!head_) {
+                // Ignore pop_front if list is empty.
+                return;
+            }
+
             node* new_head = head_->next_;
             delete head_;
             head_ = new_head;
@@ -190,8 +193,10 @@ namespace Lamp {
         }
 
         void pop_back() {
-            // if (!head)
-            // TODO: runtime error
+            if (!head_) {
+                // Ignore pop_back if list is empty
+                return;
+            }
             node* prev = head_;
 
             while (prev && prev->next_ != tail_) {
@@ -228,7 +233,8 @@ namespace Lamp {
                 return;
             }
             else if (_pos > count_) {
-                //TODO: runtime error
+                // Return if pos is out of bound instead of creating empty elements.
+                return;
             }
 
             node* prev = head_;
