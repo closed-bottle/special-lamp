@@ -5,7 +5,6 @@
 #include "lampPair.h++"
 #include "lampString.h++"
 
-//TODO: Maybe remove murmur3, its not worth and 128bit is too much for simple unordered_map.
 
 #ifndef LAMP_UNORDERED_MAP_USE_MURMUR3
 #define LAMP_UNORDERED_MAP_USE_CRC32

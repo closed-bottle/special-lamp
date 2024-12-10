@@ -2,11 +2,26 @@
 #ifndef LAMPUTILITY_H
 #define LAMPUTILITY_H
 
+#include <cstdint>
+
 namespace Lamp {
 
     enum Endianness {
         LittleEndian, BigEndian, Count
     };
+
+    template<typename T> T Clamp(const T & _src, const T & _min, const T & _max) {
+        T result = _src;
+
+        if (result < _min) {
+            result = _min;
+        }
+        else if (result > _max) {
+            result = _max;
+        }
+
+        return result;
+    }
 
     template<typename T>
     Endianness CheckEndianness() {
@@ -21,9 +36,7 @@ namespace Lamp {
         else if (if_big_endian == 1) {
             return BigEndian;
         }
-        else {
-            // TODO: runtime error
-        }
+
         return Count;
     }
 
