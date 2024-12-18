@@ -200,7 +200,7 @@ class Vector {
             return data_;
         }
 
-        bool if_contain(Vector<T> const& _rhs) {
+        bool if_contain(Vector<T> const& _rhs) const {
             if (*this == _rhs) {
                 return true;
             }
@@ -221,7 +221,7 @@ class Vector {
             return count == _rhs.size_;
         }
 
-    bool if_contain(Vector<T> const& _rhs, bool(*_if_same)(T const &, T const &)) {
+    bool if_contain(Vector<T> const& _rhs, bool(*_if_same)(T const &, T const &)) const {
             if (*this == _rhs) {
                 return true;
             }
@@ -240,6 +240,16 @@ class Vector {
             }
 
             return count == _rhs.size_;
+        }
+
+    bool if_contain(const T & _rhs) const {
+            for (uint64_t i = 0; i < size_; ++i) {
+                if (data_[i] == _rhs) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     void reserve(uint64_t _size) {
