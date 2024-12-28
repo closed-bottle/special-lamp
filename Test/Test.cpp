@@ -7,6 +7,7 @@
 #include "../lampMurmur3.h++"
 #include "../lampList.h++"
 #include "../lampUnordered_map.h++"
+#include "../lampMath.h++"
 
 #include <vector>
 #include <chrono>
@@ -271,6 +272,14 @@ int main(int argc, const char * argv[]) {
         for (int i = 0; i < test_v4.size(); ++i) {
             std::cout << "v4 : " << test_v4[i].c_str() << std::endl;
         }
+    }
+
+    {
+        Lamp::Vec4f vector;
+        vector.x = 0;
+        vector.y = 0;
+        vector.z = 0;
+        vector.w = 1;
     }
 
     std::cout << std::endl;
