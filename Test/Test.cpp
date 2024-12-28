@@ -280,6 +280,15 @@ int main(int argc, const char * argv[]) {
         vector.y = 0;
         vector.z = 0;
         vector.w = 1;
+
+        Lamp::Vec3f left, right;
+
+        left = {3,0,2};
+        right = {-1, 4, 2};
+
+        auto result = left.Cross(right);
+
+        std::cout << result.x << ", " << result.y << ", " << result.z << std::endl;
     }
 
     std::cout << std::endl;
