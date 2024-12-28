@@ -13,7 +13,7 @@ namespace Lamp {
                 return x*_rhs.x + y*_rhs.y + z*_rhs.z;
             }
 
-            Vec3 Cross(const Vec3& _rhs) {
+            Vec3 Cross(const Vec3& _rhs) const {
                 Vec3 result;
 
                 result.x = (y*_rhs.z) - (z*_rhs.y);
@@ -45,7 +45,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec3 operator-(const Vec3 & _rhs) {
+            Vec3 operator-(const Vec3 & _rhs) const {
                 Vec3 result = *this;
                 result -= _rhs;
                 return result;
@@ -59,7 +59,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec3 operator+(const Vec3 & _rhs) {
+            Vec3 operator+(const Vec3 & _rhs) const {
                 Vec3 result = *this;
                 result += _rhs;
                 return result;
@@ -103,7 +103,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec4 operator+(const Vec4& _rhs) {
+            Vec4 operator+(const Vec4& _rhs) const {
                 Vec4 result = *this;
                 result += _rhs;
                 return result;
@@ -118,7 +118,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec4 operator-(const Vec4& _rhs) {
+            Vec4 operator-(const Vec4& _rhs) const {
                 Vec4 result = *this;
                 result -= _rhs;
                 return result;
@@ -181,6 +181,29 @@ namespace Lamp {
                 result.c0.y = std::sin(_rad);
                 result.c1.x = -std::sin(_rad);
                 result.c1.y = std::cos(_rad);
+
+                return result;
+            }
+
+            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _up) {
+                Mat4 result;
+                Vec3<T> a;
+                Vec3<T> b;
+                Vec3<T> c;
+
+                c = _eye - _center;
+                c.Normalize();
+
+                a = _up.Cross(c);
+
+                b = c.Cross(a);
+
+                a.Normalize();
+                b.Normalize();
+
+                result.c0.vec3 = {a.x, b.x, c.x};
+                result.c1.vec3 = {a.y, b.y, c.y};
+                result.c2.vec3 = {a.z, b.z, c.z};
 
                 return result;
             }
