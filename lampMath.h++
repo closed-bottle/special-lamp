@@ -134,6 +134,33 @@ namespace Lamp {
             Vec4<T> c2 = {0.0f, 0.0f, 1.0f, 0.0f};
             Vec4<T> c3 = {0.0f, 0.0f, 0.0f, 1.0f};
 
+            Mat4 operator*(const Mat4& _rhs) const {
+                Mat4 result;
+
+                // Using Dotproduct instead?
+                result.c0.x = c0.x*_rhs.c0.x + c1.x*_rhs.c0.y + c2.x*_rhs.c0.z + c3.x*_rhs.c0.w;
+                result.c0.y = c0.y*_rhs.c0.x + c1.y*_rhs.c0.y + c2.y*_rhs.c0.z + c3.y*_rhs.c0.w;
+                result.c0.z = c0.z*_rhs.c0.x + c1.z*_rhs.c0.y + c2.z*_rhs.c0.z + c3.z*_rhs.c0.w;
+                result.c0.w = c0.w*_rhs.c0.x + c1.w*_rhs.c0.y + c2.w*_rhs.c0.z + c3.w*_rhs.c0.w;
+
+                result.c1.x = c0.x*_rhs.c1.x + c1.x*_rhs.c1.y + c2.x*_rhs.c1.z + c3.x*_rhs.c1.w;
+                result.c1.y = c0.y*_rhs.c1.x + c1.y*_rhs.c1.y + c2.y*_rhs.c1.z + c3.y*_rhs.c1.w;
+                result.c1.z = c0.z*_rhs.c1.x + c1.z*_rhs.c1.y + c2.z*_rhs.c1.z + c3.z*_rhs.c1.w;
+                result.c1.w = c0.w*_rhs.c1.x + c1.w*_rhs.c1.y + c2.w*_rhs.c1.z + c3.w*_rhs.c1.w;
+
+                result.c2.x = c0.x*_rhs.c2.x + c1.x*_rhs.c2.y + c2.x*_rhs.c2.z + c3.x*_rhs.c2.w;
+                result.c2.y = c0.y*_rhs.c2.x + c1.y*_rhs.c2.y + c2.y*_rhs.c2.z + c3.y*_rhs.c2.w;
+                result.c2.z = c0.z*_rhs.c2.x + c1.z*_rhs.c2.y + c2.z*_rhs.c2.z + c3.z*_rhs.c2.w;
+                result.c2.w = c0.w*_rhs.c2.x + c1.w*_rhs.c2.y + c2.w*_rhs.c2.z + c3.w*_rhs.c2.w;
+
+                result.c3.x = c0.x*_rhs.c3.x + c1.x*_rhs.c3.y + c2.x*_rhs.c3.z + c3.x*_rhs.c3.w;
+                result.c3.y = c0.y*_rhs.c3.x + c1.y*_rhs.c3.y + c2.y*_rhs.c3.z + c3.y*_rhs.c3.w;
+                result.c3.z = c0.z*_rhs.c3.x + c1.z*_rhs.c3.y + c2.z*_rhs.c3.z + c3.z*_rhs.c3.w;
+                result.c3.w = c0.w*_rhs.c3.x + c1.w*_rhs.c3.y + c2.w*_rhs.c3.z + c3.w*_rhs.c3.w;
+
+                return result;
+            }
+
             static Mat4 Translate(T _x, T _y, T _z) {
                 Mat4 result;
 
@@ -204,6 +231,20 @@ namespace Lamp {
                 result.c0.vec3 = {a.x, b.x, c.x};
                 result.c1.vec3 = {a.y, b.y, c.y};
                 result.c2.vec3 = {a.z, b.z, c.z};
+
+                return result;
+            }
+
+            static Mat4 Perspective(T _fovy, T _aspect, T _near, T _far) {
+                Mat4 result;
+                T tan_half_angle = std::tan(_fovy / 2);
+
+                result.c0.x = 1.0 / (_aspect * tan_half_angle);
+                result.c1.y = 1.0 / (tan_half_angle);
+                result.c2.z = -(_far + _near) / (_far - _near);
+
+                result.c3.z = -1;
+                result.c2.w = -(2.0 * _far * _near) / (_far - _near);
 
                 return result;
             }

@@ -281,14 +281,34 @@ int main(int argc, const char * argv[]) {
         vector.z = 0;
         vector.w = 1;
 
-        Lamp::Vec3f left, right;
+        {
+            Lamp::Vec3f left, right;
 
-        left = {3,0,2};
-        right = {-1, 4, 2};
+            left = {3,0,2};
+            right = {-1, 4, 2};
 
-        auto result = left.Cross(right);
+            auto result = left.Cross(right);
+            std::cout << result.x << ", " << result.y << ", " << result.z << std::endl;
+        }
+        {
+            Lamp::Mat4f left, right;
+            left.c0 = {5,2,8,3};
+            left.c1 = {7,3,10,3};
+            left.c2 = {9,3,2,4};
+            left.c3 = {10,8,3,8};
 
-        std::cout << result.x << ", " << result.y << ", " << result.z << std::endl;
+            right.c0 = {3, 12, 9, 3};
+            right.c1 = {10, 1, 10, 12};
+            right.c2 = {12, 4, 12, 4};
+            right.c3 = {18, 9, 2, 10};
+
+            Lamp::Mat4f result = left * right;
+
+            std::cout << "[ " << result.c0.x << ", " << result.c1.x << ", " << result.c2.x << ", " << result.c3.x << "]" << std::endl;
+            std::cout << "[ " << result.c0.y << ", " << result.c1.y << ", " << result.c2.y << ", " << result.c3.y << "]" << std::endl;
+            std::cout << "[ " << result.c0.z << ", " << result.c1.z << ", " << result.c2.z << ", " << result.c3.z << "]" << std::endl;
+            std::cout << "[ " << result.c0.w << ", " << result.c1.w << ", " << result.c2.w << ", " << result.c3.w << "]" << std::endl;
+        }
     }
 
     std::cout << std::endl;
