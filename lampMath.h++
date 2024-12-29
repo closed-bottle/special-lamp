@@ -212,25 +212,24 @@ namespace Lamp {
                 return result;
             }
 
-            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _up) {
+            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _global_up) {
                 Mat4 result;
-                Vec3<T> a;
-                Vec3<T> b;
-                Vec3<T> c;
+                Vec3<T> forward;
+                Vec3<T> right;
+                Vec3<T> up;
 
-                c = _eye - _center;
-                c.Normalize();
+                forward = (_eye - _center);
+                forward.Normalize();
 
-                a = _up.Cross(c);
+                right = forward.Cross(_global_up);
+                right.Normalize();
 
-                b = c.Cross(a);
+                up = forward.Cross(right);
+                up.Normalize();
 
-                a.Normalize();
-                b.Normalize();
-
-                result.c0.vec3 = {a.x, b.x, c.x};
-                result.c1.vec3 = {a.y, b.y, c.y};
-                result.c2.vec3 = {a.z, b.z, c.z};
+                result.c0 = {right.x, up.x, forward.x, -_eye.x};
+                result.c1 = {right.y, up.y, forward.y, -_eye.y};
+                result.c2 = {right.z, up.z, forward.z, -_eye.z};
 
                 return result;
             }
