@@ -17,7 +17,7 @@ class Vector {
         }
 
     public:
-        Vector() : size_(0), capacity_(0), data_(nullptr) {};
+        Vector() {}
         Vector(const uint64_t& _size, const T& _value) {
             size_ = _size;
             capacity_ = _size;
@@ -49,7 +49,7 @@ class Vector {
             }
         }
 
-        Vector(Vector && _rhs) {
+        Vector(Vector && _rhs) noexcept {
             size_ = _rhs.size_;
             capacity_ = _rhs.capacity_;
             data_ = _rhs.data_;
@@ -61,7 +61,7 @@ class Vector {
         }
 
 
-        Vector (const uint8_t* _data_stream, uint64_t _byte_size) {
+        Vector (const uint8_t* _data_stream, const uint64_t _byte_size) {
             // Dangerous constructor...
             const uint16_t stride = sizeof(T);
             const uint64_t count = _byte_size / stride;
@@ -79,12 +79,12 @@ class Vector {
                 data_ = AllocData();
             }
 
-            if (Lamp::CheckEndianness<T>() == Lamp::LittleEndian) {
+            if (Lamp::CheckEndianness<T>() == LittleEndian) {
                 for (uint64_t i = 0; i < _byte_size; i += stride) {
                     // First byte to LSB.
                     T curr = 0;
                     for (uint16_t j = 0; j < stride; ++j) {
-                        curr |= _data_stream[i + j] << (j * 8);
+                        curr |= _data_stream[i + j] << j * 8;
                     }
 
                     data_[i / stride] = curr;
@@ -95,7 +95,7 @@ class Vector {
                     // First byte to MSB.
                     T curr = 0;
                     for (uint16_t j = 0; j < stride; ++j) {
-                        curr |= _data_stream[i + j] << ((stride - 1 - j) * 8);
+                        curr |= _data_stream[i + j] << (stride - 1 - j) * 8;
                     }
 
                     data_[i / stride] = curr;
@@ -126,7 +126,7 @@ class Vector {
             return *this;
         }
 
-        Vector & operator=(Vector && _rhs) {
+        Vector & operator=(Vector && _rhs) noexcept {
             if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
                 return *this;
             }
@@ -141,13 +141,6 @@ class Vector {
             _rhs.size_ = 0;
 
             return *this;
-        }
-
-        bool operator==(const Vector & _rhs) const {
-            if (size_ != _rhs.size_ || capacity_ != _rhs.capacity_) {
-                return false;
-            }
-            return true;
         }
 
         T& operator[](const uint64_t& _index) {
@@ -230,11 +223,12 @@ class Vector {
             return data_;
         }
 
-        bool if_contain(Vector<T> const& _rhs) const {
+        bool if_contain(Vector const& _rhs) const {
             if (*this == _rhs) {
                 return true;
             }
-            else if (size_ < _rhs.size_) {
+
+            if (size_ < _rhs.size_) {
                 return false;
             }
 
@@ -244,6 +238,7 @@ class Vector {
                 for (uint64_t j = 0; j < _rhs.size_; j++) {
                     if (data_[i] == _rhs.data_[j]) {
                         ++count;
+                        break;
                     }
                 }
             }
@@ -251,11 +246,8 @@ class Vector {
             return count == _rhs.size_;
         }
 
-    bool if_contain(Vector<T> const& _rhs, bool(*_if_same)(T const &, T const &)) const {
-            if (*this == _rhs) {
-                return true;
-            }
-            else if (size_ < _rhs.size_) {
+    bool if_contain(Vector const& _rhs, bool(*_if_same)(T const &, T const &)) const {
+            if (size_ < _rhs.size_) {
                 return false;
             }
 
@@ -265,6 +257,7 @@ class Vector {
                 for (uint64_t j = 0; j < _rhs.size_; j++) {
                     if (_if_same(data_[i], _rhs.data_[j])) {
                         ++count;
+                        break;
                     }
                 }
             }
@@ -282,7 +275,7 @@ class Vector {
             return false;
         }
 
-    void reserve(uint64_t _size) {
+    void reserve(const uint64_t _size) {
             if (_size == 0) {
                 return;
             }
