@@ -216,6 +216,28 @@ int main(int argc, const char * argv[]) {
     }
 
     {
+        Lamp::unordered_map<uint32_t, uint32_t> uintmap;
+
+        uintmap[1] = 2;
+        uintmap[3] = 4;
+        uintmap[5] = 6;
+        uintmap[7] = 8;
+        uintmap[9] = 10;
+
+        std::cout << "map[1] : " << uintmap[1] << std::endl;
+        std::cout << "map[2] : " << uintmap[2] << std::endl;
+        std::cout << "map[3] : " << uintmap[3] << std::endl;
+        std::cout << "map[4] : " << uintmap[4] << std::endl;
+        std::cout << "map[5] : " << uintmap[5] << std::endl;
+        std::cout << "map[6] : " << uintmap[6] << std::endl;
+        std::cout << "map[7] : " << uintmap[7] << std::endl;
+        std::cout << "map[8] : " << uintmap[8] << std::endl;
+        std::cout << "map[9] : " << uintmap[9] << std::endl;
+        std::cout << std::endl;
+
+    }
+
+    {
         Lamp::Vector<Lamp::String> test_v1;
         Lamp::Vector<Lamp::String> test_v2;
 

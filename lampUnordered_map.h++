@@ -22,7 +22,7 @@ namespace {
 #ifdef LAMP_UNORDERED_MAP_USE_CRC32
     template<typename T>
     uint32_t hash(const Lamp::CRC32 &_hash, const T & _key, const size_t _size) {
-        return _hash.GetCRC32(_key, _size);
+        return _hash.GetCRC32(reinterpret_cast<const uint8_t *>(&_key), _size);
     }
 
     template<>
