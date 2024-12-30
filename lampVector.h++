@@ -11,13 +11,18 @@ class Vector {
         uint64_t size_ = 0;
         uint64_t capacity_ = 0;
         T* data_ = nullptr;
+
+        T* AllocData() {
+            return new T[capacity_ +1];
+        }
+
     public:
         Vector() : size_(0), capacity_(0), data_(nullptr) {};
         Vector(const uint64_t& _size, const T& _value) {
             size_ = _size;
             capacity_ = _size;
             if (capacity_) {
-                data_ = new T[capacity_];
+                data_ = AllocData();
             }
 
             for (uint64_t i = 0; i < size_; i++) {
@@ -36,7 +41,7 @@ class Vector {
             size_ = _rhs.size_;
             capacity_ = _rhs.capacity_;
             if (capacity_) {
-                data_ = new T[capacity_];
+                data_ = AllocData();
             }
 
             for (uint64_t i = 0; i < size_; ++i) {
@@ -71,7 +76,7 @@ class Vector {
             size_ = count;
             capacity_ = count;
             if (capacity_) {
-                data_ = new T[capacity_];
+                data_ = AllocData();
             }
 
             if (Lamp::CheckEndianness<T>() == Lamp::LittleEndian) {
@@ -109,7 +114,7 @@ class Vector {
 
                 capacity_ = _rhs.size_;
                 if (capacity_) {
-                    data_ = new T[capacity_];
+                    data_ = AllocData();
                 }
             }
 
@@ -153,6 +158,31 @@ class Vector {
         return data_[_index];
         }
 
+        T* begin() {
+            return data_;
+        }
+
+        T* end() {
+            return data_ + size_;
+        }
+
+        const T* cbegin() const {
+            return data_;
+        }
+
+        const T* cend() const {
+            return data_ + size_;
+        }
+
+        const T* begin() const {
+            return data_;
+        }
+
+        const T* end() const {
+            return data_ + size_;
+        }
+
+
         uint64_t size() const {
             return size_;
         }
@@ -161,7 +191,7 @@ class Vector {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
 
-                T* new_data = new T[capacity_];
+                T* new_data = AllocData();
                 for (uint64_t i = 0; i < size_; ++i) {
                     new_data[i] = std::move(data_[i]);
                 }
@@ -179,7 +209,7 @@ class Vector {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
 
-                T* new_data = new T[capacity_];
+                T* new_data = AllocData();
 
                 for (uint64_t i = 0; i < size_; ++i) {
                     new_data[i] = std::move(data_[i]);
@@ -266,7 +296,7 @@ class Vector {
                 capacity_ = _size;
                 size_ = _size;
 
-                T* new_data = new T[capacity_];
+                T* new_data = AllocData();
                 if (data_) {
                     for (uint64_t i = 0; i < size_; ++i) {
                         new_data[i] = std::move(data_[i]);

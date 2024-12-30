@@ -309,6 +309,28 @@ int main(int argc, const char * argv[]) {
             std::cout << "[ " << result.c0.z << ", " << result.c1.z << ", " << result.c2.z << ", " << result.c3.z << "]" << std::endl;
             std::cout << "[ " << result.c0.w << ", " << result.c1.w << ", " << result.c2.w << ", " << result.c3.w << "]" << std::endl;
         }
+
+        {
+            Lamp::Vector<int> range_based_for;
+            range_based_for.push_back(1);
+            range_based_for.push_back(2);
+            range_based_for.push_back(3);
+            range_based_for.push_back(4);
+            range_based_for.push_back(5);
+            range_based_for.push_back(6);
+            range_based_for.push_back(7);
+            for (int& i : range_based_for) {
+                std::cout << "Range based for :" << i << std::endl;
+            }
+
+            for (const int& i : range_based_for) {
+                std::cout << "const Range based for :" << i << std::endl;
+            }
+
+            for (const int i : range_based_for) {
+                std::cout << "another range based for :" << i << std::endl;
+            }
+        }
     }
 
     std::cout << std::endl;
