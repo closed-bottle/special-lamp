@@ -64,6 +64,10 @@ namespace Lamp {
                 result += _rhs;
                 return result;
             }
+
+            Vec3 operator-() const {
+                return {-x, -y, -z};
+            }
         };
 
         template <typename T>
@@ -125,14 +129,25 @@ namespace Lamp {
             }
         };
 
+        // TODO: Add more effective algorithms.
+        // For example, strassen for multiplication.
+        // effective transpose.
         template <typename T>
         class Mat4 {
 
         public:
-            Vec4<T> c0 = {1.0f, 0.0f, 0.0f, 0.0f};
-            Vec4<T> c1 = {0.0f, 1.0f, 0.0f, 0.0f};
-            Vec4<T> c2 = {0.0f, 0.0f, 1.0f, 0.0f};
-            Vec4<T> c3 = {0.0f, 0.0f, 0.0f, 1.0f};
+            union {
+                struct {
+                    Vec4<T> c0 = {1.0f, 0.0f, 0.0f, 0.0f};
+                    Vec4<T> c1 = {0.0f, 1.0f, 0.0f, 0.0f};
+                    Vec4<T> c2 = {0.0f, 0.0f, 1.0f, 0.0f};
+                    Vec4<T> c3 = {0.0f, 0.0f, 0.0f, 1.0f};
+                };
+
+                struct {
+                    float arr[16];
+                };
+            };
 
             Mat4 operator*(const Mat4& _rhs) const {
                 Mat4 result;
@@ -157,6 +172,17 @@ namespace Lamp {
                 result.c3.y = c0.y*_rhs.c3.x + c1.y*_rhs.c3.y + c2.y*_rhs.c3.z + c3.y*_rhs.c3.w;
                 result.c3.z = c0.z*_rhs.c3.x + c1.z*_rhs.c3.y + c2.z*_rhs.c3.z + c3.z*_rhs.c3.w;
                 result.c3.w = c0.w*_rhs.c3.x + c1.w*_rhs.c3.y + c2.w*_rhs.c3.z + c3.w*_rhs.c3.w;
+
+                return result;
+            }
+
+            Mat4 Transpose() {
+                Mat4 result = *this;
+
+                result.c0 = {c0.x, c1.x, c2.x, c3.x};
+                result.c1 = {c0.y, c1.y, c2.y, c3.y};
+                result.c2 = {c0.z, c1.z, c2.z, c3.z};
+                result.c3 = {c0.w, c1.w, c2.w, c3.w};
 
                 return result;
             }
