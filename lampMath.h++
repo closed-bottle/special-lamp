@@ -244,10 +244,13 @@ namespace Lamp {
                 return result;
             }
 
-            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _global_up) {
+            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _global_up,
+                               const bool _is_left_handed = true) {
                 Vec3<T> forward;
                 Vec3<T> left;
+                Vec3<T> right;
                 Vec3<T> up;
+
 
                 forward = (_eye - _center);
                 forward.Normalize();
@@ -255,13 +258,27 @@ namespace Lamp {
                 left = _global_up.Cross(forward);
                 left.Normalize();
 
+                right = -left;
+
+                // I called it left and right, but it defines the basis of
+                // "left" direction from perspective of Camera.
+
+                // Using "left" -> right handed coordinate.
+                // Using "right" -> left handed coordinate.
                 up = forward.Cross(left);
 
-                Mat4 t = Mat4::Translate(-_eye);;
+                Mat4 t = Mat4::Translate(-_eye);
                 Mat4 r;
-                r.c0.vec3 = {left.x, up.x, forward.x};
-                r.c1.vec3 = {left.y, up.y, forward.y};
-                r.c2.vec3 = {left.z, up.z, forward.z};
+                if (_is_left_handed) {
+                    r.c0.vec3 = {right.x, up.x, forward.x};
+                    r.c1.vec3 = {right.y, up.y, forward.y};
+                    r.c2.vec3 = {right.z, up.z, forward.z};
+                }
+                else {
+                    r.c0.vec3 = {left.x, up.x, forward.x};
+                    r.c1.vec3 = {left.y, up.y, forward.y};
+                    r.c2.vec3 = {left.z, up.z, forward.z};
+                }
 
                 Mat4 result = r * t;
 
