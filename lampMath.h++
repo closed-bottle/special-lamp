@@ -195,6 +195,12 @@ namespace Lamp {
                 return result;
             }
 
+            static Mat4 Translate(const Vec3<T>& _v) {
+                Mat4 result;
+                result.c3.vec3 = _v;
+                return result;
+            }
+
             static Mat4 Scale(T _x, T _y, T _z) {
                 Mat4 result;
 
@@ -239,23 +245,25 @@ namespace Lamp {
             }
 
             static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _global_up) {
-                Mat4 result;
                 Vec3<T> forward;
-                Vec3<T> right;
+                Vec3<T> left;
                 Vec3<T> up;
 
                 forward = (_eye - _center);
                 forward.Normalize();
 
-                right = forward.Cross(_global_up);
-                right.Normalize();
+                left = _global_up.Cross(forward);
+                left.Normalize();
 
-                up = forward.Cross(right);
-                up.Normalize();
+                up = forward.Cross(left);
 
-                result.c0 = {right.x, up.x, forward.x, -_eye.x};
-                result.c1 = {right.y, up.y, forward.y, -_eye.y};
-                result.c2 = {right.z, up.z, forward.z, -_eye.z};
+                Mat4 t = Mat4::Translate(-_eye);;
+                Mat4 r;
+                r.c0.vec3 = {left.x, up.x, forward.x};
+                r.c1.vec3 = {left.y, up.y, forward.y};
+                r.c2.vec3 = {left.z, up.z, forward.z};
+
+                Mat4 result = r * t;
 
                 return result;
             }
@@ -267,9 +275,11 @@ namespace Lamp {
                 result.c0.x = 1.0 / (_aspect * tan_half_angle);
                 result.c1.y = 1.0 / (tan_half_angle);
                 result.c2.z = -(_far + _near) / (_far - _near);
+                result.c3.w = 0;
 
-                result.c3.z = -1;
-                result.c2.w = -(2.0 * _far * _near) / (_far - _near);
+                result.c2.w = -1;
+                result.c3.z = -(2.0 * _far * _near) / (_far - _near);
+
 
                 return result;
             }
