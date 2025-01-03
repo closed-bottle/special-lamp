@@ -234,7 +234,6 @@ int main(int argc, const char * argv[]) {
         std::cout << "map[8] : " << uintmap[8] << std::endl;
         std::cout << "map[9] : " << uintmap[9] << std::endl;
         std::cout << std::endl;
-
     }
 
     {
@@ -352,6 +351,21 @@ int main(int argc, const char * argv[]) {
             for (const int i : range_based_for) {
                 std::cout << "another range based for :" << i << std::endl;
             }
+        }
+    }
+
+    {
+        using namespace Lamp;
+        unordered_map<uint32_t, float> map;
+        map[1] = 2;
+        map[2] = 3;
+        map[3] = 4;
+        map[4] = 5;
+        map[5] = 6;
+
+        // Sicne it is unordered map, the order must be random.
+        for (const auto& p : map) {
+            std::cout <<  p.first << " : " << p.second << std::endl;
         }
     }
 

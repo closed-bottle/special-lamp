@@ -55,6 +55,106 @@ namespace Lamp {
             delete[] bucket_;
         }
 
+        class iterator {
+            friend iterator;
+            friend unordered_map;
+            unordered_map<T1, T2>* map_ = nullptr;
+            uint64_t index_ = 0;
+            pair<T1, T2>* data_ = nullptr;
+        public:
+            iterator() = delete;
+            iterator(unordered_map<T1, T2>* _map, uint64_t _index, pair<T1, T2>* _data)
+                : map_(_map), index_(_index), data_(_data)
+            {}
+
+
+            bool operator!=(const iterator& _rhs) const {
+                return index_ != _rhs.index_ || data_ != _rhs.data_;
+            }
+
+            iterator operator++() {
+                node* n = map_->bucket_[index_].head_;
+                while (&n->data_ != data_) {
+                    n = n->next_;
+                }
+
+                // If n is nullptr, then it must be application error.
+                if (n->next_) {
+                    data_ = &(n->next_->data_);
+                    return *this;
+                }
+
+                ++index_;
+                while (index_ < map_->capacity_) {
+                    if (map_->bucket_[index_].empty()) {
+                        ++index_;
+                        continue;
+                    }
+
+                    n = map_->bucket_[index_].head_;
+                    data_ = &(n->data_);
+                    break;
+                }
+
+                if (index_ == map_->capacity_) {
+                    data_ = nullptr;
+                }
+
+                return *this;
+            }
+
+            pair<T1, T2> operator*() {
+                return *data_;
+            }
+
+        };
+
+        iterator begin() {
+            for (uint64_t i = 0; i < capacity_; ++i) {
+                if (!bucket_[i].empty()) {
+                    return {this, i, &bucket_[i].head_->data_};
+                }
+            }
+
+            return {this, capacity_, nullptr};
+        }
+
+        iterator end() {
+            return {this, capacity_, nullptr};
+        }
+
+        const iterator cbegin() const {
+           for (uint64_t i = 0; i < capacity_; ++i) {
+                if (!bucket_[i].empty()) {
+                    return {this, i, &bucket_[i].head_->data_};
+                }
+            }
+
+            return {this, capacity_, nullptr};
+        }
+
+        const pair<T1, T2>* cend() const {
+            return {this, capacity_, nullptr};
+        }
+
+        const pair<T1, T2>* begin() const {
+            for (uint64_t i = 0; i < capacity_; ++i) {
+                if (!bucket_[i].empty()) {
+                    return {this, i, &bucket_[i].head_->data_};
+                }
+            }
+
+            return {this, capacity_, nullptr};
+        }
+
+        const pair<T1, T2>* end() const {
+            return {this, capacity_, nullptr};
+        }
+
+        uint64_t size() const {
+            return size_;
+        }
+
         T2 * find(const T1 & _key) {
             list<pair<T1, T2>>& curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
             node* curr_n = curr.head_;
@@ -128,7 +228,7 @@ namespace Lamp {
         }
 
         uint64_t new_cap = (capacity_ + 1) * 2;
-        list<pair<T1, T2>> * new_bucket = new list<pair<T1, T2>>[new_cap];
+        list<pair<T1, T2>> * new_bucket = new list<pair<T1, T2>>[new_cap +1];
 
         memset(new_bucket, 0, sizeof(list<pair<T1, T2>>) * new_cap);
 
