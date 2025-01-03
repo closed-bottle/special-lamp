@@ -285,7 +285,14 @@ namespace Lamp {
                 return result;
             }
 
-            static Mat4 Perspective(T _fovy, T _aspect, T _near, T _far) {
+            static Mat4 Perspective(T _fovy, T _aspect, T _near, T _far, bool flip_y = false) {
+
+                if (_fovy < 0) {
+                    std::cout << "Perspective() doesnt take negative fov for clarity." << std::endl;
+                    std::cout << "To flip clip space vertically, use 4th parameter." << std::endl;
+                    return Mat4();
+                }
+
                 Mat4 result;
                 T tan_half_angle = std::tan(_fovy / 2);
 
@@ -297,6 +304,10 @@ namespace Lamp {
                 result.c2.w = -1;
                 result.c3.z = -(2.0 * _far * _near) / (_far - _near);
 
+
+                if (flip_y) {
+                    result.c1.y = -result.c1.y;
+                }
 
                 return result;
             }
