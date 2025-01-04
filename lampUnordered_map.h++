@@ -55,6 +55,14 @@ namespace Lamp {
             delete[] bucket_;
         }
 
+        void clear() {
+            delete[] bucket_;
+            bucket_ = new list<pair<T1, T2>>[8];
+            capacity_ = 8;
+            size_ = 0;
+            max_load_ = 0.5f;
+        }
+
         class iterator {
             friend iterator;
             friend unordered_map;
