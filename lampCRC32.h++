@@ -49,7 +49,8 @@ namespace Lamp {
 #else
 #include "lampCRC32LUT.inl"
 #endif
-        public:
+
+    public:
 #ifndef LAMP_PRECOMPILED_LUT_CRC32
         ~CRC32() {
             if (crc32_table_)
@@ -59,14 +60,14 @@ namespace Lamp {
         void GenerateCRC32LUT();
 #endif
 
-        uint32_t GetCRC32(const uint8_t * _data, size_t _size)
+        uint32_t GetCRC32(const uint8_t *_data, size_t _size)
 #ifdef LAMP_LUT_CRC32
         const
 #endif
         ;
 
 
-        template <typename T>
+        template<typename T>
         static T ReverseBits(T _rhs);
 #ifdef LAMP_NORMAL_CRC32
         static constexpr uint32_t POLY = 0x04C11DB7;
@@ -224,8 +225,6 @@ namespace Lamp {
         std::cout << "};" << std::endl;
     }
 #endif
-
-
 }
 
 #endif //LAMPCRC32_H

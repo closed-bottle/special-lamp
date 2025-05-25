@@ -21,23 +21,22 @@
 namespace {
 #ifdef LAMP_UNORDERED_MAP_USE_CRC32
     template<typename T>
-    uint32_t hash(const Lamp::CRC32 &_hash, const T & _key, const size_t _size) {
+    uint32_t hash(const Lamp::CRC32 &_hash, const T &_key, const size_t _size) {
         return _hash.GetCRC32(reinterpret_cast<const uint8_t *>(&_key), _size);
     }
 
     template<>
-    uint32_t hash(const Lamp::CRC32 &_hash, const Lamp::String & _key, const size_t _size) {
+    uint32_t hash(const Lamp::CRC32 &_hash, const Lamp::String &_key, const size_t _size) {
         return _hash.GetCRC32(reinterpret_cast<const uint8_t *>(_key.c_str()), _key.length() - 1); // Ignore null.
     }
 
 #endif
-
 };
 
 namespace Lamp {
-    template <typename T1, typename T2>
+    template<typename T1, typename T2>
     class unordered_map {
-        list<pair<T1, T2>> * bucket_ = new list<pair<T1, T2>>[8];
+        list<pair<T1, T2> > *bucket_ = new list<pair<T1, T2> >[8];
         uint64_t capacity_ = 8;
         uint64_t size_ = 0;
         float max_load_ = 0.5f;
@@ -46,18 +45,18 @@ namespace Lamp {
         CRC32 hash_function_;
 #endif
 
-        using node = list<pair<T1, T2>>::node;
+        using node = list<pair<T1, T2> >::node;
 
         void RehashIfNeeded();
 
-        public:
+    public:
         ~unordered_map() {
             delete[] bucket_;
         }
 
         void clear() {
             delete[] bucket_;
-            bucket_ = new list<pair<T1, T2>>[8];
+            bucket_ = new list<pair<T1, T2> >[8];
             capacity_ = 8;
             size_ = 0;
             max_load_ = 0.5f;
@@ -66,22 +65,24 @@ namespace Lamp {
         class iterator {
             friend iterator;
             friend unordered_map;
-            unordered_map<T1, T2>* map_ = nullptr;
+            unordered_map<T1, T2> *map_ = nullptr;
             uint64_t index_ = 0;
-            pair<T1, T2>* data_ = nullptr;
+            pair<T1, T2> *data_ = nullptr;
+
         public:
             iterator() = delete;
-            iterator(unordered_map<T1, T2>* _map, uint64_t _index, pair<T1, T2>* _data)
-                : map_(_map), index_(_index), data_(_data)
-            {}
+
+            iterator(unordered_map<T1, T2> *_map, uint64_t _index, pair<T1, T2> *_data)
+                : map_(_map), index_(_index), data_(_data) {
+            }
 
 
-            bool operator!=(const iterator& _rhs) const {
+            bool operator!=(const iterator &_rhs) const {
                 return index_ != _rhs.index_ || data_ != _rhs.data_;
             }
 
             iterator operator++() {
-                node* n = map_->bucket_[index_].head_;
+                node *n = map_->bucket_[index_].head_;
                 while (&n->data_ != data_) {
                     n = n->next_;
                 }
@@ -114,7 +115,6 @@ namespace Lamp {
             pair<T1, T2> operator*() {
                 return *data_;
             }
-
         };
 
         iterator begin() {
@@ -132,20 +132,6 @@ namespace Lamp {
         }
 
         const iterator cbegin() const {
-           for (uint64_t i = 0; i < capacity_; ++i) {
-                if (!bucket_[i].empty()) {
-                    return {this, i, &bucket_[i].head_->data_};
-                }
-            }
-
-            return {this, capacity_, nullptr};
-        }
-
-        const pair<T1, T2>* cend() const {
-            return {this, capacity_, nullptr};
-        }
-
-        const pair<T1, T2>* begin() const {
             for (uint64_t i = 0; i < capacity_; ++i) {
                 if (!bucket_[i].empty()) {
                     return {this, i, &bucket_[i].head_->data_};
@@ -155,7 +141,21 @@ namespace Lamp {
             return {this, capacity_, nullptr};
         }
 
-        const pair<T1, T2>* end() const {
+        const pair<T1, T2> *cend() const {
+            return {this, capacity_, nullptr};
+        }
+
+        const pair<T1, T2> *begin() const {
+            for (uint64_t i = 0; i < capacity_; ++i) {
+                if (!bucket_[i].empty()) {
+                    return {this, i, &bucket_[i].head_->data_};
+                }
+            }
+
+            return {this, capacity_, nullptr};
+        }
+
+        const pair<T1, T2> *end() const {
             return {this, capacity_, nullptr};
         }
 
@@ -163,9 +163,9 @@ namespace Lamp {
             return size_;
         }
 
-        T2 * find(const T1 & _key) {
-            list<pair<T1, T2>>& curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
-            node* curr_n = curr.head_;
+        T2 *find(const T1 &_key) {
+            list<pair<T1, T2> > &curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
+            node *curr_n = curr.head_;
             uint64_t i = 0;
 
             while (curr_n) {
@@ -178,8 +178,8 @@ namespace Lamp {
             return nullptr;
         }
 
-        void insert(const T1 & _key, const T2 & _value) {
-            T2* found = find(_key);
+        void insert(const T1 &_key, const T2 &_value) {
+            T2 *found = find(_key);
 
             if (found) {
                 *found = _value;
@@ -191,9 +191,9 @@ namespace Lamp {
             RehashIfNeeded();
         }
 
-        void erase(const T1 & _key) {
-            list<pair<T1, T2>>& curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
-            node* curr_n = curr.head_;
+        void erase(const T1 &_key) {
+            list<pair<T1, T2> > &curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
+            node *curr_n = curr.head_;
             uint64_t i = 0;
 
             while (curr_n) {
@@ -205,8 +205,8 @@ namespace Lamp {
             }
         }
 
-        T2 & operator[](const T1 & _key) {
-            list<pair<T1, T2>> & curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
+        T2 &operator[](const T1 &_key) {
+            list<pair<T1, T2> > &curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
 
             if (curr.empty()) {
                 // insert
@@ -214,7 +214,7 @@ namespace Lamp {
 
                 return *find(_key);
             }
-            node* curr_n = curr.head_;
+            node *curr_n = curr.head_;
 
             while (curr_n) {
                 if (curr_n->data_.first == _key) {
@@ -236,14 +236,13 @@ namespace Lamp {
         }
 
         uint64_t new_cap = (capacity_ + 1) * 2;
-        list<pair<T1, T2>> * new_bucket = new list<pair<T1, T2>>[new_cap +1];
+        list<pair<T1, T2> > *new_bucket = new list<pair<T1, T2> >[new_cap + 1];
 
-        memset(new_bucket, 0, sizeof(list<pair<T1, T2>>) * new_cap);
+        memset(new_bucket, 0, sizeof(list<pair<T1, T2> >) * new_cap);
 
         for (uint64_t i = 0; i < capacity_; ++i) {
-
-            list<pair<T1, T2>> & curr = bucket_[i];
-            node* curr_n = curr.head_;
+            list<pair<T1, T2> > &curr = bucket_[i];
+            node *curr_n = curr.head_;
 
             while (curr_n) {
                 new_bucket[hash(hash_function_, curr_n->data_.first, sizeof(T1)) % new_cap].push_back(curr_n->data_);

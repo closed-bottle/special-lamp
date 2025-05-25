@@ -4,21 +4,21 @@
 
 namespace Lamp {
     namespace {
-        template <typename T>
+        template<typename T>
         class Vec3 {
         public:
             T x = 0, y = 0, z = 0;
 
-            T Dot(const Vec3& _rhs) {
-                return x*_rhs.x + y*_rhs.y + z*_rhs.z;
+            T Dot(const Vec3 &_rhs) {
+                return x * _rhs.x + y * _rhs.y + z * _rhs.z;
             }
 
-            Vec3 Cross(const Vec3& _rhs) const {
+            Vec3 Cross(const Vec3 &_rhs) const {
                 Vec3 result;
 
-                result.x = (y*_rhs.z) - (z*_rhs.y);
-                result.y = (z*_rhs.x) - (x*_rhs.z);
-                result.z = (x*_rhs.y) - (y*_rhs.x);
+                result.x = (y * _rhs.z) - (z * _rhs.y);
+                result.y = (z * _rhs.x) - (x * _rhs.z);
+                result.z = (x * _rhs.y) - (y * _rhs.x);
 
                 return result;
             }
@@ -37,7 +37,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec3& operator-=(const Vec3 & _rhs) {
+            Vec3 &operator-=(const Vec3 &_rhs) {
                 x -= _rhs.x;
                 y -= _rhs.y;
                 z -= _rhs.z;
@@ -45,13 +45,13 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec3 operator-(const Vec3 & _rhs) const {
+            Vec3 operator-(const Vec3 &_rhs) const {
                 Vec3 result = *this;
                 result -= _rhs;
                 return result;
             }
 
-            Vec3& operator+=(const Vec3 & _rhs) {
+            Vec3 &operator+=(const Vec3 &_rhs) {
                 x += _rhs.x;
                 y += _rhs.y;
                 z += _rhs.z;
@@ -59,7 +59,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec3 operator+(const Vec3 & _rhs) const {
+            Vec3 operator+(const Vec3 &_rhs) const {
                 Vec3 result = *this;
                 result += _rhs;
                 return result;
@@ -70,22 +70,27 @@ namespace Lamp {
             }
         };
 
-        template <typename T>
+        template<typename T>
         class Vec4 {
         public:
             union {
                 struct {
                     T x = 0, y = 0, z = 0;
                 };
+
                 Vec3<T> vec3;
             };
+
             T w = 1.0f;
 
-            Vec4() {}
-            Vec4(const float _x, const float _y, const float _z, const float _w) : x(_x), y(_y), z(_z), w(_w) { }
+            Vec4() {
+            }
+
+            Vec4(const float _x, const float _y, const float _z, const float _w) : x(_x), y(_y), z(_z), w(_w) {
+            }
 
             T Length() {
-                return std::sqrt(x*x + y*y + z*z + w*w);
+                return std::sqrt(x * x + y * y + z * z + w * w);
             }
 
             Vec4 Normalize() {
@@ -98,7 +103,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec4& operator+=(const Vec4& _rhs) {
+            Vec4 &operator+=(const Vec4 &_rhs) {
                 x += _rhs.x;
                 y += _rhs.y;
                 z += _rhs.z;
@@ -107,13 +112,13 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec4 operator+(const Vec4& _rhs) const {
+            Vec4 operator+(const Vec4 &_rhs) const {
                 Vec4 result = *this;
                 result += _rhs;
                 return result;
             }
 
-            Vec4& operator-=(const Vec4& _rhs) {
+            Vec4 &operator-=(const Vec4 &_rhs) {
                 x -= _rhs.x;
                 y -= _rhs.y;
                 z -= _rhs.z;
@@ -122,7 +127,7 @@ namespace Lamp {
                 return *this;
             }
 
-            Vec4 operator-(const Vec4& _rhs) const {
+            Vec4 operator-(const Vec4 &_rhs) const {
                 Vec4 result = *this;
                 result -= _rhs;
                 return result;
@@ -132,9 +137,8 @@ namespace Lamp {
         // TODO: Add more effective algorithms.
         // For example, strassen for multiplication.
         // effective transpose.
-        template <typename T>
+        template<typename T>
         class Mat4 {
-
         public:
             union {
                 struct {
@@ -149,29 +153,29 @@ namespace Lamp {
                 };
             };
 
-            Mat4 operator*(const Mat4& _rhs) const {
+            Mat4 operator*(const Mat4 &_rhs) const {
                 Mat4 result;
 
                 // Using Dotproduct instead?
-                result.c0.x = c0.x*_rhs.c0.x + c1.x*_rhs.c0.y + c2.x*_rhs.c0.z + c3.x*_rhs.c0.w;
-                result.c0.y = c0.y*_rhs.c0.x + c1.y*_rhs.c0.y + c2.y*_rhs.c0.z + c3.y*_rhs.c0.w;
-                result.c0.z = c0.z*_rhs.c0.x + c1.z*_rhs.c0.y + c2.z*_rhs.c0.z + c3.z*_rhs.c0.w;
-                result.c0.w = c0.w*_rhs.c0.x + c1.w*_rhs.c0.y + c2.w*_rhs.c0.z + c3.w*_rhs.c0.w;
+                result.c0.x = c0.x * _rhs.c0.x + c1.x * _rhs.c0.y + c2.x * _rhs.c0.z + c3.x * _rhs.c0.w;
+                result.c0.y = c0.y * _rhs.c0.x + c1.y * _rhs.c0.y + c2.y * _rhs.c0.z + c3.y * _rhs.c0.w;
+                result.c0.z = c0.z * _rhs.c0.x + c1.z * _rhs.c0.y + c2.z * _rhs.c0.z + c3.z * _rhs.c0.w;
+                result.c0.w = c0.w * _rhs.c0.x + c1.w * _rhs.c0.y + c2.w * _rhs.c0.z + c3.w * _rhs.c0.w;
 
-                result.c1.x = c0.x*_rhs.c1.x + c1.x*_rhs.c1.y + c2.x*_rhs.c1.z + c3.x*_rhs.c1.w;
-                result.c1.y = c0.y*_rhs.c1.x + c1.y*_rhs.c1.y + c2.y*_rhs.c1.z + c3.y*_rhs.c1.w;
-                result.c1.z = c0.z*_rhs.c1.x + c1.z*_rhs.c1.y + c2.z*_rhs.c1.z + c3.z*_rhs.c1.w;
-                result.c1.w = c0.w*_rhs.c1.x + c1.w*_rhs.c1.y + c2.w*_rhs.c1.z + c3.w*_rhs.c1.w;
+                result.c1.x = c0.x * _rhs.c1.x + c1.x * _rhs.c1.y + c2.x * _rhs.c1.z + c3.x * _rhs.c1.w;
+                result.c1.y = c0.y * _rhs.c1.x + c1.y * _rhs.c1.y + c2.y * _rhs.c1.z + c3.y * _rhs.c1.w;
+                result.c1.z = c0.z * _rhs.c1.x + c1.z * _rhs.c1.y + c2.z * _rhs.c1.z + c3.z * _rhs.c1.w;
+                result.c1.w = c0.w * _rhs.c1.x + c1.w * _rhs.c1.y + c2.w * _rhs.c1.z + c3.w * _rhs.c1.w;
 
-                result.c2.x = c0.x*_rhs.c2.x + c1.x*_rhs.c2.y + c2.x*_rhs.c2.z + c3.x*_rhs.c2.w;
-                result.c2.y = c0.y*_rhs.c2.x + c1.y*_rhs.c2.y + c2.y*_rhs.c2.z + c3.y*_rhs.c2.w;
-                result.c2.z = c0.z*_rhs.c2.x + c1.z*_rhs.c2.y + c2.z*_rhs.c2.z + c3.z*_rhs.c2.w;
-                result.c2.w = c0.w*_rhs.c2.x + c1.w*_rhs.c2.y + c2.w*_rhs.c2.z + c3.w*_rhs.c2.w;
+                result.c2.x = c0.x * _rhs.c2.x + c1.x * _rhs.c2.y + c2.x * _rhs.c2.z + c3.x * _rhs.c2.w;
+                result.c2.y = c0.y * _rhs.c2.x + c1.y * _rhs.c2.y + c2.y * _rhs.c2.z + c3.y * _rhs.c2.w;
+                result.c2.z = c0.z * _rhs.c2.x + c1.z * _rhs.c2.y + c2.z * _rhs.c2.z + c3.z * _rhs.c2.w;
+                result.c2.w = c0.w * _rhs.c2.x + c1.w * _rhs.c2.y + c2.w * _rhs.c2.z + c3.w * _rhs.c2.w;
 
-                result.c3.x = c0.x*_rhs.c3.x + c1.x*_rhs.c3.y + c2.x*_rhs.c3.z + c3.x*_rhs.c3.w;
-                result.c3.y = c0.y*_rhs.c3.x + c1.y*_rhs.c3.y + c2.y*_rhs.c3.z + c3.y*_rhs.c3.w;
-                result.c3.z = c0.z*_rhs.c3.x + c1.z*_rhs.c3.y + c2.z*_rhs.c3.z + c3.z*_rhs.c3.w;
-                result.c3.w = c0.w*_rhs.c3.x + c1.w*_rhs.c3.y + c2.w*_rhs.c3.z + c3.w*_rhs.c3.w;
+                result.c3.x = c0.x * _rhs.c3.x + c1.x * _rhs.c3.y + c2.x * _rhs.c3.z + c3.x * _rhs.c3.w;
+                result.c3.y = c0.y * _rhs.c3.x + c1.y * _rhs.c3.y + c2.y * _rhs.c3.z + c3.y * _rhs.c3.w;
+                result.c3.z = c0.z * _rhs.c3.x + c1.z * _rhs.c3.y + c2.z * _rhs.c3.z + c3.z * _rhs.c3.w;
+                result.c3.w = c0.w * _rhs.c3.x + c1.w * _rhs.c3.y + c2.w * _rhs.c3.z + c3.w * _rhs.c3.w;
 
                 return result;
             }
@@ -195,7 +199,7 @@ namespace Lamp {
                 return result;
             }
 
-            static Mat4 Translate(const Vec3<T>& _v) {
+            static Mat4 Translate(const Vec3<T> &_v) {
                 Mat4 result;
                 result.c3.vec3 = _v;
                 return result;
@@ -244,7 +248,7 @@ namespace Lamp {
                 return result;
             }
 
-            static Mat4 LookAt(const Vec3<T>& _eye, const Vec3<T>& _center, const Vec3<T>& _global_up,
+            static Mat4 LookAt(const Vec3<T> &_eye, const Vec3<T> &_center, const Vec3<T> &_global_up,
                                const bool _is_left_handed = true) {
                 Vec3<T> forward;
                 Vec3<T> left;
@@ -273,8 +277,7 @@ namespace Lamp {
                     r.c0.vec3 = {right.x, up.x, forward.x};
                     r.c1.vec3 = {right.y, up.y, forward.y};
                     r.c2.vec3 = {right.z, up.z, forward.z};
-                }
-                else {
+                } else {
                     r.c0.vec3 = {left.x, up.x, forward.x};
                     r.c1.vec3 = {left.y, up.y, forward.y};
                     r.c2.vec3 = {left.z, up.z, forward.z};
@@ -286,7 +289,6 @@ namespace Lamp {
             }
 
             static Mat4 Perspective(T _fovy, T _aspect, T _near, T _far, bool flip_y = false) {
-
                 if (_fovy < 0) {
                     std::cout << "Perspective() doesnt take negative fov for clarity." << std::endl;
                     std::cout << "To flip clip space vertically, use 4th parameter." << std::endl;
@@ -317,7 +319,6 @@ namespace Lamp {
     using Vec3f = Vec3<float>;
     using Vec4f = Vec4<float>;
     using Mat4f = Mat4<float>;
-
 };
 
 #endif //LAMPMATH_H

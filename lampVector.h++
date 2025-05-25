@@ -5,20 +5,21 @@
 #include "lampUtility.h++"
 
 namespace Lamp {
-
-template <typename T>
-class Vector {
+    template<typename T>
+    class Vector {
         uint64_t size_ = 0;
         uint64_t capacity_ = 0;
-        T* data_ = nullptr;
+        T *data_ = nullptr;
 
-        T* AllocData() {
-            return new T[capacity_ +1];
+        T *AllocData() {
+            return new T[capacity_ + 1];
         }
 
     public:
-        Vector() {}
-        Vector(const uint64_t& _size, const T& _value) {
+        Vector() {
+        }
+
+        Vector(const uint64_t &_size, const T &_value) {
             size_ = _size;
             capacity_ = _size;
             if (capacity_) {
@@ -49,7 +50,7 @@ class Vector {
             }
         }
 
-        Vector(Vector && _rhs) noexcept {
+        Vector(Vector &&_rhs) noexcept {
             size_ = _rhs.size_;
             capacity_ = _rhs.capacity_;
             data_ = _rhs.data_;
@@ -61,7 +62,7 @@ class Vector {
         }
 
 
-        Vector (const uint8_t* _data_stream, const uint64_t _byte_size) {
+        Vector(const uint8_t *_data_stream, const uint64_t _byte_size) {
             // Dangerous constructor...
             const uint16_t stride = sizeof(T);
             const uint64_t count = _byte_size / stride;
@@ -89,8 +90,7 @@ class Vector {
 
                     data_[i / stride] = curr;
                 }
-            }
-            else {
+            } else {
                 for (uint64_t i = 0; i < _byte_size; i += stride) {
                     // First byte to MSB.
                     T curr = 0;
@@ -104,7 +104,7 @@ class Vector {
         }
 
 
-        Vector & operator=(const Vector & _rhs) {
+        Vector &operator=(const Vector &_rhs) {
             if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
                 return *this;
             }
@@ -126,7 +126,7 @@ class Vector {
             return *this;
         }
 
-        Vector & operator=(Vector && _rhs) noexcept {
+        Vector &operator=(Vector &&_rhs) noexcept {
             if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
                 return *this;
             }
@@ -143,35 +143,35 @@ class Vector {
             return *this;
         }
 
-        T& operator[](const uint64_t& _index) {
+        T &operator[](const uint64_t &_index) {
             return data_[_index];
         }
 
-        T const & operator[](const uint64_t& _index) const {
-        return data_[_index];
+        T const &operator[](const uint64_t &_index) const {
+            return data_[_index];
         }
 
-        T* begin() {
+        T *begin() {
             return data_;
         }
 
-        T* end() {
+        T *end() {
             return data_ + size_;
         }
 
-        const T* cbegin() const {
+        const T *cbegin() const {
             return data_;
         }
 
-        const T* cend() const {
+        const T *cend() const {
             return data_ + size_;
         }
 
-        const T* begin() const {
+        const T *begin() const {
             return data_;
         }
 
-        const T* end() const {
+        const T *end() const {
             return data_ + size_;
         }
 
@@ -180,11 +180,11 @@ class Vector {
             return size_;
         }
 
-        void push_back(T const& _value) {
+        void push_back(T const &_value) {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
 
-                T* new_data = AllocData();
+                T *new_data = AllocData();
                 for (uint64_t i = 0; i < size_; ++i) {
                     new_data[i] = std::move(data_[i]);
                 }
@@ -197,12 +197,11 @@ class Vector {
             size_++;
         }
 
-        void push_back(T && _value) {
-
+        void push_back(T &&_value) {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
 
-                T* new_data = AllocData();
+                T *new_data = AllocData();
 
                 for (uint64_t i = 0; i < size_; ++i) {
                     new_data[i] = std::move(data_[i]);
@@ -219,11 +218,11 @@ class Vector {
             size_--;
         }
 
-        T* data() const {
+        T *data() const {
             return data_;
         }
 
-        bool if_contain(Vector const& _rhs) const {
+        bool if_contain(Vector const &_rhs) const {
             if (*this == _rhs) {
                 return true;
             }
@@ -246,7 +245,7 @@ class Vector {
             return count == _rhs.size_;
         }
 
-    bool if_contain(Vector const& _rhs, bool(*_if_same)(T const &, T const &)) const {
+        bool if_contain(Vector const &_rhs, bool (*_if_same)(T const &, T const &)) const {
             if (size_ < _rhs.size_) {
                 return false;
             }
@@ -265,7 +264,7 @@ class Vector {
             return count == _rhs.size_;
         }
 
-    bool if_contain(const T & _rhs) const {
+        bool if_contain(const T &_rhs) const {
             for (uint64_t i = 0; i < size_; ++i) {
                 if (data_[i] == _rhs) {
                     return true;
@@ -275,7 +274,7 @@ class Vector {
             return false;
         }
 
-    void reserve(const uint64_t _size) {
+        void reserve(const uint64_t _size) {
             if (_size == 0) {
                 return;
             }
@@ -284,12 +283,11 @@ class Vector {
                 if (size_ < _size) {
                     size_ = _size;
                 }
-            }
-            else {
+            } else {
                 capacity_ = _size;
                 size_ = _size;
 
-                T* new_data = AllocData();
+                T *new_data = AllocData();
                 if (data_) {
                     for (uint64_t i = 0; i < size_; ++i) {
                         new_data[i] = std::move(data_[i]);
@@ -300,13 +298,14 @@ class Vector {
                 data_ = new_data;
             }
         }
-    void clear() {
+
+        void clear() {
             delete[] data_;
 
             data_ = nullptr;
             size_ = 0;
             capacity_ = 0;
         }
-};
+    };
 }
 #endif //LAMPVECTOR_H
