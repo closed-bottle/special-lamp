@@ -8,6 +8,7 @@
 #include "../lampList.h++"
 #include "../lampUnordered_map.h++"
 #include "../lampMath.h++"
+#include "../lampSegmentedArray.h++"
 
 #include <vector>
 #include <chrono>
@@ -21,6 +22,18 @@ void PrintList(Lamp::list<T> & _list) {
         _list.pop_front();
     }
 }
+
+template<typename T, size_t segmentSize>
+void PrintDeque(Lamp::SegmentedArray<T, segmentSize> & _array) {
+    for (size_t i = 0; i < _array.TotalCount(); ++i) {
+        std::cout << _array[i] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "front : " << _array.front() << ", end : " << _array.back() << std::endl;
+    std::cout << "total count : " << _array.TotalCount() << std::endl;
+    std::cout << std::endl;
+}
+
 
 int main(int argc, const char * argv[]) {
 
@@ -367,6 +380,24 @@ int main(int argc, const char * argv[]) {
         for (const auto& p : map) {
             std::cout <<  p.first << " : " << p.second << std::endl;
         }
+    }
+
+    {
+        Lamp::SegmentedArray<int, 16> segment_tree;
+        segment_tree.push_back(-1);
+        segment_tree.push_back(-2);
+        segment_tree.push_back(-3);
+        segment_tree.push_back(-4);
+        PrintDeque(segment_tree);
+
+        segment_tree.pop_front();
+        PrintDeque(segment_tree);
+
+        segment_tree.pop_back();
+        PrintDeque(segment_tree);
+
+        segment_tree.push_front(-1);
+        PrintDeque(segment_tree);
     }
 
     std::cout << std::endl;
