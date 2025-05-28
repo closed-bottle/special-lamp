@@ -9,6 +9,7 @@
 #include "../lampUnordered_map.h++"
 #include "../lampMath.h++"
 #include "../lampSegmentedArray.h++"
+#include "../lampAssert.h++"
 
 #include <vector>
 #include <chrono>
@@ -397,6 +398,9 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree);
 
         segment_tree.push_front(-1);
+        PrintDeque(segment_tree);
+
+        segment_tree.push_back(-4);
         PrintDeque(segment_tree);
     }
 
