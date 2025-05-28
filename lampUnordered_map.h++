@@ -166,7 +166,6 @@ namespace Lamp {
         T2 *find(const T1 &_key) {
             list<pair<T1, T2> > &curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
             node *curr_n = curr.head_;
-            uint64_t i = 0;
 
             while (curr_n) {
                 if (curr_n->data_.first == _key) {
@@ -194,7 +193,6 @@ namespace Lamp {
         void erase(const T1 &_key) {
             list<pair<T1, T2> > &curr = bucket_[hash(hash_function_, _key, sizeof(T1)) % capacity_];
             node *curr_n = curr.head_;
-            uint64_t i = 0;
 
             while (curr_n) {
                 if (curr_n->data_.first == _key) {
