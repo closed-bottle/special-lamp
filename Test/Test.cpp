@@ -384,24 +384,27 @@ int main(int argc, const char * argv[]) {
     }
 
     {
-        Lamp::SegmentedArray<int, 16> segment_tree;
+        Lamp::SegmentedArray<int, 2> segment_tree;
         segment_tree.push_back(-1);
         segment_tree.push_back(-2);
         segment_tree.push_back(-3);
         segment_tree.push_back(-4);
-        PrintDeque(segment_tree);
+        //PrintDeque(segment_tree); // -1, -2, -3, -4
 
         segment_tree.pop_front();
-        PrintDeque(segment_tree);
+        PrintDeque(segment_tree); // -2, -3, -4
 
         segment_tree.pop_back();
-        PrintDeque(segment_tree);
+        PrintDeque(segment_tree); // -2, -3
 
         segment_tree.push_front(-1);
-        PrintDeque(segment_tree);
+        PrintDeque(segment_tree); // -1, -2, -3
 
         segment_tree.push_back(-4);
-        PrintDeque(segment_tree);
+        PrintDeque(segment_tree); // -1, -2, -3, -4
+
+        segment_tree.push_back(-5);
+        PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
     std::cout << std::endl;
