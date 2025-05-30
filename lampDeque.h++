@@ -41,17 +41,23 @@ namespace Lamp
         size_t segment_count_ = INITIAL_SEGMENT_COUNT;
         size_t total_count_ = 0;
         size_t first_segment_ = INITIAL_SEGMENT_COUNT / 2;
-        size_t last_segment_ = INITIAL_SEGMENT_COUNT / 2;
+        size_t last_segment_ = INITIAL_SEGMENT_COUNT / 2; // not necessary, can be computed by first_segment + count
 
-        template<SegmentIncrement increment>
-        void ReallocateShift() {
-            LAMPASSERT(false, "ReallocateShift without specialization is prohibited.");
+        template<SegmentIncrement>
+        void IncreaseHelper() {
+            LAMPASSERT(false, "Using increment helper function without specialization is prohibited.");
         }
 
         template<>
-        void ReallocateShift<SegmentIncDouble>() {
+        void IncreaseHelper<SegmentIncDouble>() {segment_count_ *= 2;}
+
+        template<>
+        void IncreaseHelper<SegmentIncAdd>() {segment_count_ += IncAmount;}
+
+        template<SegmentIncrement increment = SegmentIncDouble>
+        void ReallocateShift() {
             size_t old_count = segment_count_;
-            segment_count_ *= 2;
+            IncreaseHelper<increment>();
             Segment* new_segments = new Segment[segment_count_];
 
             size_t new_first = (segment_count_ - old_count) / 2;
@@ -72,15 +78,6 @@ namespace Lamp
             delete[] segments_;
             segments_ = new_segments;
         }
-
-        template<>
-        void ReallocateShift<SegmentIncAdd>() {
-            size_t old_count = segment_count_;
-            segment_count_ += IncAmount;
-            LAMPASSERT(false, "Not implemented yet");
-            Segment* new_segments = new Segment[segment_count_];
-        }
-
 
 
         public:
@@ -170,27 +167,13 @@ namespace Lamp
             }
         }
 
-        T2& operator[](const size_t _index) {
-            size_t i = _index;
-            i += _index < segments_[first_segment_].count_ ? 0 : 1;
-            i /= segmentSize;
-            i += first_segment_;
-            i %= segment_count_;
+        T2& operator[](size_t _index) {
+            LAMPASSERT(_index < total_count_, "Index out of bound");
 
+            _index += segments_[first_segment_].start_;
 
-            size_t j = 0;
-            if (i == first_segment_) {
-                j = (segments_[i].start_ + _index) % segmentSize;
-            }
-            else {
-                j = _index % segmentSize;
-                j += segments_[i].start_;
-
-                // Add to shift instead of subtract, so I can ignore underflow.
-                j += segmentSize + (segmentSize - segments_[first_segment_].count_);
-                j %= segmentSize;
-            }
-
+            size_t i = (first_segment_ + (_index / segmentSize)) % segment_count_;
+            size_t j = (_index % segmentSize);
 
             LAMPASSERT(i < segment_count_ && j < segmentSize, "Index out of bound");
             return segments_[i].data_[j];
