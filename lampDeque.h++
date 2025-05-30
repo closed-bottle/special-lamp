@@ -2,8 +2,8 @@
 // Created by JJ on 5/24/2025.
 //
 
-#ifndef LAMPSEGMENTEDTREE_H
-#define LAMPSEGMENTEDTREE_H
+#ifndef LAMPDEQUE_H
+#define LAMPDEQUE_H
 
 #include "lampAssert.h++"
 
@@ -16,7 +16,7 @@ namespace Lamp
     };
     // Segment size should be fixed.
     template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncDouble, size_t IncAmount = 16>
-    class SegmentedArray {
+    class deque {
         struct Segment {
             size_t start_ = 0;
             size_t count_ = 0;
@@ -84,15 +84,15 @@ namespace Lamp
 
 
         public:
-        SegmentedArray() {
+        deque() {
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
         }
 
-        SegmentedArray(const size_t& _initial_segment_size) : segment_count_(_initial_segment_size) {
+        deque(const size_t& _initial_segment_size) : segment_count_(_initial_segment_size) {
             segments_ = new Segment[_initial_segment_size];
         }
 
-        ~SegmentedArray() {
+        ~deque() {
             delete[] segments_;
         }
 
@@ -198,4 +198,4 @@ namespace Lamp
     };
 }
 
-#endif //LAMPSEGMENTEDTREE_H
+#endif //LAMPDEQUE_H

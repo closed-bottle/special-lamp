@@ -8,7 +8,7 @@
 #include "../lampList.h++"
 #include "../lampUnordered_map.h++"
 #include "../lampMath.h++"
-#include "../lampSegmentedArray.h++"
+#include "../lampDeque.h++"
 #include "../lampAssert.h++"
 
 #include <vector>
@@ -25,7 +25,7 @@ void PrintList(Lamp::list<T> & _list) {
 }
 
 template<typename T, size_t segmentSize>
-void PrintDeque(Lamp::SegmentedArray<T, segmentSize> & _array) {
+void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
     for (size_t i = 0; i < _array.TotalCount(); ++i) {
         std::cout << _array[i] << ", ";
     }
@@ -384,7 +384,7 @@ int main(int argc, const char * argv[]) {
     }
 
     {
-        Lamp::SegmentedArray<int, 3> segment_tree;
+        Lamp::deque<int, 3> segment_tree;
         segment_tree.push_back(-1);
         segment_tree.push_back(-2);
         segment_tree.push_back(-3);
