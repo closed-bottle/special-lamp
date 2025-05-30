@@ -171,11 +171,28 @@ namespace Lamp
         }
 
         T2& operator[](const size_t _index) {
-            // Need to shift by first segment if it is not full but also not empty.
-            size_t i = (first_segment_ + (_index + (segmentSize - segments_[first_segment_].count_)) / segmentSize)
-                        % segment_count_;
-            size_t j = ((_index % segmentSize) + segments_[first_segment_].count_) % segmentSize;
+            size_t i = _index;
+            i += _index < segments_[first_segment_].count_ ? 0 : 1;
+            i /= segmentSize;
+            i += first_segment_;
+            i %= segment_count_;
 
+
+            size_t j = 0;
+            if (i == first_segment_) {
+                j = (segments_[i].start_ + _index) % segmentSize;
+            }
+            else {
+                j = _index % segmentSize;
+                j += segments_[i].start_;
+
+                // Add to shift instead of subtract, so I can ignore underflow.
+                j += segmentSize + (segmentSize - segments_[first_segment_].count_);
+                j %= segmentSize;
+            }
+
+
+            LAMPASSERT(i < segment_count_ && j < segmentSize, "Index out of bound");
             return segments_[i].data_[j];
         }
     };

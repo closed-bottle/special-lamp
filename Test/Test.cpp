@@ -384,7 +384,7 @@ int main(int argc, const char * argv[]) {
     }
 
     {
-        Lamp::SegmentedArray<int, 2> segment_tree;
+        Lamp::SegmentedArray<int, 3> segment_tree;
         segment_tree.push_back(-1);
         segment_tree.push_back(-2);
         segment_tree.push_back(-3);
