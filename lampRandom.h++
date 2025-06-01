@@ -42,6 +42,8 @@ namespace Lamp {
         uint16_t refreshRate_ = 32;
         uint16_t refreshCounter_ = 0;
 
+        bool isFixed_ = false;
+
         // Use ASLR
         void CollectAddressEntropy() {
             volatile char c0;
@@ -70,7 +72,7 @@ namespace Lamp {
         }
 
         void RefreshTiming() {
-            if (refreshRate_ != 0xFFFFFFF && refreshCounter_++ >= refreshRate_) {
+            if (!isFixed_ && refreshRate_ != 0xFFFFFFF && refreshCounter_++ >= refreshRate_) {
                 CollectTimingEntropy();
                 refreshCounter_ = 0;
             }
@@ -168,6 +170,11 @@ namespace Lamp {
 
         random_device() {
             InitializeEntropy();
+        }
+
+        random_device(poolType&& _fixed) {
+            entropyPool_ = _fixed;
+            isFixed_ = true;
         }
 
         void InitializeEntropy() {
