@@ -25,6 +25,14 @@ void PrintList(Lamp::list<T> & _list) {
     }
 }
 
+template<typename T>
+void PrintVector(Lamp::Vector<T>& _vector) {
+    for (auto& i : _vector) {
+        std::cout << i << ", ";
+    }
+    std::cout << std::endl;
+}
+
 template<typename T, size_t segmentSize>
 void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
     for (size_t i = 0; i < _array.TotalCount(); ++i) {
@@ -433,9 +441,115 @@ int main(int argc, const char * argv[]) {
             if (i % 20 == 0)
                 std::cout << std::endl;
         }
+        std::cout << std::endl;
     }
 
+    {
+        enum Action {
+            push_back = 0,
+            push_front,
+            pop_back,
+            pop_front
+        };
+        const unsigned count = 40;
+        Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(123414));
 
+        Lamp::deque<int, 3> deque;
+
+        Lamp::Vector<Action> actions;
+        Lamp::Vector<int> values;
+
+        actions.reserve(count);
+        values.reserve(count);
+
+        unsigned curr_count = 0;
+        for (unsigned i = 0; i < count; ++i) {
+            Action a = static_cast<Action>( randdevice.RandRange(4));
+
+            if ((a == pop_back || a == pop_front) && curr_count == 0) {
+                continue;
+            }
+
+            actions[i] = a;
+            values[i] = randdevice.RandIntBetween(-1000, 1000);
+
+            if (a == push_back || a == push_front)
+                ++curr_count;
+            else
+                --curr_count;
+        }
+
+        Lamp::Vector<int> expected;
+        expected.reserve(count);
+        unsigned start = 0;
+        unsigned expected_c = 0;
+
+        for (unsigned i = 0; i < count; ++i) {
+            const Action& a = actions[i];
+            const int& v = values[i];
+            switch (a) {
+                case push_back:
+                    expected[(start + expected_c) % count] = v;
+                    ++expected_c;
+                break;
+                case pop_back:
+                    --expected_c;
+                break;
+                case push_front:
+                    start = (start + count -1) % count;
+                    expected[start] = v;
+                    ++expected_c;
+                break;
+                case pop_front:
+                    --expected_c;
+                    start = (start + 1) % count;
+                break;
+            }
+        }
+
+
+
+        std::cout << "Expected count : " <<  expected_c << std::endl;
+        for (unsigned i = 0; i < count; ++i) {
+            const Action& a = actions[i];
+            const int& v = values[i];
+            switch (a) {
+                case push_back:
+                    deque.push_back(v);
+                break;
+                case pop_back:
+                    deque.pop_back();
+                break;
+                case push_front:
+                    deque.push_front(v);
+                break;
+                case pop_front:
+                    deque.pop_front();
+                break;
+            }
+        }
+
+        std::cout << "Actual count : " << deque.TotalCount() << std::endl;
+        bool is_fail = false;
+        for (unsigned i = 0; i < deque.TotalCount(); ++i) {
+            if (deque[i] != expected[(start + i) % count]) {
+                is_fail = true;
+                std::cout << "Value difference in index " << i << " with value " << deque[i] << " : " << expected[i]
+                << std::endl;
+            }
+        }
+
+        if (is_fail) {
+            for (unsigned i = 0; i < expected_c; ++i) {
+                std::cout << expected[(start + i) % count] << ", ";
+                if (i % 20 == 19)
+                    std::cout << std::endl;
+            }
+            std::cout << std::endl;
+
+            PrintDeque(deque);
+        }
+    }
 
 
     std::cout << std::endl;
