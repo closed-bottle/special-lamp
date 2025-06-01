@@ -41,6 +41,13 @@ namespace Lamp {
     bool IsLittleEndian() {
         return CheckEndianness<T>() == LittleEndian;
     }
+
+    template<typename T>
+    void Swap(T& _lhs, T& _rhs) {
+        T temp = std::move(_lhs);
+        _lhs = std::move(_rhs);
+        _rhs = std::move(temp);
+    }
 }
 
 #endif //LAMPUTILITY_H
