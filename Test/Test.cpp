@@ -10,6 +10,7 @@
 #include "../lampMath.h++"
 #include "../lampDeque.h++"
 #include "../lampAssert.h++"
+#include "../lampRandom.h++"
 
 #include <vector>
 #include <chrono>
@@ -39,7 +40,7 @@ void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
 int main(int argc, const char * argv[]) {
 
     std::cout << "Hello World!\n";
-    /*
+
     {
         Lamp::Vector<Lamp::String> lampVector1 = Lamp::Vector<Lamp::String>();
 
@@ -54,7 +55,7 @@ int main(int argc, const char * argv[]) {
 
         std::cout << lampVector1[0].c_str() << std::endl;
     }
-    */
+
 
     {
         char c[] = "123456jkjpj30223l789";
@@ -87,7 +88,7 @@ int main(int argc, const char * argv[]) {
         list.push_back(9);
 
         std::cout << "--------------" << std::endl;
-        PrintList(list);
+        PrintList(list); std::cout << std::endl;
         std::cout << "--------------" << std::endl;
 
         list.insert(0, 0);
@@ -384,7 +385,7 @@ int main(int argc, const char * argv[]) {
     }
 
     {
-        Lamp::deque<int, 3> segment_tree;
+        Lamp::deque<int, 4> segment_tree;
         segment_tree.push_back(-1);
         segment_tree.push_back(-2);
         segment_tree.push_back(-3);
@@ -406,6 +407,36 @@ int main(int argc, const char * argv[]) {
         segment_tree.push_back(-5);
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
+
+    {
+        Lamp::random_device<uint32_t> randdevice;
+        std::cout << randdevice.XORShift32StarStep() << std::endl;
+        std::cout << randdevice.LCGStep() << std::endl;
+        std::cout << randdevice.Rand() << std::endl;
+        std::cout << randdevice.RandRange(100) << std::endl;
+        std::cout << randdevice.RandBetween(20, 100) << std::endl;
+        std::cout << randdevice.RandBool() << std::endl;
+        std::cout << randdevice.RandFloat(2048) << std::endl;
+        std::cout << randdevice.RandFloat(4096) << std::endl;
+        std::cout << randdevice.RandFloat(8192) << std::endl;
+        std::cout << randdevice.RandIntBetween(-100, 100) << std::endl;
+        std::cout << randdevice.RandNormalizedFloat(8192) << std::endl;
+
+        Lamp::Vector<int> v;
+        for (int i = 0; i < 100; ++i) {
+            v.push_back(i);
+        }
+
+        randdevice.Shuffle(v.data(), v.size());
+        for (int i = 0; i < v.size(); ++i) {
+            std::cout << v[i] << ", ";
+            if (i % 20 == 0)
+                std::cout << std::endl;
+        }
+    }
+
+
+
 
     std::cout << std::endl;
     return 0;
