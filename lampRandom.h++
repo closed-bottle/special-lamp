@@ -38,7 +38,9 @@ namespace Lamp {
         poolType entropyPool_ = 1;
         LCGType lcgType_ = LCGparkmiller;
 
-
+        // 0 = always, 0xFFFFFFF(seven Fs.) = never.
+        uint16_t refreshRate_ = 32;
+        uint16_t refreshCounter_ = 0;
 
         // Use ASLR
         void CollectAddressEntropy() {
@@ -65,6 +67,13 @@ namespace Lamp {
             auto timeline = std::chrono::system_clock::now().time_since_epoch().count();
             entropyPool_ ^= timeline;
             entropyPool_ = (entropyPool_ << 1) | (entropyPool_ >> (PoolSizeInBit() - 1));
+        }
+
+        void RefreshTiming() {
+            if (refreshRate_ != 0xFFFFFFF && refreshCounter_++ >= refreshRate_) {
+                CollectTimingEntropy();
+                refreshCounter_ = 0;
+            }
         }
 
     public:
@@ -185,39 +194,38 @@ namespace Lamp {
         }
 
         poolType Rand() {
-            // TODO : add some refresh rate for collecting timing entropy, it is too expensive update every single time.
-            CollectTimingEntropy();
+            RefreshTiming();
             return XORShift32StarStep();
         }
 
         poolType RandRange(poolType _max) {
-            CollectTimingEntropy();
+            RefreshTiming();
             return XORShift32StarStep() % _max;
         }
 
         poolType RandBetween(poolType _min, poolType _max) {
-            CollectTimingEntropy();
+            RefreshTiming();
             return _min + RandRange(_max - _min);
         }
 
         bool RandBool() {
-            CollectTimingEntropy();
+            RefreshTiming();
             return Rand() & 1;
         }
 
         float RandFloat(uint32_t resolution) {
-            CollectTimingEntropy();
+            RefreshTiming();
             const float f = RandRange(resolution) / static_cast<float>(resolution);
             return f;
         }
 
         int RandIntBetween(int _min, int _max) {
-            CollectTimingEntropy();
+            RefreshTiming();
             return _min + RandRange(_max - _min);
         }
 
         float RandNormalizedFloat(uint32_t resolution) {
-            CollectTimingEntropy();
+            RefreshTiming();
             const float f = RandIntBetween(-resolution, resolution) / static_cast<float>(resolution);
             return f;
         }
@@ -227,6 +235,12 @@ namespace Lamp {
             for (size_t i = 0; i < _count; ++i) {
                 Lamp::Swap(_data[i], _data[RandRange(_count)]);
             }
+        }
+
+        void SetRefreshRate(uint16_t _in) {
+            refreshRate_ = _in;
+            refreshCounter_ = 0;
+            CollectTimingEntropy();
         }
     };
 }
