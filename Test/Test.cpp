@@ -35,12 +35,12 @@ void PrintVector(Lamp::Vector<T>& _vector) {
 
 template<typename T, size_t segmentSize>
 void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
-    for (size_t i = 0; i < _array.TotalCount(); ++i) {
+    for (size_t i = 0; i < _array.size(); ++i) {
         std::cout << _array[i] << ", ";
     }
     std::cout << std::endl;
     std::cout << "front : " << _array.front() << ", end : " << _array.back() << std::endl;
-    std::cout << "total count : " << _array.TotalCount() << std::endl;
+    std::cout << "total count : " << _array.size() << std::endl;
     std::cout << std::endl;
 }
 
@@ -392,6 +392,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    if (false)
     {
         Lamp::deque<int, 4> segment_tree;
         segment_tree.push_back(-1);
@@ -416,6 +417,7 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
+    if (false)
     {
         Lamp::random_device<uint32_t> randdevice;
         std::cout << randdevice.XORShift32StarStep() << std::endl;
@@ -444,6 +446,7 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl;
     }
 
+    auto random_deque_test = [&](size_t _count, uint32_t _seed) -> bool
     {
         enum Action {
             push_back = 0,
@@ -451,8 +454,8 @@ int main(int argc, const char * argv[]) {
             pop_back,
             pop_front
         };
-        const unsigned count = 40;
-        Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(123414));
+        const unsigned count = _count; //failed 20(operator[]), 100(value test failed.)
+        Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
 
         Lamp::deque<int, 3> deque;
 
@@ -491,21 +494,27 @@ int main(int argc, const char * argv[]) {
                 case push_back:
                     expected[(start + expected_c) % count] = v;
                     ++expected_c;
+                    //std::cout << "deq.push_back(" << v  << ");" << std::endl;
                 break;
                 case pop_back:
                     --expected_c;
+                    //std::cout << "deq.pop_back();" << std::endl;
                 break;
                 case push_front:
                     start = (start + count -1) % count;
                     expected[start] = v;
                     ++expected_c;
+                    //std::cout << "deq.push_front(" << v  << ");" << std::endl;
                 break;
                 case pop_front:
                     --expected_c;
                     start = (start + 1) % count;
+                    //std::cout << "deq.pop_front();" << std::endl;
                 break;
             }
         }
+
+
 
 
 
@@ -515,27 +524,38 @@ int main(int argc, const char * argv[]) {
             const int& v = values[i];
             switch (a) {
                 case push_back:
+                    //std::cout << "deq.push_back(" << v  << ");" << std::endl;
+
                     deque.push_back(v);
+
                 break;
                 case pop_back:
+                    //std::cout << "deq.pop_back();" << std::endl;
+
                     deque.pop_back();
                 break;
                 case push_front:
+                    //std::cout << "deq.push_front(" << v  << ");" << std::endl;
+
                     deque.push_front(v);
                 break;
                 case pop_front:
+                    //std::cout << "deq.pop_front();" << std::endl;
+
                     deque.pop_front();
                 break;
             }
         }
 
-        std::cout << "Actual count : " << deque.TotalCount() << std::endl;
+
+        std::cout << "Actual count : " << deque.size() << std::endl;
         bool is_fail = false;
-        for (unsigned i = 0; i < deque.TotalCount(); ++i) {
+        for (unsigned i = 0; i < deque.size(); ++i) {
             if (deque[i] != expected[(start + i) % count]) {
                 is_fail = true;
-                std::cout << "Value difference in index " << i << " with value " << deque[i] << " : " << expected[i]
-                << std::endl;
+                std::cout << "Value difference in index " << i << " with value " <<
+                    deque[i]
+                << " : (expected)" << expected[(start + i) % count] << std::endl;
             }
         }
 
@@ -548,8 +568,21 @@ int main(int argc, const char * argv[]) {
             std::cout << std::endl;
 
             PrintDeque(deque);
+            deque.DumpSegment();
         }
+        else {
+            std::cout << "Passed random deque test." << std::endl;
+        }
+
+        return !is_fail;
+    };
+
+
+    for (size_t i = 0; i < 100; ++i) {
+        if (!random_deque_test(i, 12345))
+            std::cout << "Failed test with i : " << i << std::endl;
     }
+
 
 
     std::cout << std::endl;
