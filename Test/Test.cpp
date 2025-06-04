@@ -44,6 +44,9 @@ void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
     std::cout << std::endl;
 }
 
+template<size_t _initial_cap>
+bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose);
+
 
 int main(int argc, const char * argv[]) {
 
@@ -446,146 +449,159 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl;
     }
 
-    auto random_deque_test = [&](size_t _count, uint32_t _seed) -> bool
-    {
-        enum Action {
-            push_back = 0,
-            push_front,
-            pop_back,
-            pop_front
-        };
-        const unsigned count = _count; //failed 20(operator[]), 100(value test failed.)
-        Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
 
-        Lamp::deque<int, 3> deque;
+    //RandomDequeTest<3>(10, 12345);
+    //RandomDequeTest<3>(50, 12345, true);
 
-        Lamp::Vector<Action> actions;
-        Lamp::Vector<int> values;
-
-        actions.reserve(count);
-        values.reserve(count);
-
-        unsigned curr_count = 0;
-        for (unsigned i = 0; i < count; ++i) {
-            Action a = static_cast<Action>( randdevice.RandRange(4));
-
-            if ((a == pop_back || a == pop_front) && curr_count == 0) {
-                continue;
-            }
-
-            actions[i] = a;
-            values[i] = randdevice.RandIntBetween(-1000, 1000);
-
-            if (a == push_back || a == push_front)
-                ++curr_count;
+    if (true) {
+        for (size_t i = 0; i < 100; ++i) {
+            if (!RandomDequeTest<3>(i, 12345, false))
+                std::cout << "Failed test with i : " << i << std::endl;
             else
-                --curr_count;
+                std::cout << "Passed test with i : " << i << std::endl;
         }
-
-        Lamp::Vector<int> expected;
-        expected.reserve(count);
-        unsigned start = 0;
-        unsigned expected_c = 0;
-
-        for (unsigned i = 0; i < count; ++i) {
-            const Action& a = actions[i];
-            const int& v = values[i];
-            switch (a) {
-                case push_back:
-                    expected[(start + expected_c) % count] = v;
-                    ++expected_c;
-                    //std::cout << "deq.push_back(" << v  << ");" << std::endl;
-                break;
-                case pop_back:
-                    --expected_c;
-                    //std::cout << "deq.pop_back();" << std::endl;
-                break;
-                case push_front:
-                    start = (start + count -1) % count;
-                    expected[start] = v;
-                    ++expected_c;
-                    //std::cout << "deq.push_front(" << v  << ");" << std::endl;
-                break;
-                case pop_front:
-                    --expected_c;
-                    start = (start + 1) % count;
-                    //std::cout << "deq.pop_front();" << std::endl;
-                break;
-            }
-        }
-
-
-
-
-
-        std::cout << "Expected count : " <<  expected_c << std::endl;
-        for (unsigned i = 0; i < count; ++i) {
-            const Action& a = actions[i];
-            const int& v = values[i];
-            switch (a) {
-                case push_back:
-                    //std::cout << "deq.push_back(" << v  << ");" << std::endl;
-
-                    deque.push_back(v);
-
-                break;
-                case pop_back:
-                    //std::cout << "deq.pop_back();" << std::endl;
-
-                    deque.pop_back();
-                break;
-                case push_front:
-                    //std::cout << "deq.push_front(" << v  << ");" << std::endl;
-
-                    deque.push_front(v);
-                break;
-                case pop_front:
-                    //std::cout << "deq.pop_front();" << std::endl;
-
-                    deque.pop_front();
-                break;
-            }
-        }
-
-
-        std::cout << "Actual count : " << deque.size() << std::endl;
-        bool is_fail = false;
-        for (unsigned i = 0; i < deque.size(); ++i) {
-            if (deque[i] != expected[(start + i) % count]) {
-                is_fail = true;
-                std::cout << "Value difference in index " << i << " with value " <<
-                    deque[i]
-                << " : (expected)" << expected[(start + i) % count] << std::endl;
-            }
-        }
-
-        if (is_fail) {
-            for (unsigned i = 0; i < expected_c; ++i) {
-                std::cout << expected[(start + i) % count] << ", ";
-                if (i % 20 == 19)
-                    std::cout << std::endl;
-            }
-            std::cout << std::endl;
-
-            PrintDeque(deque);
-            deque.DumpSegment();
-        }
-        else {
-            std::cout << "Passed random deque test." << std::endl;
-        }
-
-        return !is_fail;
-    };
-
-
-    for (size_t i = 0; i < 100; ++i) {
-        if (!random_deque_test(i, 12345))
-            std::cout << "Failed test with i : " << i << std::endl;
     }
+
 
 
 
     std::cout << std::endl;
     return 0;
+}
 
+
+template<size_t _initial_cap>
+bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
+    enum Action {
+        push_back = 0,
+        push_front,
+        pop_back,
+        pop_front
+    };
+    std::stringstream output;
+    const unsigned count = _count; //failed 20(operator[]), 100(value test failed.)
+    Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
+
+    Lamp::deque<int, 3> deque;
+
+    Lamp::Vector<Action> actions;
+    Lamp::Vector<int> values;
+
+    actions.reserve(count);
+    values.reserve(count);
+
+    unsigned curr_count = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        Action a = static_cast<Action>( randdevice.RandRange(4));
+
+        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+            continue;
+        }
+
+        actions[i] = a;
+        values[i] = randdevice.RandIntBetween(-1000, 1000);
+
+        if (a == push_back || a == push_front)
+            ++curr_count;
+        else
+            --curr_count;
+    }
+
+    Lamp::Vector<int> expected;
+    expected.reserve(count);
+    unsigned start = 0;
+    unsigned expected_c = 0;
+
+    for (unsigned i = 0; i < count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                expected[(start + expected_c) % count] = v;
+                ++expected_c;
+                //std::cout << "deq.push_back(" << v  << ");" << std::endl;
+            break;
+            case pop_back:
+                --expected_c;
+                //std::cout << "deq.pop_back();" << std::endl;
+            break;
+            case push_front:
+                start = (start + count -1) % count;
+                expected[start] = v;
+                ++expected_c;
+                //std::cout << "deq.push_front(" << v  << ");" << std::endl;
+            break;
+            case pop_front:
+                --expected_c;
+                start = (start + 1) % count;
+                //std::cout << "deq.pop_front();" << std::endl;
+            break;
+        }
+    }
+
+
+
+
+
+    output << "Expected count : " <<  expected_c << std::endl;
+    for (unsigned i = 0; i < count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                //std::cout << "deq.push_back(" << v  << ");" << std::endl;
+
+                deque.push_back(v);
+
+            break;
+            case pop_back:
+                //std::cout << "deq.pop_back();" << std::endl;
+
+                deque.pop_back();
+            break;
+            case push_front:
+                //std::cout << "deq.push_front(" << v  << ");" << std::endl;
+
+                deque.push_front(v);
+            break;
+            case pop_front:
+                //std::cout << "deq.pop_front();" << std::endl;
+
+                deque.pop_front();
+            break;
+        }
+    }
+
+
+    output << "Actual count : " << deque.size() << std::endl;
+    bool is_fail = false;
+    for (unsigned i = 0; i < deque.size(); ++i) {
+        if (deque[i] != expected[(start + i) % count]) {
+            is_fail = true;
+            output << "Value difference in index " << i << " with value " <<
+                deque[i]
+            << " : (expected)" << expected[(start + i) % count] << std::endl;
+        }
+    }
+
+    if (is_fail) {
+        for (unsigned i = 0; i < expected_c; ++i) {
+            output << expected[(start + i) % count] << ", ";
+            if (i % 20 == 19)
+                output << std::endl;
+        }
+        output << std::endl;
+
+        if (_is_verbose)
+            std::cout << output.str() << std::endl;
+        PrintDeque(deque);
+        deque.DumpSegment();
+    }
+    else {
+        //std::cout << "Passed random deque test." << std::endl;
+    }
+
+
+
+    return !is_fail;
 }

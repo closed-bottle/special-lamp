@@ -38,7 +38,7 @@ namespace Lamp
         static constexpr size_t INITIAL_SEGMENT_COUNT = 5;
 
         Segment* segments_ = nullptr;
-        size_t segment_count_ = INITIAL_SEGMENT_COUNT;
+        size_t segment_capacity_ = INITIAL_SEGMENT_COUNT;
         size_t total_count_ = 0;
         size_t first_segment_ = INITIAL_SEGMENT_COUNT / 2;
         size_t last_segment_ = INITIAL_SEGMENT_COUNT / 2; // not necessary, can be computed by first_segment + count
@@ -49,18 +49,18 @@ namespace Lamp
         }
 
         template<>
-        void IncreaseHelper<SegmentIncDouble>() {segment_count_ *= 2;}
+        void IncreaseHelper<SegmentIncDouble>() {segment_capacity_ *= 2;}
 
         template<>
-        void IncreaseHelper<SegmentIncAdd>() {segment_count_ += IncAmount;}
+        void IncreaseHelper<SegmentIncAdd>() {segment_capacity_ += IncAmount;}
 
         template<SegmentIncrement increment = SegmentIncDouble>
         void ReallocateShift() {
-            size_t old_count = segment_count_;
+            size_t old_count = segment_capacity_;
             IncreaseHelper<increment>();
-            Segment* new_segments = new Segment[segment_count_];
+            Segment* new_segments = new Segment[segment_capacity_];
 
-            size_t new_first = (segment_count_ - old_count) / 2;
+            size_t new_first = (segment_capacity_ - old_count) / 2;
             size_t new_last = new_first + old_count -1;
 
             if (first_segment_ > last_segment_) {
@@ -85,7 +85,7 @@ namespace Lamp
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
         }
 
-        deque(const size_t& _initial_segment_size) : segment_count_(_initial_segment_size) {
+        deque(const size_t& _initial_segment_size) : segment_capacity_(_initial_segment_size) {
             segments_ = new Segment[_initial_segment_size];
         }
 
@@ -93,7 +93,7 @@ namespace Lamp
             delete[] segments_;
         }
 
-        const size_t& TotalCount() const {
+        const size_t& size() const {
             return total_count_;
         }
 
@@ -110,7 +110,7 @@ namespace Lamp
 
         void push_back(const T2& _in) {
             if (segments_[last_segment_].IsFull()) {
-                const auto new_last_ = (last_segment_ + 1) % segment_count_;
+                const auto new_last_ = (last_segment_ + 1) % segment_capacity_;
                 if (first_segment_ == new_last_) {
                     ReallocateShift<incStrat>();
                 }
@@ -126,7 +126,7 @@ namespace Lamp
 
         void push_front(const T2& _in) {
             if (segments_[first_segment_].IsFull()) {
-                const auto new_front = (first_segment_ - 1) + (first_segment_ == 0 ? segment_count_ : 0);
+                const auto new_front = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
                 if (last_segment_ == new_front) {
                     ReallocateShift<incStrat>();
                 }
@@ -136,10 +136,8 @@ namespace Lamp
 
             Segment& curr_segment = segments_[first_segment_];
 
-            curr_segment.start_ = (curr_segment.start_ - 1) + (curr_segment.start_ == 0 ? segmentSize : 0);
-
+            curr_segment.start_ = (curr_segment.start_ + segmentSize - 1) % segmentSize;
             curr_segment.data_[curr_segment.start_] = _in;
-
             ++curr_segment.count_;
             ++total_count_;
         }
@@ -149,7 +147,7 @@ namespace Lamp
                 --segments_[last_segment_].count_;
                 --total_count_;
                 if (segments_[last_segment_].IsEmpty() && total_count_ > 0) {
-                    last_segment_ = last_segment_ == 0 ? segment_count_ - 1 : last_segment_ - 1;
+                    last_segment_ = last_segment_ == 0 ? segment_capacity_ - 1 : last_segment_ - 1;
                 }
             }
         }
@@ -159,7 +157,7 @@ namespace Lamp
                 --total_count_;
                 --segments_[first_segment_].count_;
                 if (segments_[first_segment_].IsEmpty() && total_count_ > 0) {
-                    first_segment_ = (first_segment_ + 1) % segment_count_;
+                    first_segment_ = (first_segment_ + 1) % segment_capacity_;
                 }
                 else {
                     segments_[first_segment_].start_ = (segments_[first_segment_].start_ + 1) % segmentSize;
@@ -170,13 +168,47 @@ namespace Lamp
         T2& operator[](size_t _index) {
             LAMPASSERT(_index < total_count_, "Index out of bound");
 
-            _index += segments_[first_segment_].start_;
+            // it is impossible to have empty first segment.
+            size_t i = first_segment_ + (_index + (segmentSize - segments_[first_segment_].count_)) / segmentSize;
+            i %= segment_capacity_;
+            size_t j = 0;
 
-            size_t i = (first_segment_ + (_index / segmentSize)) % segment_count_;
-            size_t j = (_index % segmentSize);
+            //[0,] , [1,2,3], index = 2
+            // i = 1, j = 1;
 
-            LAMPASSERT(i < segment_count_ && j < segmentSize, "Index out of bound");
+            j = _index;
+            if (i != first_segment_) {
+                j -= segments_[first_segment_].count_;
+                j += segments_[i].start_;
+                j %= segmentSize;
+            }
+            else {
+                j += segments_[first_segment_].start_;
+                j %= segmentSize;
+            }
+
+            LAMPASSERT(i < segment_capacity_ && j < segmentSize, "Index out of bound");
             return segments_[i].data_[j];
+        }
+
+        void DumpSegment() {
+            std::cout << "=============================" << std::endl;
+            size_t i = first_segment_;
+            while (true) {
+                std::cout << "[";
+                const Segment& curr = segments_[i];
+
+                for (size_t j = 0; j < curr.count_; ++j) {
+                    std::cout << curr.data_[(curr.start_ + j) % segmentSize] << ", ";
+                }
+
+                std::cout << "] : " << "start : " << curr.start_ << ", count : " << curr.count_ << std::endl;
+
+                if (i == last_segment_)
+                    break;
+                i = (i + 1) % segment_capacity_;
+            }
+            std::cout << "=============================" << std::endl;
         }
     };
 }
