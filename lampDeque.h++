@@ -171,21 +171,13 @@ namespace Lamp
             // it is impossible to have empty first segment.
             size_t i = first_segment_ + (_index + (segmentSize - segments_[first_segment_].count_)) / segmentSize;
             i %= segment_capacity_;
-            size_t j = 0;
 
-            //[0,] , [1,2,3], index = 2
-            // i = 1, j = 1;
-
-            j = _index;
+            size_t j = _index + segments_[i].start_;
             if (i != first_segment_) {
                 j -= segments_[first_segment_].count_;
-                j += segments_[i].start_;
-                j %= segmentSize;
             }
-            else {
-                j += segments_[first_segment_].start_;
-                j %= segmentSize;
-            }
+            j %= segmentSize;
+
 
             LAMPASSERT(i < segment_capacity_ && j < segmentSize, "Index out of bound");
             return segments_[i].data_[j];
