@@ -20,7 +20,7 @@ namespace Lamp
         struct Segment {
             size_t start_ = 0;
             size_t count_ = 0;
-            T2 data_[segmentSize];
+            T2* data_ = nullptr;
 
             inline bool IsFull() const {
                 return count_ == segmentSize;
@@ -32,6 +32,11 @@ namespace Lamp
 
             inline size_t LastIndex() const {
                 return (start_ + count_) % segmentSize;
+            }
+
+        public :
+            ~Segment() {
+                delete[] data_;
             }
         };
         static const size_t last_index_ = segmentSize -1;
@@ -56,24 +61,36 @@ namespace Lamp
 
         template<SegmentIncrement increment = SegmentIncDouble>
         void ReallocateShift() {
-            size_t old_count = segment_capacity_;
+            size_t old_capacity = segment_capacity_;
             IncreaseHelper<increment>();
             Segment* new_segments = new Segment[segment_capacity_];
-
-            size_t new_first = (segment_capacity_ - old_count) / 2;
-            size_t new_last = new_first + old_count -1;
-
-            if (first_segment_ > last_segment_) {
-                memcpy(&new_segments[new_first], &segments_[first_segment_], (old_count - first_segment_) * sizeof(Segment));
-                // Guaranteed to be more than 1
-                memcpy(&new_segments[old_count - first_segment_], &segments_[0], (last_segment_ + 1) * sizeof(Segment));
+            for (size_t i = 0; i < segment_capacity_; ++i) {
+                new_segments[i] = {};
+                new_segments[i].data_ = new T2[segmentSize];
             }
-            else {
-                memcpy(&new_segments[new_first], &segments_[first_segment_], old_count * sizeof(Segment));
-            }
+
+            size_t new_first = (segment_capacity_ - old_capacity) / 2;
+            size_t new_last = (new_first + old_capacity -1) % segment_capacity_;
+
+            size_t i = first_segment_;
+            size_t j = new_first;
+
+            do {
+                new_segments[j].count_ = segments_[i].count_;
+                new_segments[j].start_ = segments_[i].start_;
+                new_segments[j].data_  = segments_[i].data_;
+                segments_[i].data_ = nullptr;
+
+                i = (i +1) % old_capacity;
+                j = (j +1) % segment_capacity_;
+            } while(i != first_segment_);
+
 
             first_segment_ = new_first;
             last_segment_ = new_last;
+
+            // Need to set first and last with new index in push_back push_front...
+            // with current first_ and last_, it will be outdated because it points to the older segment.(-1 or +1 segment.)
 
             delete[] segments_;
             segments_ = new_segments;
@@ -83,10 +100,16 @@ namespace Lamp
         public:
         deque() {
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
+            for (size_t i = 0; i < INITIAL_SEGMENT_COUNT; ++i) {
+                segments_[i].data_ = new T2[segmentSize];
+            }
         }
 
         deque(const size_t& _initial_segment_size) : segment_capacity_(_initial_segment_size) {
             segments_ = new Segment[_initial_segment_size];
+            for (size_t i = 0; i < _initial_segment_size; ++i) {
+                segments_[i].data_ = new T2[segmentSize];
+            }
         }
 
         ~deque() {
@@ -113,6 +136,8 @@ namespace Lamp
                 const auto new_last_ = (last_segment_ + 1) % segment_capacity_;
                 if (first_segment_ == new_last_) {
                     ReallocateShift<incStrat>();
+                    // need to re compute it after reallocation
+                    last_segment_ = (last_segment_ + 1) % segment_capacity_;
                 }
                 else
                     last_segment_ = new_last_;
@@ -129,6 +154,8 @@ namespace Lamp
                 const auto new_front = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
                 if (last_segment_ == new_front) {
                     ReallocateShift<incStrat>();
+                    // need to re compute it after reallocation
+                    first_segment_ = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
                 }
                 else
                     first_segment_ = new_front;
@@ -172,17 +199,18 @@ namespace Lamp
             size_t i = first_segment_ + (_index + (segmentSize - segments_[first_segment_].count_)) / segmentSize;
             i %= segment_capacity_;
 
+
             size_t j = _index + segments_[i].start_;
             if (i != first_segment_) {
                 j -= segments_[first_segment_].count_;
             }
             j %= segmentSize;
 
-
             LAMPASSERT(i < segment_capacity_ && j < segmentSize, "Index out of bound");
             return segments_[i].data_[j];
         }
 
+        /*
         void DumpSegment() {
             std::cout << "=============================" << std::endl;
             size_t i = first_segment_;
@@ -202,6 +230,7 @@ namespace Lamp
             }
             std::cout << "=============================" << std::endl;
         }
+        */
     };
 }
 
