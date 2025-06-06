@@ -17,6 +17,7 @@ namespace Lamp
     // Segment size should be fixed.
     template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncDouble, size_t IncAmount = 16>
     class deque {
+    protected:
         struct Segment {
             size_t start_ = 0;
             size_t count_ = 0;
