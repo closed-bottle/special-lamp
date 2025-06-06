@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-#include <io.h>
 
 #include "../lampString.h++"
 #include "../lampVector.h++"
@@ -11,8 +10,10 @@
 #include "../lampDeque.h++"
 #include "../lampAssert.h++"
 #include "../lampRandom.h++"
+#include "../lampStack.h++"
 
 #include <vector>
+#include <deque>
 #include <chrono>
 #include <random>
 
@@ -202,6 +203,123 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
 
 
     return !is_fail;
+}
+
+
+template<size_t _initial_cap>
+bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
+    enum Action {
+        push_back = 0,
+        push_front,
+        pop_back,
+        pop_front
+    };
+    std::stringstream output;
+    const unsigned count = _count; //failed 20(operator[]), 100(value test failed.)
+    Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
+
+    Lamp::deque<int, _initial_cap> deque;
+    std::deque<int> std;
+
+    Lamp::Vector<Action> actions;
+    Lamp::Vector<int> values;
+
+    actions.reserve(count);
+    values.reserve(count);
+
+    unsigned curr_count = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        Action a = static_cast<Action>( randdevice.RandRange(4));
+
+        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+            continue;
+        }
+
+        actions[i] = a;
+        values[i] = randdevice.RandIntBetween(-1000, 1000);
+
+        if (a == push_back || a == push_front)
+            ++curr_count;
+        else
+            --curr_count;
+    }
+
+    TimeStamp::instance.Start();
+    for (unsigned i = 0; i < count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                deque.push_back(v);
+            break;
+            case pop_back:
+                deque.pop_back();
+            break;
+            case push_front:
+                deque.push_front(v);
+            break;
+            case pop_front:
+                deque.pop_front();
+            break;
+        }
+    }
+    TimeStamp::instance.End();
+    auto lamp_duration = TimeStamp::instance.Duration();
+
+    TimeStamp::instance.Start();
+    for (unsigned i = 0; i < count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                std.push_back(v);
+            break;
+            case pop_back:
+                std.pop_back();
+            break;
+            case push_front:
+                std.push_front(v);
+            break;
+            case pop_front:
+                std.pop_front();
+            break;
+        }
+    }
+    TimeStamp::instance.End();
+    auto std_duration = TimeStamp::instance.Duration();
+
+    std::cout << "For insert, " << std::endl;
+    std::cout << "Lamp : " << lamp_duration << std::endl;
+    std::cout << "std  : " << std_duration << std::endl;
+
+    // Random access test
+    volatile int s = 0;
+    TimeStamp::instance.Start();
+    for (size_t i = 0; i < deque.size(); ++i) {
+        s += deque[i];
+    }
+    TimeStamp::instance.End();
+    lamp_duration = TimeStamp::instance.Duration();
+
+    std::cout << s;
+    s = 0;
+
+    TimeStamp::instance.Start();
+    for (size_t i = 0; i < std.size(); ++i) {
+        s += std[i];
+    }
+    TimeStamp::instance.End();
+    std_duration = TimeStamp::instance.Duration();
+
+    std::cout << s;
+
+    std::cout << std::endl;
+    std::cout << "For random access, " << std::endl;
+    std::cout << "Lamp : " << lamp_duration << std::endl;
+    std::cout << "std  : " << std_duration << std::endl;
+
+
+    return true;
 }
 
 
@@ -577,7 +695,7 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
-    if (false)
+    if (true)
     {
         Lamp::random_device<uint32_t> randdevice;
         std::cout << randdevice.XORShift32StarStep() << std::endl;
@@ -622,11 +740,10 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    if (true) {
-
+    if (false) {
         std::cout << "========= capacity 3 ==========" << std::endl;
         TimeStamp::instance.Start();
-        for (size_t i = 0; i < 10000; ++i) {
+        for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<3>(i, 12345, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
@@ -637,7 +754,7 @@ int main(int argc, const char * argv[]) {
 
         std::cout << "========= capacity 1 ==========" << std::endl;
         TimeStamp::instance.Start();
-        for (size_t i = 0; i < 10000; ++i) {
+        for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<1>(i, 23456, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
@@ -649,7 +766,7 @@ int main(int argc, const char * argv[]) {
 
         std::cout << "========= capacity 2 ==========" << std::endl;
         TimeStamp::instance.Start();
-        for (size_t i = 0; i < 10000; ++i) {
+        for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<2>(i, 34567, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
@@ -661,7 +778,7 @@ int main(int argc, const char * argv[]) {
 
         std::cout << "========= capacity 77 ==========" << std::endl;
         TimeStamp::instance.Start();
-        for (size_t i = 0; i < 10000; ++i) {
+        for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<77>(i, 56789, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
@@ -671,6 +788,41 @@ int main(int argc, const char * argv[]) {
         std::cout << TimeStamp::instance.Duration() << std::endl;
     }
 
+
+    if (false) {
+        dequeComparison<4>(40000000, 99999, false);
+    }
+
+    if (true) {
+        Lamp::stack<int,3> stack;
+        std::cout << "lamp::stack" << std::endl;
+
+        stack.push(1);
+        std::cout << stack.top() << ", ";
+        stack.push(2);
+        stack.push(3);
+        std::cout << stack.top() << ", ";
+        stack.push(4);
+        std::cout << stack.top() << std::endl;
+
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.pop();
+        std::cout << stack.top() << std::endl;
+        stack.push(2);
+        stack.push(3);
+        std::cout << stack.top() << std::endl;
+        stack.push(4);
+        std::cout << stack.top() << std::endl;
+    }
 
 
 
