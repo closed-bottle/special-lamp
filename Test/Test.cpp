@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include "../lampAllocator.h++"
 
 #include "../lampString.h++"
 #include "../lampVector.h++"
@@ -342,7 +343,7 @@ int main(int argc, const char * argv[]) {
         std::cout << lampVector1[0].c_str() << std::endl;
     }
 
-
+    if (false)
     {
         char c[] = "123456jkjpj30223l789";
         Lamp::CRC32 crc32;
@@ -462,6 +463,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    if (false)
     {
         Lamp::list<int> erase_test;
         for (int i = 0; i < 100; ++i) {
@@ -481,6 +483,7 @@ int main(int argc, const char * argv[]) {
         PrintList(erase_test);
     }
 
+    if (false)
     {
         Lamp::unordered_map<Lamp::String, int> map;
         map["Test1"] = 1;
@@ -516,6 +519,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "map[Test5] : " << map["Test5"] << std::endl;
     }
 
+    if (false)
     {
         Lamp::unordered_map<uint32_t, uint32_t> uintmap;
 
@@ -537,6 +541,7 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl;
     }
 
+    if (false)
     {
         Lamp::Vector<Lamp::String> test_v1;
         Lamp::Vector<Lamp::String> test_v2;
@@ -596,6 +601,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    if (false)
     {
         Lamp::Vec4f vector;
         vector.x = 0;
@@ -655,6 +661,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    if (false)
     {
         using namespace Lamp;
         unordered_map<uint32_t, float> map;
@@ -695,7 +702,7 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
-    if (true)
+    if (false)
     {
         Lamp::random_device<uint32_t> randdevice;
         std::cout << randdevice.XORShift32StarStep() << std::endl;
@@ -793,7 +800,7 @@ int main(int argc, const char * argv[]) {
         dequeComparison<4>(40000000, 99999, false);
     }
 
-    if (true) {
+    if (false) {
         Lamp::stack<int,3> stack;
         std::cout << "lamp::stack" << std::endl;
 
@@ -824,6 +831,45 @@ int main(int argc, const char * argv[]) {
         std::cout << stack.top() << std::endl;
     }
 
+    if (false) {
+        std::cout << "Performance measure" << std::endl;
+        std::cout << "vector" << std::endl;
+        TimeStamp::instance.Start();
+        Lamp::Vector<int> vector;
+        for (size_t times = 0; times < 5; ++times) {
+            for (size_t i = 0; i < 500000000; ++i) {
+                vector.push_back(i);
+            }
+            vector.clear();
+        }
+        TimeStamp::instance.End();
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+        // with normal new :
+        // 9.74411s
+        // 9.9182s
+        // 9.36578s
+        // 9.56895s
+        // 9.35392s
+        // 9.46613s
+        // 9.37823s
+        // 10.5824s
+        // 9.39467s
+        // 9.42515s
+    }
+
+    // unordered_map stress test
+    if (false) {
+        std::cout << "unordered_map stress test" << std::endl;
+        TimeStamp::instance.Start();
+        Lamp::unordered_map<int, void*> map;
+        for (size_t times = 0; times < 5; ++times) {
+            for (size_t i = 0; i < 400000; ++i) {
+                map[i] = &map[i];
+            }
+        }
+        TimeStamp::instance.End();
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+    }
 
 
     std::cout << std::endl;
