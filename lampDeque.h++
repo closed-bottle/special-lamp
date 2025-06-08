@@ -64,22 +64,30 @@ namespace Lamp
         void ReallocateShift() {
             size_t old_capacity = segment_capacity_;
             IncreaseHelper<increment>();
-            Segment* new_segments = new Segment[segment_capacity_];
-            for (size_t i = 0; i < segment_capacity_; ++i) {
-                new_segments[i] = {};
-                new_segments[i].data_ = new T2[segmentSize];
-            }
 
             size_t new_first = (segment_capacity_ - old_capacity) / 2;
             size_t new_last = (new_first + old_capacity -1) % segment_capacity_;
+
+            Segment* new_segments = new Segment[segment_capacity_];
+            memset(new_segments, 0, sizeof(Segment) * segment_capacity_);
+
+
+            {
+                size_t i = (new_last + 1) % segment_capacity_;
+                while (true) {
+                    new_segments[i].data_ = new T2[segmentSize];
+
+                    i = (i + 1) % segment_capacity_;
+                    if (i == new_first)
+                        break;
+                }
+            }
 
             size_t i = first_segment_;
             size_t j = new_first;
 
             do {
-                new_segments[j].count_ = segments_[i].count_;
-                new_segments[j].start_ = segments_[i].start_;
-                new_segments[j].data_  = segments_[i].data_;
+                new_segments[j] = segments_[i];
                 segments_[i].data_ = nullptr;
 
                 i = (i +1) % old_capacity;

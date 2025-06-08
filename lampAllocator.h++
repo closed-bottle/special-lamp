@@ -335,11 +335,11 @@ namespace {
         ~allocated_unordered_map() {
 
             if (allocated_ != 0) {
-                std::cout << allocated_ << "Memory leak detected";
+                std::cout << allocated_ << "Memory leak detected " << std::endl;
 
                 for (const auto& p : *this) {
-                    //if (p.second == true)
-                    //    std::cout << p.first << " : " << p.second << "bytes" << std::endl;
+                    if (p.second == true)
+                        std::cout << p.first << " Leaked" << std::endl;
                 }
             }
 
@@ -573,6 +573,16 @@ void* operator new[](size_t _size) {
     return buff;
 }
 
+
+void operator delete(void* _ptr) noexcept {
+    allocation_track[_ptr] = false;
+    free(_ptr);
+
+    --allocation_track.allocated_;
+    if (allocation_track.allocated_ == 0)
+        allocation_track.clear();
+}
+
 void operator delete(void* _ptr, size_t _size) noexcept {
     allocation_track[_ptr] = false;
     free(_ptr);
@@ -583,6 +593,16 @@ void operator delete(void* _ptr, size_t _size) noexcept {
 }
 
 void operator delete[](void* _ptr) noexcept {
+    allocation_track[_ptr] = false;
+    free(_ptr);
+
+    --allocation_track.allocated_;
+    if (allocation_track.allocated_ == 0)
+        allocation_track.clear();
+}
+
+
+void operator delete[](void* _ptr, size_t _size) noexcept {
     allocation_track[_ptr] = false;
     free(_ptr);
 

@@ -206,7 +206,7 @@ namespace Lamp {
                 for (uint64_t i = 0; i < size_; ++i) {
                     new_data[i] = std::move(data_[i]);
                 }
-
+                delete[] data_;
                 data_ = new_data;
             }
 

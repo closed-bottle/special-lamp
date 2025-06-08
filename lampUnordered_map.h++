@@ -197,6 +197,7 @@ namespace Lamp {
             while (curr_n) {
                 if (curr_n->data_.first == _key) {
                     curr.erase(curr_n->data_);
+                    --size_;
                     return;
                 }
                 curr_n = curr_n->next_;

@@ -361,7 +361,6 @@ int main(int argc, const char * argv[]) {
         std::cout << std::hex << crc32.GetCRC32(reinterpret_cast<uint8_t *>(c), sizeof(c) - 1) << std::endl;
         std::cout << std::hex << murmur_result[0] << murmur_result[1] << std::endl;
 
-
         Lamp::list<uint32_t> list;
 
         list.push_back(1);
@@ -373,6 +372,7 @@ int main(int argc, const char * argv[]) {
         list.push_back(7);
         list.push_back(8);
         list.push_back(9);
+
 
         std::cout << "--------------" << std::endl;
         PrintList(list); std::cout << std::endl;
@@ -541,7 +541,7 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl;
     }
 
-    if (false)
+    if (true)
     {
         Lamp::Vector<Lamp::String> test_v1;
         Lamp::Vector<Lamp::String> test_v2;
@@ -558,6 +558,7 @@ int main(int argc, const char * argv[]) {
         test_v1.push_back("4");
         test_v1.push_back("5");
         test_v1.push_back("6");
+
 
         test_v2.push_back("100");
         test_v2.push_back("101");
@@ -601,7 +602,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false)
+    if (true)
     {
         Lamp::Vec4f vector;
         vector.x = 0;
@@ -661,7 +662,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false)
+    if (true)
     {
         using namespace Lamp;
         unordered_map<uint32_t, float> map;
@@ -677,7 +678,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false)
+    if (true)
     {
         Lamp::deque<int, 4> segment_tree;
         segment_tree.push_back(-1);
@@ -702,7 +703,7 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
-    if (false)
+    if (true)
     {
         Lamp::random_device<uint32_t> randdevice;
         std::cout << randdevice.XORShift32StarStep() << std::endl;
@@ -736,7 +737,7 @@ int main(int argc, const char * argv[]) {
     //RandomDequeTest<3>(50, 12345, true);
     //RandomDequeTest<3>(707, 12345, true);
 
-    if (false) {
+    if (true) {
         Lamp::deque<int, 3> deque;
 
         for (int i = 0; i < 16; ++i) {
@@ -796,8 +797,8 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    if (false) {
-        dequeComparison<4>(40000000, 99999, false);
+    if (true) {
+        dequeComparison<4>(200000001, 99999, false);
     }
 
     if (false) {
