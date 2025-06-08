@@ -262,6 +262,10 @@ namespace Lamp {
 
             return nullptr;
         }
+
+        uint64_t size() const {
+            return count_;
+        }
     };
 }
 

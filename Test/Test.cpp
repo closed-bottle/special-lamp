@@ -206,7 +206,6 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
     return !is_fail;
 }
 
-
 template<size_t _initial_cap>
 bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
     enum Action {
@@ -323,6 +322,140 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
     return true;
 }
 
+bool RandomVectorTest(size_t _count, uint32_t _seed, bool _is_verbose) {
+    int* arr = new int[_count];
+    Lamp::Vector<int> lamp;
+    std::stringstream output;
+    Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
+
+    for (size_t i = 0; i < _count; ++i) {
+        arr[i] = randdevice.RandIntBetween(-4000, 4000);
+        lamp.push_back(arr[i]);
+    }
+
+    // In my implementation, there is no input functino beside push_back.
+    for (size_t i = 0; i < _count; ++i) {
+        if (arr[i] != lamp[i]) {
+            delete[] arr;
+            return false;
+        }
+    }
+
+    delete[] arr;
+    return true;
+}
+
+template<typename T>
+bool RandomListTest(size_t _count, uint32_t _seed, bool _is_verbose) {
+    enum Action {
+        push_back = 0,
+        push_front,
+        pop_back,
+        pop_front
+    };
+
+    Lamp::list<T> lamp;
+    std::stringstream output;
+    Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(_seed));
+
+
+    Lamp::Vector<Action> actions;
+    Lamp::Vector<int> values;
+
+    actions.reserve(_count);
+    values.reserve(_count);
+
+    size_t curr_count = 0;
+    for (size_t i = 0; i < _count; ++i) {
+        Action a = static_cast<Action>( randdevice.RandRange(4));
+
+        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+            continue;
+        }
+
+        actions[i] = a;
+        values[i] = randdevice.RandIntBetween(-1000, 1000);
+
+        if (a == push_back || a == push_front)
+            ++curr_count;
+        else
+            --curr_count;
+    }
+
+    Lamp::Vector<int> expected;
+    expected.reserve(_count);
+    size_t start = 0;
+    size_t expected_c = 0;
+
+    for (size_t i = 0; i < _count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                expected[(start + expected_c) % _count] = v;
+                ++expected_c;
+            break;
+            case pop_back:
+                --expected_c;
+            break;
+            case push_front:
+                start = (start + _count -1) % _count;
+                expected[start] = v;
+                ++expected_c;
+            break;
+            case pop_front:
+                --expected_c;
+                start = (start + 1) % _count;
+            break;
+        }
+    }
+
+    for (size_t i = 0; i < _count; ++i) {
+        const Action& a = actions[i];
+        const int& v = values[i];
+        switch (a) {
+            case push_back:
+                lamp.push_back(v);
+            break;
+            case pop_back:
+                lamp.pop_back();
+            break;
+            case push_front:
+                lamp.push_front(v);
+            break;
+            case pop_front:
+                lamp.pop_front();
+            break;
+        }
+    }
+
+    bool is_fail = false;
+    if (lamp.size() != expected_c) {
+        is_fail = true;
+        std::cout << "RandomListTest: count not matching." << std::endl;
+        return !is_fail;
+    }
+
+    if (lamp.empty())
+        return true;
+
+    for (size_t i = 0; i < expected_c; ++i) {
+        if (lamp.front() != expected[(start + i) % _count]) {
+            is_fail = true;
+            output << "Value difference in index " << i << " with value " <<
+                lamp.front()
+            << " : (expected)" << expected[(start + i) % _count] << std::endl;
+        }
+
+        lamp.pop_front();
+    }
+
+    if (_is_verbose) {
+        std::cout << std::endl << output.str() << std::endl;
+    }
+
+    return true;
+}
 
 int main(int argc, const char * argv[]) {
 
@@ -541,7 +674,7 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         Lamp::Vector<Lamp::String> test_v1;
         Lamp::Vector<Lamp::String> test_v2;
@@ -602,7 +735,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true)
+    if (false)
     {
         Lamp::Vec4f vector;
         vector.x = 0;
@@ -797,7 +930,7 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    if (true) {
+    if (false) {
         dequeComparison<4>(200000001, 99999, false);
     }
 
@@ -868,6 +1001,58 @@ int main(int argc, const char * argv[]) {
                 map[i] = &map[i];
             }
         }
+        TimeStamp::instance.End();
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+    }
+
+    if (false) {
+        TimeStamp::instance.Start();
+        for (size_t i = 0; i < 50000; ++i) {
+            if (!RandomVectorTest(i, 12345, false)) {
+                std::cout << "Random vector test failed : " << i << std::endl;
+            }
+        }
+        TimeStamp::instance.End();
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+    }
+
+    if (false) {
+        TimeStamp::instance.Start();
+        for (size_t i = 0; i < 50000; ++i) {
+            if (!RandomListTest<int>(i, 12345, false)) {
+                std::cout << "Random list test failed : " << i << std::endl;
+            }
+        }
+        TimeStamp::instance.End();
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+    }
+
+    // List erase test.
+    if (true) {
+        Lamp::random_device<uint32_t> randdevice;
+        Lamp::list<int> list;
+
+        TimeStamp::instance.Start();
+        for (size_t i = 0; i < 25; ++i) {
+            list.push_back(i);
+        }
+        std::cout << list.size() << std::endl;
+
+        for (size_t i = 0; i < 25; ++i) {
+            if (i % 2 == 0)
+                list.erase(i);
+        }
+        std::cout << list.size() << std::endl;
+
+        while (!list.empty()) {
+            std::cout << list.front() << ",";
+            list.pop_front();
+        }
+        std::cout << std::endl << list.size() << std::endl;
+
+
+
+
         TimeStamp::instance.End();
         std::cout << TimeStamp::instance.Duration() << std::endl;
     }
