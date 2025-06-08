@@ -21,7 +21,7 @@ namespace Lamp
         struct Segment {
             size_t start_ = 0;
             size_t count_ = 0;
-            T2* data_ = nullptr;
+            T2 data_[segmentSize] = {};
 
             inline bool IsFull() const {
                 return count_ == segmentSize;
@@ -37,7 +37,6 @@ namespace Lamp
 
         public :
             ~Segment() {
-                delete[] data_;
             }
         };
         static const size_t last_index_ = segmentSize -1;
@@ -71,24 +70,12 @@ namespace Lamp
             Segment* new_segments = new Segment[segment_capacity_];
             memset(new_segments, 0, sizeof(Segment) * segment_capacity_);
 
-
-            {
-                size_t i = (new_last + 1) % segment_capacity_;
-                while (true) {
-                    new_segments[i].data_ = new T2[segmentSize];
-
-                    i = (i + 1) % segment_capacity_;
-                    if (i == new_first)
-                        break;
-                }
-            }
-
             size_t i = first_segment_;
             size_t j = new_first;
 
             do {
                 new_segments[j] = segments_[i];
-                segments_[i].data_ = nullptr;
+                memcpy(new_segments[j].data_, segments_[i].data_, sizeof(T2) * segmentSize);
 
                 i = (i +1) % old_capacity;
                 j = (j +1) % segment_capacity_;
@@ -109,16 +96,12 @@ namespace Lamp
         public:
         deque() {
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
-            for (size_t i = 0; i < INITIAL_SEGMENT_COUNT; ++i) {
-                segments_[i].data_ = new T2[segmentSize];
-            }
+
         }
 
         deque(const size_t& _initial_segment_size) : segment_capacity_(_initial_segment_size) {
             segments_ = new Segment[_initial_segment_size];
-            for (size_t i = 0; i < _initial_segment_size; ++i) {
-                segments_[i].data_ = new T2[segmentSize];
-            }
+
         }
 
         ~deque() {
