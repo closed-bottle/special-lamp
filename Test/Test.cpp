@@ -12,6 +12,7 @@
 #include "../lampAssert.h++"
 #include "../lampRandom.h++"
 #include "../lampStack.h++"
+#include "../lampQueue.h++"
 
 #include <vector>
 #include <deque>
@@ -950,6 +951,10 @@ int main(int argc, const char * argv[]) {
                 arr[(count -1) - i] = rand;
             }
 
+            if (stack.size() != count) {
+                std::cout << "Incorrect size." << std::endl;
+            }
+
             for (size_t i = 0; i < count; ++i) {
 
                 if (stack.top() != arr[i]) {
@@ -1049,10 +1054,43 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl << list.size() << std::endl;
 
 
-
-
         TimeStamp::instance.End();
         std::cout << TimeStamp::instance.Duration() << std::endl;
+    }
+
+    if (true) {
+
+        std::cout << "lamp::queue" << std::endl;
+        constexpr size_t count = 100;
+
+        Lamp::random_device<uint32_t> randdevice(12345);
+        Lamp::queue<int> lamp;
+        int* arr = new int[count];
+
+        TimeStamp::instance.Start();
+        TimeStamp::instance.End();
+        for (size_t i = 0; i < count; ++i) {
+            int rand = randdevice.RandIntBetween(-4000, 4000);
+
+            arr[i] = rand;
+            lamp.push(rand);
+        }
+
+        if (lamp.size() != count) {
+            std::cout << "Failed queue size test." << std::endl;
+        }
+
+        for (size_t i = 0; i < count; ++i) {
+            if (arr[i] != lamp.top()) {
+                std::cout << "Failed queue test with index : " << i << std::endl;
+            }
+
+            lamp.pop();
+        }
+
+
+        std::cout << TimeStamp::instance.Duration() << std::endl;
+        delete[] arr;
     }
 
 
