@@ -934,35 +934,24 @@ int main(int argc, const char * argv[]) {
         dequeComparison<4>(200000001, 99999, false);
     }
 
-    if (false) {
-        Lamp::stack<int,3> stack;
+    if (true) {
+        constexpr size_t count = 25;
+        constexpr size_t cap = 3;
+
+        Lamp::random_device<uint32_t> randdevice;
+        Lamp::stack<int, cap> stack;
         std::cout << "lamp::stack" << std::endl;
 
-        stack.push(1);
-        std::cout << stack.top() << ", ";
-        stack.push(2);
-        stack.push(3);
-        std::cout << stack.top() << ", ";
-        stack.push(4);
-        std::cout << stack.top() << std::endl;
 
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.pop();
-        std::cout << stack.top() << std::endl;
-        stack.push(2);
-        stack.push(3);
-        std::cout << stack.top() << std::endl;
-        stack.push(4);
-        std::cout << stack.top() << std::endl;
+        for (size_t i = 0; i < count; ++i)
+            stack.push(i);
+
+        stack.Dump();
+
+        for (size_t i = 0; i < count; ++i) {
+            std::cout << stack.top() << ", ";
+            stack.pop();
+        }
     }
 
     if (false) {
@@ -1028,7 +1017,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // List erase test.
-    if (true) {
+    if (false) {
         Lamp::random_device<uint32_t> randdevice;
         Lamp::list<int> list;
 

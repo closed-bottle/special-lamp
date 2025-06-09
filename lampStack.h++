@@ -14,28 +14,24 @@ namespace Lamp {
         using deque = deque<T2, segmentSize, incStrat, IncAmount>;
         using Segment = typename deque::Segment;
 
-        template<SegmentIncrement increment = SegmentIncDouble>
         void ReallocateShift() {
-            deque::template IncreaseHelper<increment>();
-
+            size_t old_cap = deque::segment_capacity_;
+            deque::template IncreaseHelper<incStrat>();
             Segment* new_segments = new typename deque::Segment[deque::segment_capacity_];
-            for (size_t i = 0; i < deque::segment_capacity_; ++i) {
-                new_segments[i] = {};
-                new_segments[i].data_ = new T2[segmentSize];
-            }
+            memset(new_segments, 0, sizeof(Segment) * deque::segment_capacity_);
 
-            size_t i = 0;
-            do {
-                memcpy(&new_segments[i], &deque::segments_[i], sizeof(Segment));
-                deque::segments_[i].data_ = nullptr;
-                ++i;
-            } while(i != deque::last_segment_);
-
+            memcpy(new_segments, deque::segments_, sizeof(Segment) * old_cap);
 
             delete[] deque::segments_;
             deque::segments_ = new_segments;
         }
     public:
+        stack() : deque() {
+            deque::first_segment_ = 0;
+            deque::last_segment_ = 0;
+        }
+
+
         void push(const T2& _in) {
             deque::push_back(_in);
         }
@@ -52,6 +48,10 @@ namespace Lamp {
 
         bool empty() const {
             return deque::total_count_ == 0;
+        }
+
+        void Dump() {
+            deque::DumpSegment();
         }
     };
 }
