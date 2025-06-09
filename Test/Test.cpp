@@ -935,22 +935,31 @@ int main(int argc, const char * argv[]) {
     }
 
     if (true) {
-        constexpr size_t count = 25;
-        constexpr size_t cap = 3;
+        constexpr uint32_t seed = 12345;
+        Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(seed));
+        std::cout << "lamp::stack stress test" << std::endl;
 
-        Lamp::random_device<uint32_t> randdevice;
-        Lamp::stack<int, cap> stack;
-        std::cout << "lamp::stack" << std::endl;
+        {
+            constexpr size_t count = 500000;
+            Lamp::stack<int, 3> stack;
+            int* arr = new int[count];
 
+            for (size_t i = 0; i < count; ++i) {
+                int rand = randdevice.RandIntBetween(-4000, 4000);
+                stack.push(rand);
+                arr[(count -1) - i] = rand;
+            }
 
-        for (size_t i = 0; i < count; ++i)
-            stack.push(i);
+            for (size_t i = 0; i < count; ++i) {
 
-        stack.Dump();
+                if (stack.top() != arr[i]) {
+                    std::cout << "Failed stack test." << i << std::endl;
+                }
 
-        for (size_t i = 0; i < count; ++i) {
-            std::cout << stack.top() << ", ";
-            stack.pop();
+                stack.pop();
+            }
+
+            delete[] arr;
         }
     }
 
