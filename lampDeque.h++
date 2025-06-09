@@ -59,10 +59,9 @@ namespace Lamp
         template<>
         void IncreaseHelper<SegmentIncAdd>() {segment_capacity_ += IncAmount;}
 
-        template<SegmentIncrement increment = SegmentIncDouble>
-        void ReallocateShift() {
+        virtual void ReallocateShift() {
             size_t old_capacity = segment_capacity_;
-            IncreaseHelper<increment>();
+            IncreaseHelper<incStrat>();
 
             size_t new_first = (segment_capacity_ - old_capacity) / 2;
             size_t new_last = (new_first + old_capacity -1) % segment_capacity_;
@@ -96,7 +95,6 @@ namespace Lamp
         public:
         deque() {
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
-
         }
 
         deque(const size_t& _initial_segment_size) : segment_capacity_(_initial_segment_size) {
@@ -127,7 +125,7 @@ namespace Lamp
             if (segments_[last_segment_].IsFull()) {
                 const auto new_last_ = (last_segment_ + 1) % segment_capacity_;
                 if (first_segment_ == new_last_) {
-                    ReallocateShift<incStrat>();
+                    ReallocateShift();
                     // need to re compute it after reallocation
                     last_segment_ = (last_segment_ + 1) % segment_capacity_;
                 }
@@ -145,7 +143,7 @@ namespace Lamp
             if (segments_[first_segment_].IsFull()) {
                 const auto new_front = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
                 if (last_segment_ == new_front) {
-                    ReallocateShift<incStrat>();
+                    ReallocateShift();
                     // need to re compute it after reallocation
                     first_segment_ = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
                 }
@@ -202,7 +200,7 @@ namespace Lamp
             return segments_[i].data_[j];
         }
 
-        /*
+
         void DumpSegment() {
             std::cout << "=============================" << std::endl;
             size_t i = first_segment_;
@@ -222,7 +220,7 @@ namespace Lamp
             }
             std::cout << "=============================" << std::endl;
         }
-        */
+
     };
 }
 
