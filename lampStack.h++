@@ -50,9 +50,14 @@ namespace Lamp {
             return deque::total_count_ == 0;
         }
 
+        size_t size() const {
+            return deque::size();
+        }
+
+        /*
         void Dump() {
             deque::DumpSegment();
-        }
+        }*/
     };
 }
 
