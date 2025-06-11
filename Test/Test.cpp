@@ -13,6 +13,7 @@
 #include "../lampRandom.h++"
 #include "../lampStack.h++"
 #include "../lampQueue.h++"
+#include "../lampBinarySearchTree.h++"
 
 #include <vector>
 #include <deque>
@@ -1088,9 +1089,22 @@ int main(int argc, const char * argv[]) {
             lamp.pop();
         }
 
-
         std::cout << TimeStamp::instance.Duration() << std::endl;
         delete[] arr;
+    }
+
+    if (true) {
+        Lamp::BinarySearchTree<int> bst;
+
+        std::cout << "Binary search tree implementation test" << std::endl;
+
+        for (int i = 10; i >= 0; --i) {
+            bst.insert(i);
+        }
+
+
+        std::cout << "min : " << bst.min() << std::endl;
+        std::cout << "max : " << bst.max() << std::endl;
     }
 
 
