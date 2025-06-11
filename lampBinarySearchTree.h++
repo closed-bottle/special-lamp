@@ -22,8 +22,6 @@ namespace Lamp {
         node* min(node* _root) const {
             node* curr = _root;
 
-            // Undefined behavior if tree is empty but still tried to call min().
-            // Check for assert only for debug build.
             LAMPASSERT(head_ != nullptr, "BinarySearchTree is empty.");
 
             while (curr->left_) {
@@ -36,8 +34,6 @@ namespace Lamp {
         node* max(node* _root) const {
             node* curr = _root;
 
-            // Undefined behavior if tree is empty but still tried to call min().
-            // Check for assert only for debug build.
             LAMPASSERT(head_ != nullptr, "BinarySearchTree is empty.");
 
             while (curr->right_) {
@@ -92,6 +88,23 @@ namespace Lamp {
             ++size_;
         }
 
+        bool exist(const T& _in) const {
+            node* curr = head_;
+
+            while (curr) {
+                if (_in == curr->data_)
+                    return true;
+
+                if (_in < curr->data_) {
+                    curr = curr->left_;
+                }
+                else {
+                    curr = curr->right_;
+                }
+            }
+
+            return false;
+        }
 
         T min() const {return min(head_)->data_;}
         T max() const {return max(head_)->data_;}
