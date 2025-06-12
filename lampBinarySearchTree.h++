@@ -43,40 +43,6 @@ namespace Lamp {
             return curr;
         }
 
-        node* erase(node* _root, const T& _val) {
-            if (_root == nullptr)
-                return _root;
-
-            if (_val > _root->data_) {
-                _root->right_ = erase(_root->right_, _val);
-            }
-            else if (_val < _root->data_) {
-                _root->left_ = erase(_root->left_, _val);
-            }
-            else {
-                if (!_root->left_) {
-                    node* temp = _root->right_;
-                    delete _root;
-                    return temp;
-                }
-
-                if (!_root->right_) {
-                    node* temp = _root->left_;
-                    delete _root;
-                    return temp;
-                }
-
-                node* curr = _root->right_;
-                while (curr != nullptr && curr->left_ != nullptr)
-                    curr = curr->left_;
-
-                _root->data_ = curr->data_;
-                _root->right_ = erase(_root->right_, curr->data_);
-            }
-
-            return _root;
-        }
-
     public:
         ~BinarySearchTree() {
             clear();
@@ -142,9 +108,66 @@ namespace Lamp {
             return false;
         }
 
+        // Changed to iterative solution, if you want recursive version
+        // goto:
+        // b8d1e1576904e0feccf0ba762085926a1efe41a6
         void erase(const T& _in) {
             LAMPASSERT(head_ != nullptr, "BinarySearchTree is empty.");
-            head_ = erase(head_, _in);
+            if (!head_) {
+                return;
+            }
+
+            node* prev = nullptr;
+            node* root = head_;
+
+            while (root && root->data_ != _in) {
+                prev = root;
+                root = root->data_ < _in ? root->left_ : root->right_;
+            }
+
+            // unable to find one
+            if (!root)
+                return;
+
+            // one or no child node at all.
+            if (!root->left_ || !root->right_) {
+                node* curr = root;
+
+                if (root->left_)
+                    curr = root->left_;
+                else
+                    curr = root->right_;
+
+                // prev is null if and only if root == head_.(first iteration)
+                if (!prev) {
+                    delete head_;
+                    head_ = curr;
+                }
+
+                if (root == prev->left_)
+                    prev->left_ = curr;
+                else
+                    prev->right_ = curr;
+
+                delete root;
+            }
+            else {
+                node* curr = root->right_;
+                while (curr && curr->left_) {
+                    prev = curr;
+                    curr = curr->left_;
+                }
+
+                if (prev)
+                    prev->left_ = curr->right_;
+                else
+                    root->right_ = curr->right_;
+
+                root->data_ = std::move(curr->data_);
+                delete curr;
+            }
+
+            head_ = root;
 
             --size_;
         }

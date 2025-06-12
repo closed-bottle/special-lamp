@@ -1059,7 +1059,7 @@ int main(int argc, const char * argv[]) {
         std::cout << TimeStamp::instance.Duration() << std::endl;
     }
 
-    if (true) {
+    if (false) {
 
         std::cout << "lamp::queue" << std::endl;
         constexpr size_t count = 100;
@@ -1093,7 +1093,8 @@ int main(int argc, const char * argv[]) {
         delete[] arr;
     }
 
-    if (true) {
+    //Binary search tree base.
+    if (false) {
         std::cout << "Binary search tree implementation test" << std::endl;
 
         for (int i = 0; i <= 10; ++i) {
@@ -1131,9 +1132,78 @@ int main(int argc, const char * argv[]) {
         std::cout << "min : " << bst.min() << ", ";
         std::cout << "max : " << bst.max() << ", ";
         std::cout << "size : " << bst.size() << std::endl;
+
+        auto exist_test = [&](int i) {
+            if (!bst.exist(i))
+                std::cout << i << " not exist." << std::endl;
+        };
+
+        exist_test(5);
+        exist_test(5);
+        exist_test(3);
+        exist_test(7);
+        exist_test(3);
+        exist_test(1);
+        exist_test(9);
+        exist_test(0);
+        exist_test(10);
+        exist_test(7);
+        exist_test(5);
+
+        exist_test(11); // should not exist
+        exist_test(12); // should not exist
+
+        bst.erase(5);
+        exist_test(5);
+        bst.erase(5);
+        exist_test(5);
+        bst.erase(5);
+        exist_test(5); // should not exist
     }
 
+    if (false) {
+        std::cout << "Binary tree performance measure" << std::endl;
 
+        Lamp::random_device<uint32_t> randdevice(12345);
+        int min = 5000;
+        int max = -5000;
+
+        constexpr size_t count = 800000;
+        constexpr int loop_count = 20;
+
+        std::chrono::duration<double> s;
+
+        for (int loop = 0; loop < loop_count; ++loop) {
+            TimeStamp::instance.Start();
+            Lamp::BinarySearchTree<int> bst;
+            for (size_t i = 0; i < count; ++i) {
+                int rand = randdevice.RandIntBetween(-4000, 4000);
+                min = std::min(rand, min);
+                max = std::max(rand, max);
+                bst.insert(rand);
+            }
+
+            if (bst.min() != min) {
+                std::cout << "min value not matching." << std::endl;
+            }
+
+            if (bst.max() != max) {
+                std::cout << "max value not matching." << std::endl;
+            }
+
+            bst.insert(0);
+            bst.exist(0);
+
+            TimeStamp::instance.End();
+            auto duration = TimeStamp::instance.Duration();
+            std::cout << duration << std::endl;
+            s += duration;
+        }
+
+        std::cout << s / loop_count << " in average." << std::endl;
+        // recursive version : 5.75988s in average.
+        //5.68381s in average.
+    }
 
 
     std::cout << std::endl;
