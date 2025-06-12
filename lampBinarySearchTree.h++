@@ -43,6 +43,40 @@ namespace Lamp {
             return curr;
         }
 
+        node* erase(node* _root, const T& _val) {
+            if (_root == nullptr)
+                return _root;
+
+            if (_val > _root->data_) {
+                _root->right_ = erase(_root->right_, _val);
+            }
+            else if (_val < _root->data_) {
+                _root->left_ = erase(_root->left_, _val);
+            }
+            else {
+                if (!_root->left_) {
+                    node* temp = _root->right_;
+                    delete _root;
+                    return temp;
+                }
+
+                if (!_root->right_) {
+                    node* temp = _root->left_;
+                    delete _root;
+                    return temp;
+                }
+
+                node* curr = _root->right_;
+                while (curr != nullptr && curr->left_ != nullptr)
+                    curr = curr->left_;
+
+                _root->data_ = curr->data_;
+                _root->right_ = erase(_root->right_, curr->data_);
+            }
+
+            return _root;
+        }
+
     public:
         ~BinarySearchTree() {
             clear();
@@ -91,6 +125,8 @@ namespace Lamp {
         bool exist(const T& _in) const {
             node* curr = head_;
 
+            LAMPASSERT(head_ != nullptr, "BinarySearchTree is empty.");
+
             while (curr) {
                 if (_in == curr->data_)
                     return true;
@@ -104,6 +140,13 @@ namespace Lamp {
             }
 
             return false;
+        }
+
+        void erase(const T& _in) {
+            LAMPASSERT(head_ != nullptr, "BinarySearchTree is empty.");
+            head_ = erase(head_, _in);
+
+            --size_;
         }
 
         T min() const {return min(head_)->data_;}

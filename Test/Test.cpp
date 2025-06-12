@@ -1094,18 +1094,46 @@ int main(int argc, const char * argv[]) {
     }
 
     if (true) {
-        Lamp::BinarySearchTree<int> bst;
-
         std::cout << "Binary search tree implementation test" << std::endl;
 
-        for (int i = 10; i >= 0; --i) {
-            bst.insert(i);
+        for (int i = 0; i <= 10; ++i) {
+            Lamp::BinarySearchTree<int> bst;
+
+            for (int j = 10; j >= 0; --j) {
+                bst.insert(j);
+            }
+
+            bst.erase(i);
+
+            std::cout << "min : " << bst.min() << ", ";
+            std::cout << "max : " << bst.max() << ", ";
+            std::cout << "size : " << bst.size() << std::endl;
         }
-
-
-        std::cout << "min : " << bst.min() << std::endl;
-        std::cout << "max : " << bst.max() << std::endl;
     }
+
+    if (true) {
+        std::cout << "Binary search tree number test" << std::endl;
+        //[5, 5, 3, 7, 3, 1, 9, 5, 7, 0, 10]
+
+        Lamp::BinarySearchTree<int> bst;
+        bst.insert(5);
+        bst.insert(5);
+        bst.insert(3);
+        bst.insert(7);
+        bst.insert(3);
+        bst.insert(1);
+        bst.insert(9);
+        bst.insert(5);
+        bst.insert(7);
+        bst.insert(0);
+        bst.insert(10);
+
+        std::cout << "min : " << bst.min() << ", ";
+        std::cout << "max : " << bst.max() << ", ";
+        std::cout << "size : " << bst.size() << std::endl;
+    }
+
+
 
 
     std::cout << std::endl;
