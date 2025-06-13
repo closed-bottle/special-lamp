@@ -244,7 +244,7 @@ namespace Lamp
                 return *this;
             }
 
-            T2 operator*() {
+            T2& operator*() {
                 return (container_->segments_[segment_index_].data_[index_]);
             }
         };

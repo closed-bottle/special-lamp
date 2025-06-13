@@ -9,7 +9,6 @@
 #include "../lampUnordered_map.h++"
 #include "../lampMath.h++"
 #include "../lampDeque.h++"
-#include "../lampAssert.h++"
 #include "../lampRandom.h++"
 #include "../lampStack.h++"
 #include "../lampQueue.h++"
@@ -26,15 +25,15 @@ class TimeStamp {
     static std::chrono::steady_clock::time_point end_;
 
 public:
-    void Start() {
+    static void Start() {
         start_ = std::chrono::steady_clock::now();
     }
 
-    void End() {
+    static void End() {
         end_ = std::chrono::steady_clock::now();
     }
 
-    std::chrono::duration<double> Duration() const {
+    static std::chrono::duration<double> Duration() {
         return end_ - start_;
     }
     static TimeStamp& instance;
@@ -55,7 +54,9 @@ struct HugeStruct {
         d = _i;
         f = _i;
         i = _i;
+        c = 0;
         memcpy(&c, &_i, 1);
+
 
         for (int j = 0; j < 16; ++j) {
             if (j % 3 == 0)
@@ -276,7 +277,7 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
             --curr_count;
     }
 
-    TimeStamp::instance.Start();
+    TimeStamp::Start();
     for (unsigned i = 0; i < count; ++i) {
         const Action& a = actions[i];
         const int& v = values[i];
@@ -295,10 +296,10 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
             break;
         }
     }
-    TimeStamp::instance.End();
-    auto lamp_duration = TimeStamp::instance.Duration();
+    TimeStamp::End();
+    auto lamp_duration = TimeStamp::Duration();
 
-    TimeStamp::instance.Start();
+    TimeStamp::Start();
     for (unsigned i = 0; i < count; ++i) {
         const Action& a = actions[i];
         const int& v = values[i];
@@ -317,8 +318,8 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
             break;
         }
     }
-    TimeStamp::instance.End();
-    auto std_duration = TimeStamp::instance.Duration();
+    TimeStamp::End();
+    auto std_duration = TimeStamp::Duration();
 
     std::cout << "For insert, " << std::endl;
     std::cout << "Lamp : " << lamp_duration << std::endl;
@@ -326,22 +327,22 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
 
     // Random access test
     volatile int s = 0;
-    TimeStamp::instance.Start();
+    TimeStamp::Start();
     for (size_t i = 0; i < deque.size(); ++i) {
         s += deque[i];
     }
-    TimeStamp::instance.End();
-    lamp_duration = TimeStamp::instance.Duration();
+    TimeStamp::End();
+    lamp_duration = TimeStamp::Duration();
 
     std::cout << s;
     s = 0;
 
-    TimeStamp::instance.Start();
+    TimeStamp::Start();
     for (size_t i = 0; i < std.size(); ++i) {
         s += std[i];
     }
-    TimeStamp::instance.End();
-    std_duration = TimeStamp::instance.Duration();
+    TimeStamp::End();
+    std_duration = TimeStamp::Duration();
 
     std::cout << s;
 
@@ -915,50 +916,50 @@ int main(int argc, const char * argv[]) {
 
     if (false) {
         std::cout << "========= capacity 3 ==========" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<3>(i, 12345, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
             //    std::cout << "Passed test with i : " << i << std::endl;
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
 
         std::cout << "========= capacity 1 ==========" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<1>(i, 23456, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
             //    std::cout << "Passed test with i : " << i << std::endl;
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
 
 
         std::cout << "========= capacity 2 ==========" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<2>(i, 34567, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
             //    std::cout << "Passed test with i : " << i << std::endl;
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
 
 
         std::cout << "========= capacity 77 ==========" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomDequeTest<77>(i, 56789, false))
                 std::cout << "Failed test with i : " << i << std::endl;
             //else
             //    std::cout << "Passed test with i : " << i << std::endl;
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
     }
 
 
@@ -1002,7 +1003,7 @@ int main(int argc, const char * argv[]) {
     if (false) {
         std::cout << "Performance measure" << std::endl;
         std::cout << "vector" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         Lamp::Vector<int> vector;
         for (size_t times = 0; times < 5; ++times) {
             for (size_t i = 0; i < 500000000; ++i) {
@@ -1010,8 +1011,8 @@ int main(int argc, const char * argv[]) {
             }
             vector.clear();
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
         // with normal new :
         // 9.74411s
         // 9.9182s
@@ -1028,37 +1029,37 @@ int main(int argc, const char * argv[]) {
     // unordered_map stress test
     if (false) {
         std::cout << "unordered_map stress test" << std::endl;
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         Lamp::unordered_map<int, void*> map;
         for (size_t times = 0; times < 5; ++times) {
             for (size_t i = 0; i < 400000; ++i) {
                 map[i] = &map[i];
             }
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
     }
 
     if (false) {
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomVectorTest(i, 12345, false)) {
                 std::cout << "Random vector test failed : " << i << std::endl;
             }
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
     }
 
     if (false) {
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 50000; ++i) {
             if (!RandomListTest<int>(i, 12345, false)) {
                 std::cout << "Random list test failed : " << i << std::endl;
             }
         }
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
     }
 
     // List erase test.
@@ -1066,7 +1067,7 @@ int main(int argc, const char * argv[]) {
         Lamp::random_device<uint32_t> randdevice;
         Lamp::list<int> list;
 
-        TimeStamp::instance.Start();
+        TimeStamp::Start();
         for (size_t i = 0; i < 25; ++i) {
             list.push_back(i);
         }
@@ -1085,8 +1086,8 @@ int main(int argc, const char * argv[]) {
         std::cout << std::endl << list.size() << std::endl;
 
 
-        TimeStamp::instance.End();
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        TimeStamp::End();
+        std::cout << TimeStamp::Duration() << std::endl;
     }
 
     if (false) {
@@ -1098,8 +1099,8 @@ int main(int argc, const char * argv[]) {
         Lamp::queue<int> lamp;
         int* arr = new int[count];
 
-        TimeStamp::instance.Start();
-        TimeStamp::instance.End();
+        TimeStamp::Start();
+        TimeStamp::End();
         for (size_t i = 0; i < count; ++i) {
             int rand = randdevice.RandIntBetween(-4000, 4000);
 
@@ -1119,7 +1120,7 @@ int main(int argc, const char * argv[]) {
             lamp.pop();
         }
 
-        std::cout << TimeStamp::instance.Duration() << std::endl;
+        std::cout << TimeStamp::Duration() << std::endl;
         delete[] arr;
     }
 
@@ -1204,7 +1205,7 @@ int main(int argc, const char * argv[]) {
         std::chrono::duration<double> s;
 
         for (int loop = 0; loop < loop_count; ++loop) {
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             Lamp::BinarySearchTree<int> bst;
             for (size_t i = 0; i < count; ++i) {
                 int rand = randdevice.RandIntBetween(-4000, 4000);
@@ -1224,8 +1225,8 @@ int main(int argc, const char * argv[]) {
             bst.insert(0);
             bst.exist(0);
 
-            TimeStamp::instance.End();
-            auto duration = TimeStamp::instance.Duration();
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
             std::cout << duration << std::endl;
             s += duration;
         }
@@ -1246,80 +1247,103 @@ int main(int argc, const char * argv[]) {
             std::vector<HugeStruct> std;
             Lamp::Vector<HugeStruct> lamp;
 
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (size_t i = 0; i < vcount; ++i) {
                 std.push_back(randdevice.RandIntBetween(-4000, 4000));
             }
-            TimeStamp::instance.End();
-            std::cout << "std::vector::push_back " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "std::vector::push_back " << TimeStamp::Duration() << std::endl;
 
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (size_t i = 0; i < vcount; ++i) {
                 lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
             }
-            TimeStamp::instance.End();
-            std::cout << "Lamp::Vector::push_back " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "Lamp::Vector::push_back " << TimeStamp::Duration() << std::endl;
 
 
             volatile int s = 0;
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (auto& i : std) {
                 s += i.i;
                 s += i.c;
                 s += static_cast<int>(i.d);
                 s += static_cast<int>(i.darr[s % 16]);
             }
-            TimeStamp::instance.End();
-            std::cout << "std::vector::for loop " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "std::vector::for loop& " << TimeStamp::Duration() << std::endl;
 
 
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (auto& i : lamp) {
                 s += i.i;
                 s += i.c;
                 s += static_cast<int>(i.d);
                 s += static_cast<int>(i.darr[s % 16]);
             }
-            TimeStamp::instance.End();
-            std::cout << "Lamp::Vector::for loop " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "Lamp::Vector::for loop& " << TimeStamp::Duration() << std::endl;
+
+            TimeStamp::Start();
+            for (auto i : std) {
+                s += i.i;
+                s += i.c;
+                s += static_cast<int>(i.d);
+                s += static_cast<int>(i.darr[s % 16]);
+            }
+            TimeStamp::End();
+            std::cout << "std::vector::for loop copy" << TimeStamp::Duration() << std::endl;
+
+
+            TimeStamp::Start();
+            for (auto i : lamp) {
+                s += i.i;
+                s += i.c;
+                s += static_cast<int>(i.d);
+                s += static_cast<int>(i.darr[s % 16]);
+            }
+            TimeStamp::End();
+            std::cout << "Lamp::Vector::for loop copy" << TimeStamp::Duration() << std::endl;
         }
+
+
 
         {
             std::deque<int> std;
             Lamp::deque<int> lamp;
 
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (size_t i = 0; i < dcount; ++i) {
                 std.push_back(randdevice.RandIntBetween(-4000, 4000));
                 std.push_front(randdevice.RandIntBetween(-4000, 4000));
             }
-            TimeStamp::instance.End();
-            std::cout << "std::deque::push_back and front " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "std::deque::push_back and front " << TimeStamp::Duration() << std::endl;
 
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (size_t i = 0; i < dcount; ++i) {
                 lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
                 lamp.push_front(randdevice.RandIntBetween(-4000, 4000));
             }
-            TimeStamp::instance.End();
-            std::cout << "Lamp::deque::push_back and front " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "Lamp::deque::push_back and front " << TimeStamp::Duration() << std::endl;
 
 
             volatile int s = 0;
-            TimeStamp::instance.Start();
+            TimeStamp::Start();
             for (auto& i : std) {
                 s += i;
             }
-            TimeStamp::instance.End();
-            std::cout << "std::deque::for loop " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "std::deque::for loop " << TimeStamp::Duration() << std::endl;
 
 
-            TimeStamp::instance.Start();
-            for (auto i : lamp) {
+            TimeStamp::Start();
+            for (auto& i : lamp) {
                 s += i;
             }
-            TimeStamp::instance.End();
-            std::cout << "Lamp::deque::for loop " << TimeStamp::instance.Duration() << std::endl;
+            TimeStamp::End();
+            std::cout << "Lamp::deque::for loop " << TimeStamp::Duration() << std::endl;
         }
     }
 
