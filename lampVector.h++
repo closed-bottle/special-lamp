@@ -214,6 +214,24 @@ namespace Lamp {
             size_++;
         }
 
+        template<typename... Args>
+        void emplace_back(Args&&... _args) {
+            if (capacity_ == size_) {
+                capacity_ = (capacity_ + 1) * 2;
+
+                T *new_data = AllocData();
+
+                for (uint64_t i = 0; i < size_; ++i) {
+                    new_data[i] = std::move(data_[i]);
+                }
+                delete[] data_;
+                data_ = new_data;
+            }
+
+            new (data_ + size_) T(static_cast<Args&&>(_args)...);
+            size_++;
+        }
+
         void pop_back() {
             size_--;
         }

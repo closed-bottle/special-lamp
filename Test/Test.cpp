@@ -68,6 +68,27 @@ struct HugeStruct {
         }
     }
 
+    HugeStruct(HugeStruct&& _rhs)
+        : d(std::move(_rhs.d)), f(std::move(_rhs.f)), i(std::move(_rhs.i)), c(std::move(_rhs.c)) {
+        memcpy(darr, _rhs.darr, sizeof(double) * 16);
+    }
+
+    HugeStruct(const HugeStruct& _rhs)
+        : d(_rhs.d), f(_rhs.f), i(_rhs.i), c(_rhs.c) {
+        memcpy(darr, _rhs.darr, sizeof(double) * 16);
+    }
+
+    HugeStruct& operator=(HugeStruct&& _rhs) {
+        if (this != &_rhs) {
+            d = std::move(_rhs.d);
+            f = std::move(_rhs.f);
+            i = std::move(_rhs.i);
+            c = std::move(_rhs.c);
+            memcpy(darr, _rhs.darr, sizeof(double) * 16);
+        }
+
+        return *this;
+    }
 } __attribute__((packed));
 
 std::chrono::steady_clock::time_point TimeStamp::start_;
@@ -1239,7 +1260,7 @@ int main(int argc, const char * argv[]) {
     // Range based for performance comparison test
     if (true) {
         Lamp::random_device<uint32_t> randdevice(12345);
-        constexpr size_t vcount = 1000000;
+        constexpr size_t vcount = 10000000;
         constexpr size_t dcount = 1000000;
 
         std::cout << "Performance comparison" << std::endl;
@@ -1260,6 +1281,23 @@ int main(int argc, const char * argv[]) {
             }
             TimeStamp::End();
             std::cout << "Lamp::Vector::push_back " << TimeStamp::Duration() << std::endl;
+
+
+            TimeStamp::Start();
+            for (size_t i = 0; i < vcount; ++i) {
+                std.emplace_back(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::End();
+            std::cout << "std::vector::emplace_back " << TimeStamp::Duration() << std::endl;
+
+            TimeStamp::Start();
+            for (size_t i = 0; i < vcount; ++i) {
+                lamp.emplace_back(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::End();
+            std::cout << "Lamp::Vector::emplace_back " << TimeStamp::Duration() << std::endl;
+
+
 
 
             volatile int s = 0;
