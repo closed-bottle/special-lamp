@@ -76,7 +76,6 @@ namespace Lamp {
                 : map_(_map), index_(_index), data_(_data) {
             }
 
-
             bool operator!=(const iterator &_rhs) const {
                 return index_ != _rhs.index_ || data_ != _rhs.data_;
             }

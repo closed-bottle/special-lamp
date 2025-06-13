@@ -39,6 +39,36 @@ public:
     }
     static TimeStamp& instance;
 };
+
+// Huge Pod Struct for testing..
+struct HugeStruct {
+    double d;
+    float f;
+    int i;
+    char c;
+
+    double darr[16];
+
+    HugeStruct() = default;
+    HugeStruct(int _i) {
+        // do the random thing..
+        d = _i;
+        f = _i;
+        i = _i;
+        memcpy(&c, &_i, 1);
+
+        for (int j = 0; j < 16; ++j) {
+            if (j % 3 == 0)
+                darr[j] = d;
+            else if (j % 3 == 0)
+                darr[j] = f;
+            else if (j % 3 == 0)
+                darr[j] = i;
+        }
+    }
+
+} __attribute__((packed));
+
 std::chrono::steady_clock::time_point TimeStamp::start_;
 std::chrono::steady_clock::time_point TimeStamp::end_;
 
@@ -797,7 +827,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true)
+    if (false)
     {
         using namespace Lamp;
         unordered_map<uint32_t, float> map;
@@ -813,7 +843,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true)
+    if (false)
     {
         Lamp::deque<int, 4> segment_tree;
         segment_tree.push_back(-1);
@@ -838,7 +868,7 @@ int main(int argc, const char * argv[]) {
         PrintDeque(segment_tree); // -1, -2, -3, -4, -5
     }
 
-    if (true)
+    if (false)
     {
         Lamp::random_device<uint32_t> randdevice;
         std::cout << randdevice.XORShift32StarStep() << std::endl;
@@ -872,7 +902,7 @@ int main(int argc, const char * argv[]) {
     //RandomDequeTest<3>(50, 12345, true);
     //RandomDequeTest<3>(707, 12345, true);
 
-    if (true) {
+    if (false) {
         Lamp::deque<int, 3> deque;
 
         for (int i = 0; i < 16; ++i) {
@@ -936,7 +966,7 @@ int main(int argc, const char * argv[]) {
         dequeComparison<4>(200000001, 99999, false);
     }
 
-    if (true) {
+    if (false) {
         constexpr uint32_t seed = 12345;
         Lamp::random_device<uint32_t> randdevice(static_cast<uint32_t>(seed));
         std::cout << "lamp::stack stress test" << std::endl;
@@ -1112,7 +1142,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true) {
+    if (false) {
         std::cout << "Binary search tree number test" << std::endl;
         //[5, 5, 3, 7, 3, 1, 9, 5, 7, 0, 10]
 
@@ -1205,6 +1235,93 @@ int main(int argc, const char * argv[]) {
         //5.68381s in average.
     }
 
+    // Range based for performance comparison test
+    if (true) {
+        Lamp::random_device<uint32_t> randdevice(12345);
+        constexpr size_t vcount = 1000000;
+        constexpr size_t dcount = 1000000;
+
+        std::cout << "Performance comparison" << std::endl;
+        {
+            std::vector<HugeStruct> std;
+            Lamp::Vector<HugeStruct> lamp;
+
+            TimeStamp::instance.Start();
+            for (size_t i = 0; i < vcount; ++i) {
+                std.push_back(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::instance.End();
+            std::cout << "std::vector::push_back " << TimeStamp::instance.Duration() << std::endl;
+
+            TimeStamp::instance.Start();
+            for (size_t i = 0; i < vcount; ++i) {
+                lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::instance.End();
+            std::cout << "Lamp::Vector::push_back " << TimeStamp::instance.Duration() << std::endl;
+
+
+            volatile int s = 0;
+            TimeStamp::instance.Start();
+            for (auto& i : std) {
+                s += i.i;
+                s += i.c;
+                s += static_cast<int>(i.d);
+                s += static_cast<int>(i.darr[s % 16]);
+            }
+            TimeStamp::instance.End();
+            std::cout << "std::vector::for loop " << TimeStamp::instance.Duration() << std::endl;
+
+
+            TimeStamp::instance.Start();
+            for (auto& i : lamp) {
+                s += i.i;
+                s += i.c;
+                s += static_cast<int>(i.d);
+                s += static_cast<int>(i.darr[s % 16]);
+            }
+            TimeStamp::instance.End();
+            std::cout << "Lamp::Vector::for loop " << TimeStamp::instance.Duration() << std::endl;
+        }
+
+        {
+            std::deque<int> std;
+            Lamp::deque<int> lamp;
+
+            TimeStamp::instance.Start();
+            for (size_t i = 0; i < dcount; ++i) {
+                std.push_back(randdevice.RandIntBetween(-4000, 4000));
+                std.push_front(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::instance.End();
+            std::cout << "std::deque::push_back and front " << TimeStamp::instance.Duration() << std::endl;
+
+            TimeStamp::instance.Start();
+            for (size_t i = 0; i < dcount; ++i) {
+                lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
+                lamp.push_front(randdevice.RandIntBetween(-4000, 4000));
+            }
+            TimeStamp::instance.End();
+            std::cout << "Lamp::deque::push_back and front " << TimeStamp::instance.Duration() << std::endl;
+
+
+            volatile int s = 0;
+            TimeStamp::instance.Start();
+            for (auto& i : std) {
+                s += i;
+            }
+            TimeStamp::instance.End();
+            std::cout << "std::deque::for loop " << TimeStamp::instance.Duration() << std::endl;
+
+
+            TimeStamp::instance.Start();
+            for (auto i : lamp) {
+                s += i;
+            }
+            TimeStamp::instance.End();
+            std::cout << "Lamp::deque::for loop " << TimeStamp::instance.Duration() << std::endl;
+        }
+    }
 
     std::cout << std::endl;
     return 0;

@@ -36,9 +36,11 @@ namespace Lamp
             }
 
         public :
+
             ~Segment() {
             }
         };
+
         static const size_t last_index_ = segmentSize -1;
         static constexpr size_t INITIAL_SEGMENT_COUNT = 5;
 
@@ -94,12 +96,13 @@ namespace Lamp
 
         public:
         deque() {
+            //end_itr_.container_ = this;
             segments_ = new Segment[INITIAL_SEGMENT_COUNT];
         }
 
         deque(const size_t& _initial_segment_size) : segment_capacity_(_initial_segment_size) {
+            end_itr_.container_ = this;
             segments_ = new Segment[_initial_segment_size];
-
         }
 
         ~deque() {
@@ -200,7 +203,81 @@ namespace Lamp
             return segments_[i].data_[j];
         }
 
+        class iterator {
+            friend deque;
 
+            deque* container_;
+            size_t segment_index_;
+            size_t index_;
+            size_t total_index_;
+
+        public:
+            iterator() = delete;
+            iterator(deque* _deque, size_t _segment, size_t _index)
+                : container_(_deque), segment_index_(_segment), index_(_index), total_index_(0) {}
+
+            bool operator!=(const iterator &_rhs) const {
+                return segment_index_ != _rhs.segment_index_ || index_ != _rhs.index_ || container_ != _rhs.container_
+                || total_index_ != _rhs.total_index_;
+            }
+
+            iterator operator++() {
+                if (total_index_ == container_->total_count_) {
+                    *this = end_itr_;
+                    return *this;
+                }
+                const Segment* curr_seg = &container_->segments_[segment_index_];
+
+                if (curr_seg->count_ == segmentSize) {
+                    const size_t next_seg_index = (segment_index_ + 1) % container_->segment_capacity_;
+                    curr_seg = &container_->segments_[next_seg_index];
+
+                    segment_index_ = next_seg_index;
+                    index_ = curr_seg->start_;
+                }
+                else {
+                    curr_seg = &container_->segments_[segment_index_];
+                    index_ = (index_ + 1) % segmentSize;
+                }
+
+                ++total_index_;
+                return *this;
+            }
+
+            T2 operator*() {
+                return (container_->segments_[segment_index_].data_[index_]);
+            }
+        };
+
+    protected:
+        inline static iterator end_itr_ = {nullptr, 0, 0};
+    public:
+
+        iterator begin() {
+            return {this, first_segment_, segments_[first_segment_].start_};
+        }
+
+        iterator end() {
+            return end_itr_;
+        }
+
+        const iterator cbegin() const {
+            return {this, first_segment_, segments_[first_segment_].start_};
+        }
+
+        const iterator cend() const {
+            return end_itr_;
+        }
+
+        const iterator begin() const {
+            return {this, first_segment_, segments_[first_segment_].start_};
+        }
+
+        const iterator end() const {
+            return end_itr_;
+        }
+
+        /*
         void DumpSegment() {
             std::cout << "=============================" << std::endl;
             size_t i = first_segment_;
@@ -220,7 +297,7 @@ namespace Lamp
             }
             std::cout << "=============================" << std::endl;
         }
-
+        */
     };
 }
 
