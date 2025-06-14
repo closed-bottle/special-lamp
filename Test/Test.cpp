@@ -89,6 +89,33 @@ struct HugeStruct {
 
         return *this;
     }
+
+    HugeStruct& operator=(const HugeStruct& _rhs) {
+        if (this != &_rhs) {
+            d = (_rhs.d);
+            f = (_rhs.f);
+            i = (_rhs.i);
+            c = (_rhs.c);
+            memcpy(darr, _rhs.darr, sizeof(double) * 16);
+        }
+
+        return *this;
+    }
+
+    bool operator!=(const HugeStruct& _rhs) {
+        bool result = true;
+
+        result = result && (_rhs.d != d);
+        result = result && (_rhs.i != i);
+        result = result && (_rhs.c != c);
+        result = result && (_rhs.f != f);
+
+        for (int i = 0; i < 16; ++i) {
+            result = result && (_rhs.darr[i] != darr[i]);
+        }
+
+        return result;
+    }
 } __attribute__((packed));
 
 std::chrono::steady_clock::time_point TimeStamp::start_;
@@ -237,6 +264,23 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
             << " : (expected)" << expected[(start + i) % count] << std::endl;
         }
     }
+
+    // Range based for test
+    {
+        size_t j = 0;
+        for (auto& i : deque) {
+
+            if (i != expected[(start + j) % count]) {
+                is_fail = true;
+                output << "Value difference during range based for loop " << " with value " <<
+                    i
+                << " : (expected)" << expected[(start + j) % count] << std::endl;
+            }
+
+            ++j;
+        }
+    }
+
 
     if (is_fail) {
         for (unsigned i = 0; i < expected_c; ++i) {
@@ -865,7 +909,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false)
+    if (true)
     {
         Lamp::deque<int, 4> segment_tree;
         segment_tree.push_back(-1);
@@ -920,11 +964,7 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    //RandomDequeTest<3>(10, 12345, false);
-    //RandomDequeTest<3>(50, 12345, true);
-    //RandomDequeTest<3>(707, 12345, true);
-
-    if (false) {
+    if (true) {
         Lamp::deque<int, 3> deque;
 
         for (int i = 0; i < 16; ++i) {
@@ -1257,13 +1297,75 @@ int main(int argc, const char * argv[]) {
         //5.68381s in average.
     }
 
+    if (true) {
+        std::cout << "deque emplace_back test" << std::endl;
+        {
+            Lamp::deque<HugeStruct> d;
+
+            d.push_front(7);
+            d.push_back(8);
+            d.push_front(6);
+            d.push_back(9);
+            d.push_front(5);
+            d.push_back(10);
+            d.push_front(4);
+            d.push_back(11);
+            d.push_front(3);
+            d.push_back(12);
+            d.push_front(2);
+            d.push_back(13);
+            d.push_front(1);
+            d.push_back(14);
+            d.push_front(0);
+            d.push_back(15);
+
+            for (int i = 0; i < 16; ++i) {
+                std::cout << d[i].i << ", ";
+            }
+            std::cout << std::endl;
+
+            for (auto& i : d) {
+                std::cout << i.i << ", ";
+            }
+            std::cout << std::endl;
+        }
+
+
+        {
+            Lamp::deque<HugeStruct> d;
+
+            d.emplace_front(7);
+            d.emplace_back(8);
+            d.emplace_front(6);
+            d.emplace_back(9);
+            d.emplace_front(5);
+            d.emplace_back(10);
+            d.emplace_front(4);
+            d.emplace_back(11);
+            d.emplace_front(3);
+            d.emplace_back(12);
+            d.emplace_front(2);
+            d.emplace_back(13);
+            d.emplace_front(1);
+            d.emplace_back(14);
+            d.emplace_front(0);
+            d.emplace_back(15);
+
+            for (auto& i : d) {
+                std::cout << i.i << ", ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
     // Range based for performance comparison test
     if (true) {
         Lamp::random_device<uint32_t> randdevice(12345);
         constexpr size_t vcount = 10000000;
-        constexpr size_t dcount = 1000000;
+        constexpr size_t dcount = 20000000;
 
         std::cout << "Performance comparison" << std::endl;
+        if (false)
         {
             std::vector<HugeStruct> std;
             Lamp::Vector<HugeStruct> lamp;
@@ -1345,43 +1447,94 @@ int main(int argc, const char * argv[]) {
         }
 
 
-
+        if (true)
         {
-            std::deque<int> std;
-            Lamp::deque<int> lamp;
+            std::deque<HugeStruct> std;
+            Lamp::deque<HugeStruct> lamp;
 
-            TimeStamp::Start();
-            for (size_t i = 0; i < dcount; ++i) {
-                std.push_back(randdevice.RandIntBetween(-4000, 4000));
-                std.push_front(randdevice.RandIntBetween(-4000, 4000));
+            {
+                TimeStamp::Start();
+                Lamp::random_device<uint32_t> randdevice(23456);
+
+                for (size_t i = 0; i < dcount; ++i) {
+                    std.push_back(randdevice.RandIntBetween(-4000, 4000));
+                    std.push_front(randdevice.RandIntBetween(-4000, 4000));
+                }
+                TimeStamp::End();
+                std::cout << "std::deque::push_back and front " << TimeStamp::Duration() << std::endl;
             }
-            TimeStamp::End();
-            std::cout << "std::deque::push_back and front " << TimeStamp::Duration() << std::endl;
 
-            TimeStamp::Start();
-            for (size_t i = 0; i < dcount; ++i) {
-                lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
-                lamp.push_front(randdevice.RandIntBetween(-4000, 4000));
+            {
+                TimeStamp::Start();
+                Lamp::random_device<uint32_t> randdevice(23456);
+
+                for (size_t i = 0; i < dcount; ++i) {
+                    lamp.push_back(randdevice.RandIntBetween(-4000, 4000));
+                    lamp.push_front(randdevice.RandIntBetween(-4000, 4000));
+                }
+                TimeStamp::End();
+                std::cout << "Lamp::deque::push_back and front " << TimeStamp::Duration() << std::endl;
             }
-            TimeStamp::End();
-            std::cout << "Lamp::deque::push_back and front " << TimeStamp::Duration() << std::endl;
+
+            {
+                TimeStamp::Start();
+                Lamp::random_device<uint32_t> randdevice(23456);
+
+                for (size_t i = 0; i < dcount; ++i) {
+                    std.emplace_back(randdevice.RandIntBetween(-4000, 4000));
+                    std.emplace_front(randdevice.RandIntBetween(-4000, 4000));
+                }
+                TimeStamp::End();
+                std::cout << "std::deque::emplace_back and front " << TimeStamp::Duration() << std::endl;
+            }
+
+            {
+                TimeStamp::Start();
+                Lamp::random_device<uint32_t> randdevice(23456);
+
+                for (size_t i = 0; i < dcount; ++i) {
+                    lamp.emplace_back(randdevice.RandIntBetween(-4000, 4000));
+                    lamp.emplace_front(randdevice.RandIntBetween(-4000, 4000));
+                }
+                TimeStamp::End();
+                std::cout << "Lamp::deque::emplace_back and front " << TimeStamp::Duration() << std::endl;
+            }
 
 
-            volatile int s = 0;
+            volatile size_t si = 0;
             TimeStamp::Start();
             for (auto& i : std) {
-                s += i;
+                si += i.i;
+                si += i.c;
+                //si += static_cast<int>(i.d);
+                //si += static_cast<int>(i.darr[si % 16]);
             }
             TimeStamp::End();
             std::cout << "std::deque::for loop " << TimeStamp::Duration() << std::endl;
 
-
+            volatile size_t sj = 0;
             TimeStamp::Start();
             for (auto& i : lamp) {
-                s += i;
+                sj += i.i;
+                sj += i.c;
+                //sj += static_cast<int>(i.d);
+                //sj += static_cast<int>(i.darr[sj % 16]);
             }
             TimeStamp::End();
             std::cout << "Lamp::deque::for loop " << TimeStamp::Duration() << std::endl;
+
+
+            if (si != sj) {
+                std::cout << "Lamp::deque and std::deque failed sum check." << std::endl;
+            }
+            /*
+            for (size_t i = 0; i < lamp.size(); ++i) {
+                if (std[i] != lamp[i]) {
+                    std::cout << "Lamp::deque and std::deque failed comparison check." << std::endl;
+                    break;
+                }
+            }
+            */
         }
     }
 

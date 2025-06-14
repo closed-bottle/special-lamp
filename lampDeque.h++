@@ -36,9 +36,6 @@ namespace Lamp
             }
 
         public :
-
-            ~Segment() {
-            }
         };
 
         static const size_t last_index_ = segmentSize -1;
@@ -162,6 +159,47 @@ namespace Lamp
             ++total_count_;
         }
 
+        template<typename... Args>
+        void emplace_back(Args&&... _args) {
+            if (segments_[last_segment_].IsFull()) {
+                const auto new_last_ = (last_segment_ + 1) % segment_capacity_;
+                if (first_segment_ == new_last_) {
+                    ReallocateShift();
+                    // need to re compute it after reallocation
+                    last_segment_ = (last_segment_ + 1) % segment_capacity_;
+                }
+                else
+                    last_segment_ = new_last_;
+            }
+
+            Segment& curr_segment = segments_[last_segment_];
+            new (curr_segment.data_ + curr_segment.LastIndex()) T2(static_cast<Args&&>(_args)...);
+            ++curr_segment.count_;
+            ++total_count_;
+        }
+
+        template<typename... Args>
+        void emplace_front(Args&&... _args) {
+            if (segments_[first_segment_].IsFull()) {
+                const auto new_front = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
+                if (last_segment_ == new_front) {
+                    ReallocateShift();
+                    // need to re compute it after reallocation
+                    first_segment_ = (first_segment_ + segment_capacity_ -1) % segment_capacity_;
+                }
+                else
+                    first_segment_ = new_front;
+            }
+
+            Segment& curr_segment = segments_[first_segment_];
+
+            curr_segment.start_ = (curr_segment.start_ + segmentSize - 1) % segmentSize;
+            new (curr_segment.data_ + curr_segment.start_) T2(static_cast<Args&&>(_args)...);
+
+            ++curr_segment.count_;
+            ++total_count_;
+        }
+
         void pop_back() {
             if (total_count_) {
                 --segments_[last_segment_].count_;
@@ -222,25 +260,21 @@ namespace Lamp
             }
 
             iterator operator++() {
-                if (total_index_ == container_->total_count_) {
+                if (++total_index_ >= container_->total_count_) {
                     *this = end_itr_;
                     return *this;
                 }
-                const Segment* curr_seg = &container_->segments_[segment_index_];
 
-                if (curr_seg->count_ == segmentSize) {
+                const Segment* curr_seg = &container_->segments_[segment_index_];
+                index_ = (index_ + 1) % segmentSize;
+
+                if (curr_seg->LastIndex() == index_) {
                     const size_t next_seg_index = (segment_index_ + 1) % container_->segment_capacity_;
-                    curr_seg = &container_->segments_[next_seg_index];
 
                     segment_index_ = next_seg_index;
-                    index_ = curr_seg->start_;
-                }
-                else {
-                    curr_seg = &container_->segments_[segment_index_];
-                    index_ = (index_ + 1) % segmentSize;
+                    index_ = container_->segments_[next_seg_index].start_;
                 }
 
-                ++total_index_;
                 return *this;
             }
 
@@ -254,6 +288,8 @@ namespace Lamp
     public:
 
         iterator begin() {
+            if (!total_count_)
+                return end_itr_;
             return {this, first_segment_, segments_[first_segment_].start_};
         }
 
@@ -262,6 +298,8 @@ namespace Lamp
         }
 
         const iterator cbegin() const {
+            if (!total_count_)
+                return end_itr_;
             return {this, first_segment_, segments_[first_segment_].start_};
         }
 
@@ -270,6 +308,8 @@ namespace Lamp
         }
 
         const iterator begin() const {
+            if (!total_count_)
+                return end_itr_;
             return {this, first_segment_, segments_[first_segment_].start_};
         }
 
