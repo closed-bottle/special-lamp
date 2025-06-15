@@ -13,6 +13,7 @@
 #include "../lampStack.h++"
 #include "../lampQueue.h++"
 #include "../lampBinarySearchTree.h++"
+#include "../lampAlgorithm.h++"
 
 #include <vector>
 #include <deque>
@@ -1366,7 +1367,7 @@ int main(int argc, const char * argv[]) {
 
         constexpr bool vector_tests = false;
         constexpr bool std_deque_tests = false;
-        constexpr bool lamp_deque_tests = true;
+        constexpr bool lamp_deque_tests = false;
 
 
         std::cout << "Performance comparison" << std::endl;
@@ -1546,6 +1547,20 @@ int main(int argc, const char * argv[]) {
                 std::cout << "Lamp::deque and std::deque failed sum check." << std::endl;
             }
         }
+    }
+
+    // Algorithm : sort test
+    if (true) {
+        Lamp::Vector<int> v;
+
+        v.push_back(4);
+        v.push_back(3);
+        v.push_back(2);
+        v.push_back(1);
+
+        Lamp::sort(v.begin(), v.end(), Lamp::SortStrat::SortBubbleAscending);
+
+        PrintVector(v);
     }
 
     std::cout << std::endl;
