@@ -9,25 +9,27 @@
 namespace {
     template<typename itr_type>
     void BubbleSortAscending(itr_type& _begin, itr_type& _end) {
-        itr_type& left = _begin;
 
-        while (left != _end) {
-            itr_type begin = {};
+        while (_begin != _end) {
+            itr_type left = _begin;
             // + operator would most likely not implemented.
+            itr_type next = {};
             {
                 itr_type temp = left;
                 ++temp;
-                begin = temp;
+                next = temp;
             }
-            itr_type end = _end;
 
-            for (; begin != end; ++begin) {
-                if (*left > *begin) {
-                    Lamp::Swap(*left, *begin);
+            while (next != _end) {
+                if (*left > *next) {
+                    Lamp::Swap(*left, *next);
                 }
+
+                ++left;
+                ++next;
             }
 
-            ++left;
+            _end = left;
         }
     }
 }
