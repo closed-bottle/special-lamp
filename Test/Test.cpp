@@ -49,6 +49,7 @@ struct HugeStruct {
     double darr[16];
 
     HugeStruct() = default;
+
     HugeStruct(int _i) {
         // do the random thing..
         d = _i;
@@ -1362,7 +1363,6 @@ int main(int argc, const char * argv[]) {
     if (true) {
         Lamp::random_device<uint32_t> randdevice(12345);
         constexpr size_t vcount = 10000000;
-        constexpr size_t dcount = 20000000;
 
         std::cout << "Performance comparison" << std::endl;
         if (false)
@@ -1446,13 +1446,16 @@ int main(int argc, const char * argv[]) {
             std::cout << "Lamp::Vector::for loop copy" << TimeStamp::Duration() << std::endl;
         }
 
-
+        constexpr size_t dcount = 20000000;
         if (true)
         {
-            std::deque<HugeStruct> std;
-            Lamp::deque<HugeStruct> lamp;
+            volatile size_t si = 0;
+            volatile size_t sj = 0;
+
 
             {
+                std::deque<HugeStruct> std;
+
                 TimeStamp::Start();
                 Lamp::random_device<uint32_t> randdevice(23456);
 
@@ -1462,9 +1465,36 @@ int main(int argc, const char * argv[]) {
                 }
                 TimeStamp::End();
                 std::cout << "std::deque::push_back and front " << TimeStamp::Duration() << std::endl;
+
+
+                TimeStamp::Start();
+                for (size_t i = 0; i < dcount; ++i) {
+                    std.emplace_back(randdevice.RandIntBetween(-4000, 4000));
+                    std.emplace_front(randdevice.RandIntBetween(-4000, 4000));
+                }
+                TimeStamp::End();
+                std::cout << "std::deque::emplace_back and front " << TimeStamp::Duration() << std::endl;
+
+
+                TimeStamp::Start();
+                for (auto& i : std) {
+                    si += i.i;
+                    si += i.c;
+                    //si += static_cast<int>(i.d);
+                    //si += static_cast<int>(i.darr[si % 16]);
+                }
+                TimeStamp::End();
+                std::cout << "std::deque::for loop " << TimeStamp::Duration() << std::endl;
+
+                TimeStamp::Start();
             }
+            TimeStamp::End();
+            std::cout << "std::deque::~deque() " << TimeStamp::Duration() << std::endl;
+
 
             {
+                Lamp::deque<HugeStruct> lamp;
+
                 TimeStamp::Start();
                 Lamp::random_device<uint32_t> randdevice(23456);
 
@@ -1474,23 +1504,9 @@ int main(int argc, const char * argv[]) {
                 }
                 TimeStamp::End();
                 std::cout << "Lamp::deque::push_back and front " << TimeStamp::Duration() << std::endl;
-            }
 
-            {
+
                 TimeStamp::Start();
-                Lamp::random_device<uint32_t> randdevice(23456);
-
-                for (size_t i = 0; i < dcount; ++i) {
-                    std.emplace_back(randdevice.RandIntBetween(-4000, 4000));
-                    std.emplace_front(randdevice.RandIntBetween(-4000, 4000));
-                }
-                TimeStamp::End();
-                std::cout << "std::deque::emplace_back and front " << TimeStamp::Duration() << std::endl;
-            }
-
-            {
-                TimeStamp::Start();
-                Lamp::random_device<uint32_t> randdevice(23456);
 
                 for (size_t i = 0; i < dcount; ++i) {
                     lamp.emplace_back(randdevice.RandIntBetween(-4000, 4000));
@@ -1498,30 +1514,24 @@ int main(int argc, const char * argv[]) {
                 }
                 TimeStamp::End();
                 std::cout << "Lamp::deque::emplace_back and front " << TimeStamp::Duration() << std::endl;
-            }
 
 
-            volatile size_t si = 0;
-            TimeStamp::Start();
-            for (auto& i : std) {
-                si += i.i;
-                si += i.c;
-                //si += static_cast<int>(i.d);
-                //si += static_cast<int>(i.darr[si % 16]);
-            }
-            TimeStamp::End();
-            std::cout << "std::deque::for loop " << TimeStamp::Duration() << std::endl;
+                TimeStamp::Start();
+                for (auto& i : lamp) {
+                    sj += i.i;
+                    sj += i.c;
+                    //sj += static_cast<int>(i.d);
+                    //sj += static_cast<int>(i.darr[sj % 16]);
+                }
+                TimeStamp::End();
+                std::cout << "Lamp::deque::for loop " << TimeStamp::Duration() << std::endl;
 
-            volatile size_t sj = 0;
-            TimeStamp::Start();
-            for (auto& i : lamp) {
-                sj += i.i;
-                sj += i.c;
-                //sj += static_cast<int>(i.d);
-                //sj += static_cast<int>(i.darr[sj % 16]);
+                TimeStamp::Start();
             }
             TimeStamp::End();
-            std::cout << "Lamp::deque::for loop " << TimeStamp::Duration() << std::endl;
+            std::cout << "Lamp::deque::~deque() " << TimeStamp::Duration() << std::endl;
+
+
 
 
             if (si != sj) {
