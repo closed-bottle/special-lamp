@@ -1364,8 +1364,13 @@ int main(int argc, const char * argv[]) {
         Lamp::random_device<uint32_t> randdevice(12345);
         constexpr size_t vcount = 10000000;
 
+        constexpr bool vector_tests = false;
+        constexpr bool std_deque_tests = false;
+        constexpr bool lamp_deque_tests = true;
+
+
         std::cout << "Performance comparison" << std::endl;
-        if (false)
+        if (vector_tests)
         {
             std::vector<HugeStruct> std;
             Lamp::Vector<HugeStruct> lamp;
@@ -1446,13 +1451,12 @@ int main(int argc, const char * argv[]) {
             std::cout << "Lamp::Vector::for loop copy" << TimeStamp::Duration() << std::endl;
         }
 
-        constexpr size_t dcount = 20000000;
-        if (true)
+        constexpr size_t dcount = 40000000;
         {
             volatile size_t si = 0;
             volatile size_t sj = 0;
 
-
+            if (std_deque_tests)
             {
                 std::deque<HugeStruct> std;
 
@@ -1488,10 +1492,14 @@ int main(int argc, const char * argv[]) {
 
                 TimeStamp::Start();
             }
-            TimeStamp::End();
-            std::cout << "std::deque::~deque() " << TimeStamp::Duration() << std::endl;
+
+            if (std_deque_tests) {
+                TimeStamp::End();
+                std::cout << "std::deque::~deque() " << TimeStamp::Duration() << std::endl;
+            }
 
 
+            if (lamp_deque_tests)
             {
                 Lamp::deque<HugeStruct> lamp;
 
@@ -1528,23 +1536,15 @@ int main(int argc, const char * argv[]) {
 
                 TimeStamp::Start();
             }
-            TimeStamp::End();
-            std::cout << "Lamp::deque::~deque() " << TimeStamp::Duration() << std::endl;
+            if (lamp_deque_tests) {
+                TimeStamp::End();
+                std::cout << "Lamp::deque::~deque() " << TimeStamp::Duration() << std::endl;
+            }
 
 
-
-
-            if (si != sj) {
+            if (lamp_deque_tests && std_deque_tests && si != sj) {
                 std::cout << "Lamp::deque and std::deque failed sum check." << std::endl;
             }
-            /*
-            for (size_t i = 0; i < lamp.size(); ++i) {
-                if (std[i] != lamp[i]) {
-                    std::cout << "Lamp::deque and std::deque failed comparison check." << std::endl;
-                    break;
-                }
-            }
-            */
         }
     }
 
