@@ -266,6 +266,52 @@ namespace Lamp {
         uint64_t size() const {
             return count_;
         }
+
+
+        class iterator {
+            friend list;
+            node* curr;
+        public:
+            iterator() = delete;
+            iterator(node* _in) : curr(_in) {};
+
+            bool operator!=(const iterator &_rhs) const {
+                return curr != _rhs.curr;
+            }
+
+            iterator& operator++() {
+                curr = curr->next_;
+                return *this;
+            }
+
+            T& operator*() {
+                return curr->data_;
+            }
+        };
+
+        iterator begin() {
+            return {head_};
+        }
+
+        iterator end() {
+            return nullptr;
+        }
+
+        const iterator cbegin() const {
+            return {head_};
+        }
+
+        const iterator cend() const {
+            return nullptr;
+        }
+
+        const iterator begin() const {
+            return {head_};
+        }
+
+        const iterator end() const {
+            return nullptr;
+        }
     };
 }
 

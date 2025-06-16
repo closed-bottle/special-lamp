@@ -1553,8 +1553,8 @@ int main(int argc, const char * argv[]) {
     if (true) {
         Lamp::Vector<int> v;
         Lamp::deque<int> d;
-        Lamp::list<int> l; // not implemented yet
-        Lamp::unordered_map<int, int> u; // unordered_map..
+        Lamp::list<int> l;
+        Lamp::unordered_map<int, int> u;
 
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1563,10 +1563,10 @@ int main(int argc, const char * argv[]) {
         for (size_t i = 0; i < test_count; ++i) {
             v.push_back(rand.RandIntBetween(-5000, 5000));
             d.push_back(rand.RandIntBetween(-5000, 5000));
+            l.push_back(rand.RandIntBetween(-5000, 5000));
             u[rand.RandIntBetween(-5000, 5000)] = rand.RandIntBetween(-5000, 5000);
         }
         Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(v.begin(), v.end());
-
         for (size_t i = 1; i < test_count; ++i) {
             if (v[i-1] > v[i]) {
                 std::cout << "Lamp::Vector not sorted properly." << std::endl;
@@ -1578,19 +1578,32 @@ int main(int argc, const char * argv[]) {
         Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(d.begin(), d.end());
         for (size_t i = 1; i < test_count; ++i) {
             if (d[i-1] > d[i]) {
-                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                std::cout << "Lamp::deque not sorted properly." << std::endl;
                 PrintDeque(d);
                 break;
             }
         }
 
-        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(u.begin(), u.end());
-        Lamp::pair<int, int> prev(-5001, 1);
-        for (const auto& p : u) {
-            if (prev.first > p.first) {
-                std::cout << "Lamp::unordered_map not sorted properly." << std::endl;
+        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(l.begin(), l.end());
+        {
+            int prev = -5001;
+            for (const auto& i : l) {
+                if (prev > i) {
+                    std::cout << "Lamp::unordered_map not sorted properly." << std::endl;
+                }
+                prev = i;
             }
-            prev = p;
+        }
+
+        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(u.begin(), u.end());
+        {
+            Lamp::pair<int, int> prev(-5001, 1);
+            for (const auto& p : u) {
+                if (prev.first > p.first) {
+                    std::cout << "Lamp::unordered_map not sorted properly." << std::endl;
+                }
+                prev = p;
+            }
         }
     }
 
