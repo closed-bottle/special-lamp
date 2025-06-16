@@ -111,7 +111,7 @@ namespace Lamp {
                 return *this;
             }
 
-            pair<T1, T2> operator*() {
+            pair<T1, T2>& operator*() {
                 return *data_;
             }
         };
