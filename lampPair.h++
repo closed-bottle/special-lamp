@@ -17,6 +17,14 @@ namespace Lamp {
             return _rhs.first != first || _rhs.second != second;
         }
 
+        bool operator<(const pair& _rhs) const {
+            return first < _rhs.first;
+        }
+
+        bool operator>(const pair& _rhs) const {
+            return first > _rhs.first;
+        }
+
         T1 first;
         T2 second;
     };
