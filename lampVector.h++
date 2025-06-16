@@ -175,7 +175,6 @@ namespace Lamp {
             return data_ + size_;
         }
 
-
         uint64_t size() const {
             return size_;
         }
