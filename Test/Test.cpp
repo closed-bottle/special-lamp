@@ -1552,15 +1552,46 @@ int main(int argc, const char * argv[]) {
     // Algorithm : sort test
     if (true) {
         Lamp::Vector<int> v;
+        Lamp::deque<int> d;
+        Lamp::list<int> l; // not implemented yet
+        Lamp::unordered_map<int, int> u; // unordered_map..
 
-        v.push_back(4);
-        v.push_back(3);
-        v.push_back(2);
-        v.push_back(1);
+        Lamp::random_device<uint32_t> rand(34567);
 
-        Lamp::sort(v.begin(), v.end(), Lamp::SortStrat::SortBubbleAscending);
+        constexpr size_t test_count = 1000;
 
-        PrintVector(v);
+        for (size_t i = 0; i < test_count; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+            d.push_back(rand.RandIntBetween(-5000, 5000));
+            u[rand.RandIntBetween(-5000, 5000)] = rand.RandIntBetween(-5000, 5000);
+        }
+        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(v.begin(), v.end());
+
+        for (size_t i = 1; i < test_count; ++i) {
+            if (v[i-1] > v[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+                break;
+            }
+        }
+
+        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(d.begin(), d.end());
+        for (size_t i = 1; i < test_count; ++i) {
+            if (d[i-1] > d[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintDeque(d);
+                break;
+            }
+        }
+
+        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(u.begin(), u.end());
+        Lamp::pair<int, int> prev(-5001, 1);
+        for (const auto& p : u) {
+            if (prev.first > p.first) {
+                std::cout << "Lamp::unordered_map not sorted properly." << std::endl;
+            }
+            prev = p;
+        }
     }
 
     std::cout << std::endl;
