@@ -80,7 +80,7 @@ namespace Lamp {
                 return index_ != _rhs.index_ || data_ != _rhs.data_;
             }
 
-            iterator operator++() {
+            iterator& operator++() {
                 node *n = map_->bucket_[index_].head_;
                 while (&n->data_ != data_) {
                     n = n->next_;

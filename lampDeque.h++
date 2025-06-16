@@ -259,7 +259,7 @@ namespace Lamp
                 || total_index_ != _rhs.total_index_;
             }
 
-            iterator operator++() {
+            iterator& operator++() {
                 if (++total_index_ >= container_->total_count_) {
                     *this = end_itr_;
                     return *this;
