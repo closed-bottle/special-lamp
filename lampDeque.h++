@@ -281,6 +281,14 @@ namespace Lamp
             T2& operator*() {
                 return (container_->segments_[segment_index_].data_[index_]);
             }
+
+            bool operator<(const iterator &_rhs) const {
+                return total_index_ < _rhs.total_index_;
+            }
+
+            bool operator>(const iterator &_rhs) const {
+                return total_index_ > _rhs.total_index_;
+            }
         };
 
     protected:
