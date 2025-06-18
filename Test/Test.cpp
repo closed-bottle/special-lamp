@@ -51,7 +51,7 @@ struct HugeStruct {
 
     HugeStruct() = default;
 
-    HugeStruct(int _i) {
+    HugeStruct(const int& _i) {
         // do the random thing..
         d = _i;
         f = _i;
@@ -69,6 +69,26 @@ struct HugeStruct {
                 darr[j] = i;
         }
     }
+
+    HugeStruct(int&& _i) {
+        // do the same thing..
+        d = std::move(_i);
+        f = _i;
+        i = _i;
+        c = 0;
+        memcpy(&c, &_i, 1);
+
+
+        for (int j = 0; j < 16; ++j) {
+            if (j % 3 == 0)
+                darr[j] = d;
+            else if (j % 3 == 0)
+                darr[j] = f;
+            else if (j % 3 == 0)
+                darr[j] = i;
+        }
+    }
+
 
     HugeStruct(HugeStruct&& _rhs)
         : d(std::move(_rhs.d)), f(std::move(_rhs.f)), i(std::move(_rhs.i)), c(std::move(_rhs.c)) {
@@ -1616,11 +1636,9 @@ int main(int argc, const char * argv[]) {
 
         constexpr size_t test_count = 1000;
 
-
         for (size_t i = 0; i < test_count; ++i) {
             v.push_back(rand.RandIntBetween(-5000, 5000));
         }
-
 
         Lamp::sort<Lamp::SortStrat::SortQuickAscending>(v.begin(), v.end());
         for (size_t i = 1; i < test_count; ++i) {
@@ -1630,9 +1648,63 @@ int main(int argc, const char * argv[]) {
                 break;
             }
         }
+    }
 
-        PrintVector(v);
+    // Sort comparison : bubble vs quick.
+    // Quick should be faster, but it can be slower due to poor implementation.
+    if (true) {
+        constexpr size_t vcount = 10000000;
 
+        std::cout << "Bubble sort : SKIP"; // Skipping bubble sort, it is too slow to compare..
+        /*
+        {
+            Lamp::Vector<int> v;
+            Lamp::random_device<uint32_t> rand(34567);
+
+            for (size_t i = 0; i < vcount; ++i) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+            TimeStamp::Start();
+            Lamp::sort<Lamp::SortBubbleAscending>(v.begin(), v.end());
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
+            std::cout << duration << std::endl;
+        }
+        */
+        std::cout << std::endl;;
+
+        std::cout << "Quick sort : ";
+        {
+            Lamp::Vector<int> v;
+            Lamp::random_device<uint32_t> rand(34567);
+
+            for (size_t i = 0; i < vcount; ++i) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+            TimeStamp::Start();
+            Lamp::sort<Lamp::SortQuickAscending>(v.begin(), v.end());
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
+            std::cout << duration << std::endl;
+        }
+
+        // std::sort(Introsort?)
+        std::cout << "std::sort : ";
+        {
+            std::vector<int> v;
+            Lamp::random_device<uint32_t> rand(34567);
+
+            for (size_t i = 0; i < vcount; ++i) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+            TimeStamp::Start();
+            std::sort(v.begin(), v.end());
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
+            std::cout << duration << std::endl;
+        }
+
+        // Quick sort is faster when n is smaller(I think it happens because of the depth).
     }
 
     std::cout << std::endl;

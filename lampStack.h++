@@ -36,6 +36,11 @@ namespace Lamp {
             deque::push_back(_in);
         }
 
+        template<typename... Args>
+        void emplace(Args&&... _args) {
+            deque::emplace_back(static_cast<Args&&>(_args)...);
+        }
+
         void pop() {
             deque::pop_back();
         }

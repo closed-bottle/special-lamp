@@ -84,13 +84,19 @@ namespace {
 
     template<typename itr_type>
     void QuickSort(itr_type _begin, itr_type _end) {
-        if (_begin < _end) {
-            itr_type pivot = QuickPartition(_begin, _end);
-            itr_type i = _begin;
-            itr_type j = _end;
 
-            QuickSort(_begin, pivot);
-            QuickSort(++pivot, _end);
+        Lamp::stack<Lamp::pair<itr_type, itr_type>> stck;
+        stck.emplace(_begin, _end);
+
+        while (!stck.empty()) {
+            auto curr = stck.top();
+            stck.pop();
+
+            if (curr.first < curr.second) {
+                itr_type pivot = QuickPartition(curr.first, curr.second);
+                stck.emplace(curr.first, pivot);
+                stck.emplace(++pivot, curr.second);
+            }
         }
     }
 
