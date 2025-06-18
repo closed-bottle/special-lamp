@@ -9,6 +9,7 @@ namespace Lamp {
     enum SortStrat {
         SortInvalid = 0,
         SortBubbleAscending,
+        SortQuickAscending,
         SortCount
     };
 }
@@ -46,6 +47,58 @@ namespace {
 
                 _end = left;
             }
+        }
+    };
+
+    template<typename itr_type>
+    itr_type QuickPartition(itr_type _low, itr_type _high) {
+        // Few points to note:
+        // 1. It only works with C-style data set if operator < is not implemented.
+        //  it is not implemented for vector, but it is guaranteed to work with address from C-style data set.
+        // 2. I can only use first(_low) iterator as pivot, because _end is not an actual value, but a marker.
+
+        itr_type pivot = _low;
+        itr_type i = _low++; // must be same with initial _low, so it can be out of bound. we can use condition
+                             // i == _low as nullptr.
+        itr_type j = _low;
+
+
+        while (j != _high) {
+            if ((*j) <= *pivot) {
+                ++i;
+
+                // Again, < operator needs to be implemented or this one should be C style array.
+                if (i < j) {
+                    Lamp::Swap(*i, *j);
+                }
+            }
+            ++j;
+        }
+
+        Lamp::Swap(*i, *pivot);
+        Lamp::Swap(i, pivot);
+
+
+        return pivot;
+    }
+
+    template<typename itr_type>
+    void QuickSort(itr_type _begin, itr_type _end) {
+        if (_begin < _end) {
+            itr_type pivot = QuickPartition(_begin, _end);
+            itr_type i = _begin;
+            itr_type j = _end;
+
+            QuickSort(_begin, pivot);
+            QuickSort(++pivot, _end);
+        }
+    }
+
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortQuickAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            QuickSort(_begin, _end);
         }
     };
 }

@@ -1551,6 +1551,7 @@ int main(int argc, const char * argv[]) {
 
     // Algorithm : sort test
     if (true) {
+        std::cout << "Bubble sort implementation test" << std::endl;
         Lamp::Vector<int> v;
         Lamp::deque<int> d;
         Lamp::list<int> l;
@@ -1605,6 +1606,33 @@ int main(int argc, const char * argv[]) {
                 prev = p;
             }
         }
+    }
+
+    // Quick sort implementation test
+    if (true) {
+        std::cout << "Quick sort implementation test" << std::endl;
+        Lamp::Vector<int> v;
+        Lamp::random_device<uint32_t> rand(34567);
+
+        constexpr size_t test_count = 1000;
+
+
+        for (size_t i = 0; i < test_count; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+        }
+
+
+        Lamp::sort<Lamp::SortStrat::SortQuickAscending>(v.begin(), v.end());
+        for (size_t i = 1; i < test_count; ++i) {
+            if (v[i-1] > v[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+                break;
+            }
+        }
+
+        PrintVector(v);
+
     }
 
     std::cout << std::endl;
