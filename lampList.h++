@@ -270,22 +270,32 @@ namespace Lamp {
 
         class iterator {
             friend list;
-            node* curr;
+            node* curr_;
+            uint64_t location_;
         public:
             iterator() = delete;
-            iterator(node* _in) : curr(_in) {};
+            iterator(node* _in) : curr_(_in), location_(0) {};
 
             bool operator!=(const iterator &_rhs) const {
-                return curr != _rhs.curr;
+                return curr_ != _rhs.curr_;
             }
 
             iterator& operator++() {
-                curr = curr->next_;
+                curr_ = curr_->next_;
+                ++location_;
                 return *this;
             }
 
             T& operator*() {
-                return curr->data_;
+                return curr_->data_;
+            }
+
+            bool operator<(const iterator &_rhs) const {
+                return location_ < _rhs.location_;
+            }
+
+            bool operator>(const iterator &_rhs) const {
+                return location_ > _rhs.location_;
             }
         };
 
