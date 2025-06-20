@@ -107,6 +107,33 @@ namespace {
             QuickSort(_begin, _end);
         }
     };
+
+    template<typename T>
+    void heapifyAux(T* _arr, size_t _count, size_t _i) {
+        static auto get_left_child = [](const size_t& _index) -> size_t {
+            return 2*_index+1;
+        };
+
+        static auto get_right_child = [&](const size_t& _index) -> size_t {
+            return 2*_index+2;
+        };
+
+        auto left = get_left_child(_i);
+        auto right = get_right_child(_i);
+        auto maximum = _i;
+
+        if (left < _count && _arr[left] > _arr[maximum]) {
+            maximum = left;
+        }
+        if (right < _count && _arr[right] > _arr[maximum]) {
+            maximum = right;
+        }
+
+        if (maximum != _i) {
+            Lamp::Swap(_arr[_i], _arr[maximum]);
+            heapifyAux(_arr, _count, maximum);
+        }
+    }
 }
 
 
@@ -114,6 +141,15 @@ namespace Lamp {
     template<SortStrat strat>
     void sort(auto _begin, auto _end) {
         SortHelper<decltype(_begin), strat>::sort(_begin, _end);
+    }
+
+    template<typename T>
+    void make_heap(T* _arr, size_t _count) {
+        const size_t _stride = sizeof(T);
+
+        for (size_t i = 1; i <= _count; ++i) {
+            heapifyAux(_arr, _count, (_count - i));
+        }
     }
 };
 

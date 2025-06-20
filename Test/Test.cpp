@@ -244,8 +244,6 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
 
 
 
-
-
     output << "Expected count : " <<  expected_c << std::endl;
     for (unsigned i = 0; i < count; ++i) {
         const Action& a = actions[i];
@@ -1652,7 +1650,7 @@ int main(int argc, const char * argv[]) {
 
     // Sort comparison : bubble vs quick.
     // Quick should be faster, but it can be slower due to poor implementation.
-    if (true) {
+    if (false) {
         constexpr size_t vcount = 10000000;
 
         std::cout << "Bubble sort : SKIP"; // Skipping bubble sort, it is too slow to compare..
@@ -1705,6 +1703,42 @@ int main(int argc, const char * argv[]) {
         }
 
         // Quick sort is faster when n is smaller(I think it happens because of the depth).
+    }
+
+    // Max-min heap implementation
+    if (true) {
+        Lamp::Vector<int> v;
+        Lamp::random_device<uint32_t> rand(34567);
+
+        constexpr size_t vcount = 100000;
+
+        for (size_t i = 0; i < vcount; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+        }
+        //          0
+        //      1       2
+        //   3    4   5   6
+        // 7  8  9
+
+
+
+
+        Lamp::make_heap<int>(v.data(), v.size());
+        //PrintVector(v);
+
+        for (size_t i = 0; i < v.size(); ++i) {
+            const auto left = 2 * i+1;
+            const auto right = 2 * i+2;
+
+            if ((left < v.size() && v[i] < v[left]) || (right < v.size() && v[i] < v[right])) {
+                std::cout << "Failed max heap test in v[" << i  << "] = " << v[i] <<
+                    ", left,right : " << v[left] << ' ' << v[right] << std::endl;
+                break;
+            }
+            else if (v[i] > v[0]) {
+                std::cout << "Failed max heap property." << std::endl;
+            }
+        }
     }
 
     std::cout << std::endl;
