@@ -1710,7 +1710,7 @@ int main(int argc, const char * argv[]) {
         Lamp::Vector<int> v;
         Lamp::random_device<uint32_t> rand(34567);
 
-        constexpr size_t vcount = 100000;
+        constexpr size_t vcount = 900000;
 
         for (size_t i = 0; i < vcount; ++i) {
             v.push_back(rand.RandIntBetween(-5000, 5000));
@@ -1719,8 +1719,6 @@ int main(int argc, const char * argv[]) {
         //      1       2
         //   3    4   5   6
         // 7  8  9
-
-
 
 
         Lamp::make_heap<int>(v.data(), v.size());
@@ -1739,7 +1737,28 @@ int main(int argc, const char * argv[]) {
                 std::cout << "Failed max heap property." << std::endl;
             }
         }
+        std::cout << "max : " << v[0] << std::endl;
+
+        Lamp::make_heap<int, Lamp::HeapStrat::Min>(v.data(), v.size());
+        //PrintVector(v);
+
+        for (size_t i = 0; i < v.size(); ++i) {
+            const auto left = 2 * i+1;
+            const auto right = 2 * i+2;
+
+            if ((left < v.size() && v[i] > v[left]) || (right < v.size() && v[i] > v[right])) {
+                std::cout << "Failed min heap test in v[" << i  << "] = " << v[i] <<
+                    ", left,right : " << v[left] << ' ' << v[right] << std::endl;
+                break;
+            }
+            else if (v[i] < v[0]) {
+                std::cout << "Failed min heap property." << std::endl;
+            }
+        }
+        std::cout << "min : " << v[0] << std::endl;
     }
+
+
 
     std::cout << std::endl;
     return 0;
