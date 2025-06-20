@@ -9,13 +9,14 @@
 
 namespace Lamp
 {
-    enum SegmentIncrement {
-        SegmentIncAdd = 0,
-        SegmentIncDouble,
-        SegmentIncCount
+    enum class SegmentIncrement {
+        Invalid = 0,
+        Add,
+        Double,
+        Count
     };
     // Segment size should be fixed.
-    template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncDouble, size_t IncAmount = 16>
+    template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncrement::Double, size_t IncAmount = 16>
     class deque {
     protected:
         struct Segment {
@@ -53,10 +54,10 @@ namespace Lamp
         }
 
         template<>
-        void IncreaseHelper<SegmentIncDouble>() {segment_capacity_ *= 2;}
+        void IncreaseHelper<SegmentIncrement::Double>() {segment_capacity_ *= 2;}
 
         template<>
-        void IncreaseHelper<SegmentIncAdd>() {segment_capacity_ += IncAmount;}
+        void IncreaseHelper<SegmentIncrement::Add>() {segment_capacity_ += IncAmount;}
 
         virtual void ReallocateShift() {
             size_t old_capacity = segment_capacity_;

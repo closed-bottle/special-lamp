@@ -175,7 +175,7 @@ void PrintDeque(Lamp::deque<T, segmentSize> & _array) {
 
 template<size_t _initial_cap>
 bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
-    enum Action {
+    enum class Action {
         push_back = 0,
         push_front,
         pop_back,
@@ -197,14 +197,14 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
     for (unsigned i = 0; i < count; ++i) {
         Action a = static_cast<Action>( randdevice.RandRange(4));
 
-        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+        if ((a == Action::pop_back || a == Action::pop_front) && curr_count == 0) {
             continue;
         }
 
         actions[i] = a;
         values[i] = randdevice.RandIntBetween(-1000, 1000);
 
-        if (a == push_back || a == push_front)
+        if (a == Action::push_back || a == Action::push_front)
             ++curr_count;
         else
             --curr_count;
@@ -219,22 +219,22 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 expected[(start + expected_c) % count] = v;
                 ++expected_c;
                 //std::cout << "deq.push_back(" << v  << ");" << std::endl;
             break;
-            case pop_back:
+            case Action::pop_back:
                 --expected_c;
                 //std::cout << "deq.pop_back();" << std::endl;
             break;
-            case push_front:
+            case Action::push_front:
                 start = (start + count -1) % count;
                 expected[start] = v;
                 ++expected_c;
                 //std::cout << "deq.push_front(" << v  << ");" << std::endl;
             break;
-            case pop_front:
+            case Action::pop_front:
                 --expected_c;
                 start = (start + 1) % count;
                 //std::cout << "deq.pop_front();" << std::endl;
@@ -249,23 +249,23 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 //std::cout << "deq.push_back(" << v  << ");" << std::endl;
 
                 deque.push_back(v);
 
             break;
-            case pop_back:
+            case Action::pop_back:
                 //std::cout << "deq.pop_back();" << std::endl;
 
                 deque.pop_back();
             break;
-            case push_front:
+            case Action::push_front:
                 //std::cout << "deq.push_front(" << v  << ");" << std::endl;
 
                 deque.push_front(v);
             break;
-            case pop_front:
+            case Action::pop_front:
                 //std::cout << "deq.pop_front();" << std::endl;
 
                 deque.pop_front();
@@ -326,7 +326,7 @@ bool RandomDequeTest(size_t _count, uint32_t _seed, bool _is_verbose) {
 
 template<size_t _initial_cap>
 bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
-    enum Action {
+    enum class Action {
         push_back = 0,
         push_front,
         pop_back,
@@ -349,14 +349,14 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
     for (unsigned i = 0; i < count; ++i) {
         Action a = static_cast<Action>( randdevice.RandRange(4));
 
-        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+        if ((a == Action::pop_back || a == Action::pop_front) && curr_count == 0) {
             continue;
         }
 
         actions[i] = a;
         values[i] = randdevice.RandIntBetween(-1000, 1000);
 
-        if (a == push_back || a == push_front)
+        if (a == Action::push_back || a == Action::push_front)
             ++curr_count;
         else
             --curr_count;
@@ -367,16 +367,16 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 deque.push_back(v);
             break;
-            case pop_back:
+            case Action::pop_back:
                 deque.pop_back();
             break;
-            case push_front:
+            case Action::push_front:
                 deque.push_front(v);
             break;
-            case pop_front:
+            case Action::pop_front:
                 deque.pop_front();
             break;
         }
@@ -389,16 +389,16 @@ bool dequeComparison(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 std.push_back(v);
             break;
-            case pop_back:
+            case Action::pop_back:
                 std.pop_back();
             break;
-            case push_front:
+            case Action::push_front:
                 std.push_front(v);
             break;
-            case pop_front:
+            case Action::pop_front:
                 std.pop_front();
             break;
         }
@@ -465,7 +465,7 @@ bool RandomVectorTest(size_t _count, uint32_t _seed, bool _is_verbose) {
 
 template<typename T>
 bool RandomListTest(size_t _count, uint32_t _seed, bool _is_verbose) {
-    enum Action {
+    enum class Action {
         push_back = 0,
         push_front,
         pop_back,
@@ -487,14 +487,14 @@ bool RandomListTest(size_t _count, uint32_t _seed, bool _is_verbose) {
     for (size_t i = 0; i < _count; ++i) {
         Action a = static_cast<Action>( randdevice.RandRange(4));
 
-        if ((a == pop_back || a == pop_front) && curr_count == 0) {
+        if ((a ==Action:: pop_back || a == Action::pop_front) && curr_count == 0) {
             continue;
         }
 
         actions[i] = a;
         values[i] = randdevice.RandIntBetween(-1000, 1000);
 
-        if (a == push_back || a == push_front)
+        if (a == Action::push_back || a == Action::push_front)
             ++curr_count;
         else
             --curr_count;
@@ -509,19 +509,19 @@ bool RandomListTest(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 expected[(start + expected_c) % _count] = v;
                 ++expected_c;
             break;
-            case pop_back:
+            case Action::pop_back:
                 --expected_c;
             break;
-            case push_front:
+            case Action::push_front:
                 start = (start + _count -1) % _count;
                 expected[start] = v;
                 ++expected_c;
             break;
-            case pop_front:
+            case Action::pop_front:
                 --expected_c;
                 start = (start + 1) % _count;
             break;
@@ -532,16 +532,16 @@ bool RandomListTest(size_t _count, uint32_t _seed, bool _is_verbose) {
         const Action& a = actions[i];
         const int& v = values[i];
         switch (a) {
-            case push_back:
+            case Action::push_back:
                 lamp.push_back(v);
             break;
-            case pop_back:
+            case Action::pop_back:
                 lamp.pop_back();
             break;
-            case push_front:
+            case Action::push_front:
                 lamp.push_front(v);
             break;
-            case pop_front:
+            case Action::pop_front:
                 lamp.pop_front();
             break;
         }
@@ -1585,7 +1585,7 @@ int main(int argc, const char * argv[]) {
             l.push_back(rand.RandIntBetween(-5000, 5000));
             u[rand.RandIntBetween(-5000, 5000)] = rand.RandIntBetween(-5000, 5000);
         }
-        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(v.begin(), v.end());
+        Lamp::sort<Lamp::SortStrat::BubbleAscending>(v.begin(), v.end());
         for (size_t i = 1; i < test_count; ++i) {
             if (v[i-1] > v[i]) {
                 std::cout << "Lamp::Vector not sorted properly." << std::endl;
@@ -1594,7 +1594,7 @@ int main(int argc, const char * argv[]) {
             }
         }
 
-        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(d.begin(), d.end());
+        Lamp::sort<Lamp::SortStrat::BubbleAscending>(d.begin(), d.end());
         for (size_t i = 1; i < test_count; ++i) {
             if (d[i-1] > d[i]) {
                 std::cout << "Lamp::deque not sorted properly." << std::endl;
@@ -1603,7 +1603,7 @@ int main(int argc, const char * argv[]) {
             }
         }
 
-        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(l.begin(), l.end());
+        Lamp::sort<Lamp::SortStrat::BubbleAscending>(l.begin(), l.end());
         {
             int prev = -5001;
             for (const auto& i : l) {
@@ -1614,7 +1614,7 @@ int main(int argc, const char * argv[]) {
             }
         }
 
-        Lamp::sort<Lamp::SortStrat::SortBubbleAscending>(u.begin(), u.end());
+        Lamp::sort<Lamp::SortStrat::BubbleAscending>(u.begin(), u.end());
         {
             Lamp::pair<int, int> prev(-5001, 1);
             for (const auto& p : u) {
@@ -1638,7 +1638,7 @@ int main(int argc, const char * argv[]) {
             v.push_back(rand.RandIntBetween(-5000, 5000));
         }
 
-        Lamp::sort<Lamp::SortStrat::SortQuickAscending>(v.begin(), v.end());
+        Lamp::sort<Lamp::SortStrat::QuickAscending>(v.begin(), v.end());
         for (size_t i = 1; i < test_count; ++i) {
             if (v[i-1] > v[i]) {
                 std::cout << "Lamp::Vector not sorted properly." << std::endl;
@@ -1680,7 +1680,7 @@ int main(int argc, const char * argv[]) {
                 v.push_back(rand.RandIntBetween(-5000, 5000));
             }
             TimeStamp::Start();
-            Lamp::sort<Lamp::SortQuickAscending>(v.begin(), v.end());
+            Lamp::sort<Lamp::SortStrat::QuickAscending>(v.begin(), v.end());
             TimeStamp::End();
             auto duration = TimeStamp::Duration();
             std::cout << duration << std::endl;

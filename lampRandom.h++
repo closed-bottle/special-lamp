@@ -16,14 +16,14 @@
 // This is p-random, so it should never be used for some security reason.
 
 namespace Lamp {
-    enum LCGType {
-        LCGinvalid,
-        LCGrandqd1,
-        LCGjava,
-        LCGborland,
-        LCGglibc,
-        LCGansi,
-        LCGparkmiller
+    enum class LCGType {
+        Invalid,
+        Randqd1,
+        Java,
+        Borland,
+        Glibc,
+        Ansi,
+        Parkmiller
     };
 
     // I don't think anything else than uint32_t will make any meaningful difference,
@@ -36,7 +36,7 @@ namespace Lamp {
         }
 
         poolType entropyPool_ = 1;
-        LCGType lcgType_ = LCGparkmiller;
+        LCGType lcgType_ = LCGType::Parkmiller;
 
         // 0 = always, 0xFFFFFFF(seven Fs.) = never.
         uint16_t refreshRate_ = 32;
@@ -84,7 +84,7 @@ namespace Lamp {
         // https://en.wikipedia.org/wiki/Lehmer_random_number_generator
         // Linear congruential generator, think it as some kind of clock, which can be wind multiple times
         // so it seems random.
-        template<LCGType type = LCGparkmiller>
+        template<LCGType type = LCGType::Parkmiller>
         poolType LCGStep() {
             unsigned long long a = 0;
             unsigned long long c = 0;
@@ -93,27 +93,27 @@ namespace Lamp {
 
 
             switch (type) {
-                case LCGrandqd1:
+                case LCGType::Randqd1:
                     a = 1664525UL; c = 1013904223UL;
                     msb = PoolSizeInBit() -1; lsb = 0;
                     break;
-                case LCGjava:
+                case LCGType::Java:
                     a = 25214903917UL; c = 11UL;
                     msb = 47; lsb = 17;
                     break;
-                case LCGborland:
+                case LCGType::Borland:
                     a = 22695477UL; c = 1UL;
                     msb = 30; lsb = 16;
                     break;
-                case LCGglibc:
+                case LCGType::Glibc:
                     a = 1103515245UL; c = 12345UL;
                     msb = 30; lsb = 0;
                     break;
-                case LCGansi:
+                case LCGType::Ansi:
                     a = 1103515245UL; c = 12345UL;
                     msb = 30; lsb = 16; // same with glib, but different bits
                     break;
-                case LCGparkmiller:
+                case LCGType::Parkmiller:
                     LAMPASSERT(false, "This line should never be reached, parkmiller implementation is down below.");
                     break;
             }
@@ -133,7 +133,7 @@ namespace Lamp {
         }
 
         template<>
-        poolType LCGStep<LCGparkmiller>() {
+        poolType LCGStep<LCGType::Parkmiller>() {
             // Schrage's method to use only 32bit operations for better compatibility.
             // There is 16bit arithmetic version, but I was not able to understand it...
             constexpr uint32_t m = 0x7fffffff;
@@ -182,7 +182,7 @@ namespace Lamp {
 
             for (int i = 0; i < 16; ++i) {
                 CollectTimingEntropy();
-                LCGStep<LCGparkmiller>();
+                LCGStep<LCGType::Parkmiller>();
             }
         }
 

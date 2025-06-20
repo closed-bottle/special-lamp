@@ -80,7 +80,7 @@ namespace Lamp {
                 data_ = AllocData();
             }
 
-            if (Lamp::CheckEndianness<T>() == LittleEndian) {
+            if (Lamp::CheckEndianness<T>() == Endianness::Little) {
                 for (uint64_t i = 0; i < _byte_size; i += stride) {
                     // First byte to LSB.
                     T curr = 0;
@@ -90,7 +90,7 @@ namespace Lamp {
 
                     data_[i / stride] = curr;
                 }
-            } else {
+            } else if (Lamp::CheckEndianness<T>() == Endianness::Big) {
                 for (uint64_t i = 0; i < _byte_size; i += stride) {
                     // First byte to MSB.
                     T curr = 0;

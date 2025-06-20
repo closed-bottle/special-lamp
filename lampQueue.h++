@@ -8,7 +8,7 @@
 #include "lampDeque.h++"
 
 namespace Lamp {
-    template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncDouble, size_t IncAmount = 16>
+    template<typename T2, size_t segmentSize = 4, SegmentIncrement incStrat = SegmentIncrement::Double, size_t IncAmount = 16>
         class queue : private deque<T2, segmentSize, incStrat, IncAmount> {
 
         using deque = deque<T2, segmentSize, incStrat, IncAmount>;

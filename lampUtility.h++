@@ -4,8 +4,8 @@
 #include <cstdint>
 
 namespace Lamp {
-    enum Endianness {
-        LittleEndian, BigEndian, Count
+    enum class Endianness {
+        Invalid, Little, Big, Count
     };
 
     template<typename T>
@@ -29,17 +29,17 @@ namespace Lamp {
         T if_big_endian = 1 << ((sizeof(T) * 8) - 1);
 
         if (endianness == 1) {
-            return LittleEndian;
+            return Endianness::Little;
         } else if (if_big_endian == 1) {
-            return BigEndian;
+            return Endianness::Big;
         }
 
-        return Count;
+        return Endianness::Invalid;
     }
 
     template<typename T>
     bool IsLittleEndian() {
-        return CheckEndianness<T>() == LittleEndian;
+        return CheckEndianness<T>() == Endianness::Little;
     }
 
     template<typename T>

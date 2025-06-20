@@ -6,11 +6,18 @@
 #define LAMPALGORITHM_H
 
 namespace Lamp {
-    enum SortStrat {
-        SortInvalid = 0,
-        SortBubbleAscending,
-        SortQuickAscending,
-        SortCount
+    enum class SortStrat {
+        Invalid = 0,
+        BubbleAscending,
+        QuickAscending,
+        Count
+    };
+
+    enum class HeapStrat {
+        Invalid = 0,
+        Max,
+        Min,
+        Count
     };
 }
 
@@ -23,7 +30,7 @@ namespace {
     };
 
     template<typename itr_type>
-    struct SortHelper<itr_type, Lamp::SortBubbleAscending> {
+    struct SortHelper<itr_type, Lamp::SortStrat::BubbleAscending> {
         static void sort(itr_type& _begin, itr_type& _end) {
             while (_begin != _end) {
                 itr_type left = _begin;
@@ -102,7 +109,7 @@ namespace {
 
 
     template<typename itr_type>
-    struct SortHelper<itr_type, Lamp::SortQuickAscending> {
+    struct SortHelper<itr_type, Lamp::SortStrat::QuickAscending> {
         static void sort(itr_type& _begin, itr_type& _end) {
             QuickSort(_begin, _end);
         }
