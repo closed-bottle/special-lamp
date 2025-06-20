@@ -115,30 +115,51 @@ namespace {
         }
     };
 
+    template<typename T, Lamp::HeapStrat strat = Lamp::HeapStrat::Invalid>
+    struct HeapUtil {
+        static bool Compare(const T& _lhs, const T& _rhs) {
+            LAMPASSERT(false, "Invalid HeapStrat");
+            return false;
+        }
+    };
     template<typename T>
+    struct HeapUtil<T, Lamp::HeapStrat::Max> {
+        static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs > _rhs;
+        }
+    };
+
+    template<typename T>
+    struct HeapUtil<T, Lamp::HeapStrat::Min> {
+        static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs < _rhs;
+        }
+    };
+
+    template<typename T, Lamp::HeapStrat strat>
     void heapifyAux(T* _arr, size_t _count, size_t _i) {
         static auto get_left_child = [](const size_t& _index) -> size_t {
             return 2*_index+1;
         };
 
-        static auto get_right_child = [&](const size_t& _index) -> size_t {
+        static auto get_right_child = [](const size_t& _index) -> size_t {
             return 2*_index+2;
         };
 
         auto left = get_left_child(_i);
         auto right = get_right_child(_i);
-        auto maximum = _i;
+        auto peak = _i; // It is Maximum or Minimum basted on strat
 
-        if (left < _count && _arr[left] > _arr[maximum]) {
-            maximum = left;
+        if (left < _count && HeapUtil<T, strat>::Compare(_arr[left], _arr[peak])) {
+            peak = left;
         }
-        if (right < _count && _arr[right] > _arr[maximum]) {
-            maximum = right;
+        if (right < _count && HeapUtil<T, strat>::Compare(_arr[right], _arr[peak])) {
+            peak = right;
         }
 
-        if (maximum != _i) {
-            Lamp::Swap(_arr[_i], _arr[maximum]);
-            heapifyAux(_arr, _count, maximum);
+        if (peak != _i) {
+            Lamp::Swap(_arr[_i], _arr[peak]);
+            heapifyAux<T, strat>(_arr, _count, peak);
         }
     }
 }
@@ -150,12 +171,12 @@ namespace Lamp {
         SortHelper<decltype(_begin), strat>::sort(_begin, _end);
     }
 
-    template<typename T>
+    template<typename T, HeapStrat strat = HeapStrat::Max>
     void make_heap(T* _arr, size_t _count) {
         const size_t _stride = sizeof(T);
 
         for (size_t i = 1; i <= _count; ++i) {
-            heapifyAux(_arr, _count, (_count - i));
+            heapifyAux<T, strat>(_arr, _count, (_count - i));
         }
     }
 };
