@@ -125,50 +125,54 @@ namespace {
 
     template<typename T, Lamp::HeapStrat strat = Lamp::HeapStrat::Invalid>
     struct HeapUtil {
-        static bool Compare(const T& _lhs, const T& _rhs) {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             LAMPASSERT(false, "Invalid HeapStrat");
             return false;
         }
     };
     template<typename T>
     struct HeapUtil<T, Lamp::HeapStrat::Max> {
-        static bool Compare(const T& _lhs, const T& _rhs) {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs > _rhs;
         }
     };
 
     template<typename T>
     struct HeapUtil<T, Lamp::HeapStrat::Min> {
-        static bool Compare(const T& _lhs, const T& _rhs) {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs < _rhs;
         }
     };
 
     template<typename T, Lamp::HeapStrat strat>
-    void heapifyAux(T* _arr, size_t _count, size_t _i) {
-        static auto get_left_child = [](const size_t& _index) -> size_t {
-            return 2*_index+1;
-        };
+    void heapify(T* _arr, size_t _count, size_t _i) {
+        bool is_heap = false;
 
-        static auto get_right_child = [](const size_t& _index) -> size_t {
-            return 2*_index+2;
-        };
+        while (!is_heap) {
+            auto left = (2 * _i) + 1;
+            auto right = (2 * _i) + 2;
+            auto peak = _i; // It is Maximum or Minimum basted on strat
 
-        auto left = get_left_child(_i);
-        auto right = get_right_child(_i);
-        auto peak = _i; // It is Maximum or Minimum basted on strat
 
-        if (left < _count && HeapUtil<T, strat>::Compare(_arr[left], _arr[peak])) {
-            peak = left;
+            if (left < _count && HeapUtil<T, strat>::Compare(_arr[left], _arr[peak])) {
+                peak = left;
+            }
+            if (right < _count && HeapUtil<T, strat>::Compare(_arr[right], _arr[peak])) {
+                peak = right;
+            }
+
+
+            is_heap = peak == _i; // It is a heap if parent(_i) node satisfy the all the heap property.
+                                  // which keep the _i unchanged.
+            if (!is_heap) {
+                Lamp::Swap(_arr[_i], _arr[peak]);
+                _i = peak;
+            }
         }
-        if (right < _count && HeapUtil<T, strat>::Compare(_arr[right], _arr[peak])) {
-            peak = right;
-        }
 
-        if (peak != _i) {
-            Lamp::Swap(_arr[_i], _arr[peak]);
-            heapifyAux<T, strat>(_arr, _count, peak);
-        }
+
+        // Recursive versoin was implemented :
+        // cfa83eca8dc051ae8812ad98e16dd94ba73bc414
     }
 
     template<typename itr_type, Lamp::SortStrat strat>
@@ -190,7 +194,7 @@ namespace {
 
 
             while (count > 1) {
-                heapifyAux<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, --count, 0);
+                heapify<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, --count, 0);
                 Lamp::Swap(_begin[0], _begin[count - 1]);
             }
         }
@@ -221,7 +225,7 @@ namespace Lamp {
     template<typename T, HeapStrat strat = HeapStrat::Max>
     void make_heap(T* _arr, size_t _count) {
         for (size_t i = 1; i <= _count; ++i) {
-            heapifyAux<T, strat>(_arr, _count, (_count - i));
+            heapify<T, strat>(_arr, _count, (_count - i));
         }
     }
 };
