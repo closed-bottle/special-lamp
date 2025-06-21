@@ -1568,7 +1568,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // Algorithm : sort test
-    if (true) {
+    if (false) {
         std::cout << "Bubble sort implementation test" << std::endl;
         Lamp::Vector<int> v;
         Lamp::deque<int> d;
@@ -1627,7 +1627,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // Quick sort implementation test
-    if (true) {
+    if (false) {
         std::cout << "Quick sort implementation test" << std::endl;
         Lamp::Vector<int> v;
         Lamp::random_device<uint32_t> rand(34567);
@@ -1648,10 +1648,11 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    // Sort comparison : bubble vs quick.
+    // Sort comparison
     // Quick should be faster, but it can be slower due to poor implementation.
-    if (false) {
-        constexpr size_t vcount = 10000000;
+    if (true) {
+        constexpr size_t vcount = 40000000;
+        std::cout << "Sort comparison" << std::endl;
 
         std::cout << "Bubble sort : SKIP"; // Skipping bubble sort, it is too slow to compare..
         /*
@@ -1686,6 +1687,21 @@ int main(int argc, const char * argv[]) {
             std::cout << duration << std::endl;
         }
 
+        std::cout << "Heap sort : ";
+        {
+            Lamp::Vector<int> v;
+            Lamp::random_device<uint32_t> rand(34567);
+
+            for (size_t i = 0; i < vcount; ++i) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+            TimeStamp::Start();
+            Lamp::sort<Lamp::SortStrat::HeapAscending>(v.begin(), v.end());
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
+            std::cout << duration << std::endl;
+        }
+
         // std::sort(Introsort?)
         std::cout << "std::sort : ";
         {
@@ -1706,7 +1722,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // Max-min heap implementation
-    if (true) {
+    if (false) {
         Lamp::Vector<int> v;
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1756,6 +1772,30 @@ int main(int argc, const char * argv[]) {
             }
         }
         std::cout << "min : " << v[0] << std::endl;
+    }
+
+    if (false) {
+        std::cout << "Heap sort implementation test" << std::endl;
+        Lamp::random_device<uint32_t> rand(34567);
+
+        constexpr size_t vcount = 10;
+
+        for (size_t i = 0; i < vcount; ++i) {
+            Lamp::Vector<int> v;
+            for (size_t j = 0; j < i; ++j) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+
+            Lamp::sort<Lamp::SortStrat::HeapAscending>(v.begin(), v.end());
+
+            for (size_t j = 1; j < i; ++j) {
+                if (v[j -1] > v[j]) {
+                    std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                    PrintVector(v);
+                    break;
+                }
+            }
+        }
     }
 
 

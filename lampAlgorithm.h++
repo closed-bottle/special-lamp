@@ -10,6 +10,8 @@ namespace Lamp {
         Invalid = 0,
         BubbleAscending,
         QuickAscending,
+        HeapAscending,
+        HeapDescending,
         Count
     };
 
@@ -19,6 +21,9 @@ namespace Lamp {
         Min,
         Count
     };
+
+    template<typename T, HeapStrat>
+    void make_heap(T* _arr, size_t _count);
 }
 
 namespace {
@@ -115,6 +120,9 @@ namespace {
         }
     };
 
+
+
+
     template<typename T, Lamp::HeapStrat strat = Lamp::HeapStrat::Invalid>
     struct HeapUtil {
         static bool Compare(const T& _lhs, const T& _rhs) {
@@ -162,6 +170,52 @@ namespace {
             heapifyAux<T, strat>(_arr, _count, peak);
         }
     }
+
+
+    template<typename itr_type>
+        struct SortHelper<itr_type, Lamp::SortStrat::HeapAscending>{
+        static void sort(itr_type& _begin, itr_type& _end) {
+            // For heap sort, it only takes pointer type, because it needs random access.
+            // It is possible to implement random accessible iterator, but it will be much slower
+            // due to indirection & cache miss.
+            size_t count = (_end - _begin);
+
+            if (count < 2)
+                return;
+
+            Lamp::make_heap<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Max>(_begin, count);
+            Lamp::Swap(_begin[0], _begin[count - 1]);
+
+
+            while (count > 1) {
+                heapifyAux<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Max>(_begin, --count, 0);
+                Lamp::Swap(_begin[0], _begin[count - 1]);
+            }
+        }
+    };
+
+
+    template<typename itr_type>
+        struct SortHelper<itr_type, Lamp::SortStrat::HeapDescending>{
+        static void sort(itr_type& _begin, itr_type& _end) {
+            // For heap sort, it only takes pointer type, because it needs random access.
+            // It is possible to implement random accessible iterator, but it will be much slower
+            // due to indirection & cache miss.
+            size_t count = (_end - _begin);
+
+            if (count < 2)
+                return;
+
+            Lamp::make_heap<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Min>(_begin, count);
+            Lamp::Swap(_begin[0], _begin[count - 1]);
+
+
+            while (count > 1) {
+                heapifyAux<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Min>(_begin, --count, 0);
+                Lamp::Swap(_begin[0], _begin[count - 1]);
+            }
+        }
+    };
 }
 
 
@@ -173,8 +227,6 @@ namespace Lamp {
 
     template<typename T, HeapStrat strat = HeapStrat::Max>
     void make_heap(T* _arr, size_t _count) {
-        const size_t _stride = sizeof(T);
-
         for (size_t i = 1; i <= _count; ++i) {
             heapifyAux<T, strat>(_arr, _count, (_count - i));
         }
