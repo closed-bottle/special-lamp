@@ -5,6 +5,8 @@
 #ifndef LAMPALGORITHM_H
 #define LAMPALGORITHM_H
 
+#include "lampUtility.h++"
+
 namespace Lamp {
     enum class SortStrat {
         Invalid = 0,
@@ -101,7 +103,7 @@ namespace {
 
 
         while (j != _high) {
-            if (QuickSortUtil<std::decay_t<decltype(*_low)>, strat>::Compare((*j), *pivot)) {
+            if (QuickSortUtil<typename Lamp::RemovePtr<itr_type>::type, strat>::Compare((*j), *pivot)) {
                 ++i;
 
                 // Again, < operator needs to be implemented or this one should be C style array.
@@ -218,12 +220,12 @@ namespace {
             constexpr Lamp::HeapStrat heap_strat = strat == Lamp::SortStrat::HeapAscending ?
                 Lamp::HeapStrat::Max : Lamp::HeapStrat::Min;
 
-            Lamp::make_heap<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, count);
+            Lamp::make_heap<typename Lamp::RemovePtr<itr_type>::type, heap_strat>(_begin, count);
             Lamp::Swap(_begin[0], _begin[count - 1]);
 
 
             while (count > 1) {
-                heapify<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, --count, 0);
+                heapify<typename Lamp::RemovePtr<itr_type>::type, heap_strat>(_begin, --count, 0);
                 Lamp::Swap(_begin[0], _begin[count - 1]);
             }
         }

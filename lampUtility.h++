@@ -47,6 +47,26 @@ namespace Lamp {
     }
 
     template<typename T>
+    struct RemoveRef {
+        typedef T type;
+    };
+
+    template<typename T>
+    struct RemoveRef<T&> {
+        typedef T type;
+    };
+
+    template<typename T>
+    struct RemovePtr {
+        typedef T type;
+    };
+
+    template<typename T>
+    struct RemovePtr<T*> {
+        typedef T type;
+    };
+
+    template<typename T>
     void Swap(T& _lhs, T& _rhs) {
         T temp = std::move(_lhs);
         _lhs = std::move(_rhs);
