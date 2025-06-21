@@ -10,6 +10,7 @@ namespace Lamp {
         Invalid = 0,
         BubbleAscending,
         QuickAscending,
+        QuickDescending,
         HeapAscending,
         HeapDescending,
         Count
@@ -62,7 +63,31 @@ namespace {
         }
     };
 
-    template<typename itr_type>
+
+    template<typename T, Lamp::SortStrat strat = Lamp::SortStrat::Invalid>
+    struct QuickSortUtil {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            LAMPASSERT(false, "Invalid SortStrat");
+            return false;
+        }
+    };
+
+    template<typename T>
+    struct QuickSortUtil<T, Lamp::SortStrat::QuickDescending> {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs > _rhs;
+        }
+    };
+
+    template<typename T>
+    struct QuickSortUtil<T, Lamp::SortStrat::QuickAscending> {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs < _rhs;
+        }
+    };
+
+
+    template<typename itr_type, Lamp::SortStrat strat>
     itr_type QuickPartition(itr_type _low, itr_type _high) {
         // Few points to note:
         // 1. It only works with C-style data set if operator < is not implemented.
@@ -76,7 +101,7 @@ namespace {
 
 
         while (j != _high) {
-            if ((*j) <= *pivot) {
+            if (QuickSortUtil<std::decay_t<decltype(*_low)>, strat>::Compare((*j), *pivot)) {
                 ++i;
 
                 // Again, < operator needs to be implemented or this one should be C style array.
@@ -94,7 +119,7 @@ namespace {
         return pivot;
     }
 
-    template<typename itr_type>
+    template<typename itr_type, Lamp::SortStrat strat>
     void QuickSort(itr_type _begin, itr_type _end) {
 
         Lamp::stack<Lamp::pair<itr_type, itr_type>> stck;
@@ -105,22 +130,26 @@ namespace {
             stck.pop();
 
             if (curr.first < curr.second) {
-                itr_type pivot = QuickPartition(curr.first, curr.second);
+                itr_type pivot = QuickPartition<itr_type, strat>(curr.first, curr.second);
                 stck.emplace(curr.first, pivot);
                 stck.emplace(++pivot, curr.second);
             }
         }
     }
 
-
     template<typename itr_type>
     struct SortHelper<itr_type, Lamp::SortStrat::QuickAscending> {
         static void sort(itr_type& _begin, itr_type& _end) {
-            QuickSort(_begin, _end);
+            QuickSort<itr_type, Lamp::SortStrat::QuickAscending>(_begin, _end);
         }
     };
 
-
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::QuickDescending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            QuickSort<itr_type, Lamp::SortStrat::QuickDescending>(_begin, _end);
+        }
+    };
 
 
     template<typename T, Lamp::HeapStrat strat = Lamp::HeapStrat::Invalid>

@@ -1627,7 +1627,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // Quick sort implementation test
-    if (false) {
+    if (true) {
         std::cout << "Quick sort implementation test" << std::endl;
         Lamp::Vector<int> v;
         Lamp::random_device<uint32_t> rand(34567);
@@ -1641,6 +1641,16 @@ int main(int argc, const char * argv[]) {
         Lamp::sort<Lamp::SortStrat::QuickAscending>(v.begin(), v.end());
         for (size_t i = 1; i < test_count; ++i) {
             if (v[i-1] > v[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+                break;
+            }
+        }
+
+
+        Lamp::sort<Lamp::SortStrat::QuickDescending>(v.begin(), v.end());
+        for (size_t i = 1; i < test_count; ++i) {
+            if (v[i-1] < v[i]) {
                 std::cout << "Lamp::Vector not sorted properly." << std::endl;
                 PrintVector(v);
                 break;
@@ -1705,7 +1715,7 @@ int main(int argc, const char * argv[]) {
         // std::sort(Introsort?)
         std::cout << "std::sort : ";
         {
-            std::vector<int> v;
+            Lamp::Vector<int> v;
             Lamp::random_device<uint32_t> rand(34567);
 
             for (size_t i = 0; i < vcount; ++i) {
@@ -1774,7 +1784,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "min : " << v[0] << std::endl;
     }
 
-    if (false) {
+    if (true) {
         std::cout << "Heap sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
