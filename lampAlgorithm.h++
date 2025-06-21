@@ -171,9 +171,8 @@ namespace {
         }
     }
 
-
-    template<typename itr_type>
-        struct SortHelper<itr_type, Lamp::SortStrat::HeapAscending>{
+    template<typename itr_type, Lamp::SortStrat strat>
+    struct HeapSortHelper {
         static void sort(itr_type& _begin, itr_type& _end) {
             // For heap sort, it only takes pointer type, because it needs random access.
             // It is possible to implement random accessible iterator, but it will be much slower
@@ -183,37 +182,31 @@ namespace {
             if (count < 2)
                 return;
 
-            Lamp::make_heap<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Max>(_begin, count);
+            constexpr Lamp::HeapStrat heap_strat = strat == Lamp::SortStrat::HeapAscending ?
+                Lamp::HeapStrat::Max : Lamp::HeapStrat::Min;
+
+            Lamp::make_heap<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, count);
             Lamp::Swap(_begin[0], _begin[count - 1]);
 
 
             while (count > 1) {
-                heapifyAux<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Max>(_begin, --count, 0);
+                heapifyAux<std::decay_t<decltype(*_begin)>, heap_strat>(_begin, --count, 0);
                 Lamp::Swap(_begin[0], _begin[count - 1]);
             }
         }
     };
 
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::HeapAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            HeapSortHelper<itr_type, Lamp::SortStrat::HeapAscending>::sort(_begin, _end);
+        }
+    };
 
     template<typename itr_type>
-        struct SortHelper<itr_type, Lamp::SortStrat::HeapDescending>{
+    struct SortHelper<itr_type, Lamp::SortStrat::HeapDescending> {
         static void sort(itr_type& _begin, itr_type& _end) {
-            // For heap sort, it only takes pointer type, because it needs random access.
-            // It is possible to implement random accessible iterator, but it will be much slower
-            // due to indirection & cache miss.
-            size_t count = (_end - _begin);
-
-            if (count < 2)
-                return;
-
-            Lamp::make_heap<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Min>(_begin, count);
-            Lamp::Swap(_begin[0], _begin[count - 1]);
-
-
-            while (count > 1) {
-                heapifyAux<std::decay_t<decltype(*_begin)>, Lamp::HeapStrat::Min>(_begin, --count, 0);
-                Lamp::Swap(_begin[0], _begin[count - 1]);
-            }
+            HeapSortHelper<itr_type, Lamp::SortStrat::HeapDescending>::sort(_begin, _end);
         }
     };
 }
