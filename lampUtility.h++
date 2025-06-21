@@ -67,6 +67,11 @@ namespace Lamp {
     };
 
     template<typename T>
+    constexpr typename RemoveRef<T>::type&& move(T&& _in) noexcept {
+        return static_cast<typename RemoveRef<T>::type&&>(_in);
+    }
+
+    template<typename T>
     void Swap(T& _lhs, T& _rhs) {
         T temp = std::move(_lhs);
         _lhs = std::move(_rhs);
