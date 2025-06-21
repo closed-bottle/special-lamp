@@ -22,7 +22,7 @@ namespace Lamp {
     }
 
     template<typename T>
-    Endianness CheckEndianness() {
+    constexpr Endianness CheckEndianness() {
         T end = static_cast<T>(1);
         uint8_t endianness = reinterpret_cast<uint8_t>(reinterpret_cast<uint8_t *>(&end)[0]);
 
@@ -38,8 +38,12 @@ namespace Lamp {
     }
 
     template<typename T>
-    bool IsLittleEndian() {
+    constexpr bool IsLittleEndian() {
         return CheckEndianness<T>() == Endianness::Little;
+    }
+
+    constexpr size_t PtrSize() {
+        return sizeof(int*);
     }
 
     template<typename T>
