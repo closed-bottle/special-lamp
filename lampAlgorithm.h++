@@ -15,6 +15,8 @@ namespace Lamp {
         QuickDescending,
         HeapAscending,
         HeapDescending,
+        InsertionAscending,
+        InsertionDescending,
         Count
     };
 
@@ -242,6 +244,65 @@ namespace {
     struct SortHelper<itr_type, Lamp::SortStrat::HeapDescending> {
         static void sort(itr_type& _begin, itr_type& _end) {
             HeapSortHelper<itr_type, Lamp::SortStrat::HeapDescending>::sort(_begin, _end);
+        }
+    };
+
+    template<typename T, Lamp::SortStrat strat = Lamp::SortStrat::Invalid>
+    struct InsertSortUtil {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            LAMPASSERT(false, "Invalid SortStrat");
+            return false;
+        }
+    };
+
+    template<typename T>
+    struct InsertSortUtil<T, Lamp::SortStrat::InsertionAscending> {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs > _rhs;
+        }
+    };
+
+    template<typename T>
+    struct InsertSortUtil<T, Lamp::SortStrat::InsertionDescending> {
+        constexpr static bool Compare(const T& _lhs, const T& _rhs) {
+            return _lhs < _rhs;
+        }
+    };
+
+
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::InsertionAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            // Start with _begin instead of ++_begin so we can filter out _begin == _end.
+            auto right = _begin;
+
+            while (right != _end) {
+                auto left = _begin;
+                auto insert = *right;
+
+                while (left != right) {
+                    if (*left > insert) {
+                        // Shift
+                        auto i = left;
+                        auto j = left;
+                        ++j;
+                        auto temp = *i;
+
+                        while (j != _end) {
+                            Lamp::Swap(*j, temp);
+                            ++j;
+                        }
+
+                        *left = insert;
+                        break;
+                    }
+
+                    ++left;
+                }
+
+                ++right;
+            }
         }
     };
 }

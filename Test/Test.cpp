@@ -1660,7 +1660,7 @@ int main(int argc, const char * argv[]) {
 
     // Sort comparison
     // Quick should be faster, but it can be slower due to poor implementation.
-    if (true) {
+    if (false) {
         constexpr size_t vcount = 40000000;
         std::cout << "Sort comparison" << std::endl;
 
@@ -1807,6 +1807,60 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
+
+    if (false) {
+        std::cout << "Insertion sort implementation test" << std::endl;
+        Lamp::random_device<uint32_t> rand(34567);
+
+        Lamp::Vector<int> v;
+
+        v.push_back(5);
+        v.push_back(4);
+        v.push_back(3);
+
+        std::cout << "Before sort : " << std::endl;
+        PrintVector(v);
+
+        Lamp::sort<Lamp::SortStrat::InsertionAscending>(v.begin(), v.end());
+
+        for (size_t j = 1; j < v.size(); ++j) {
+            if (v[j -1] > v[j]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+                break;
+            }
+        }
+    }
+
+    if (true) {
+        std::cout << "Insertion sort implementation test" << std::endl;
+        Lamp::random_device<uint32_t> rand(34567);
+
+        constexpr size_t vcount = 1000;
+        bool is_all_pass = true;
+        for (size_t i = 0; i < vcount; ++i) {
+            Lamp::Vector<int> v;
+            for (size_t j = 0; j < i; ++j) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+
+            Lamp::sort<Lamp::SortStrat::InsertionAscending>(v.begin(), v.end());
+
+            for (size_t j = 1; j < i; ++j) {
+                if (v[j -1] > v[j]) {
+                    std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                    PrintVector(v);
+                    is_all_pass = false;
+                    break;
+                }
+            }
+        }
+
+        if (is_all_pass) {
+            std::cout << "All pass for insertion sort implementation test." << std::endl;
+        }
+    }
+
 
 
 
