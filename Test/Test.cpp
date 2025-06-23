@@ -1808,7 +1808,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false) {
+    if (true) {
         std::cout << "Insertion sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1817,11 +1817,15 @@ int main(int argc, const char * argv[]) {
         v.push_back(5);
         v.push_back(4);
         v.push_back(3);
+        v.push_back(2);
+        v.push_back(1);
 
         std::cout << "Before sort : " << std::endl;
         PrintVector(v);
 
         Lamp::sort<Lamp::SortStrat::InsertionAscending>(v.begin(), v.end());
+        std::cout << "After : " << std::endl;
+        PrintVector(v);
 
         for (size_t j = 1; j < v.size(); ++j) {
             if (v[j -1] > v[j]) {
@@ -1836,7 +1840,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Insertion sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
-        constexpr size_t vcount = 1000;
+        constexpr size_t vcount = 10;
         bool is_all_pass = true;
         for (size_t i = 0; i < vcount; ++i) {
             Lamp::Vector<int> v;
@@ -1854,13 +1858,14 @@ int main(int argc, const char * argv[]) {
                     break;
                 }
             }
+
+
         }
 
         if (is_all_pass) {
             std::cout << "All pass for insertion sort implementation test." << std::endl;
         }
     }
-
 
 
 

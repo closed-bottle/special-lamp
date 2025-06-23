@@ -269,40 +269,53 @@ namespace {
         }
     };
 
-
-
-    template<typename itr_type>
-    struct SortHelper<itr_type, Lamp::SortStrat::InsertionAscending> {
+    template<typename itr_type, Lamp::SortStrat strat>
+    struct InsertSortHelper {
         static void sort(itr_type& _begin, itr_type& _end) {
             // Start with _begin instead of ++_begin so we can filter out _begin == _end.
             auto right = _begin;
 
             while (right != _end) {
                 auto left = _begin;
-                auto insert = *right;
+                auto insert = right;
 
                 while (left != right) {
-                    if (*left > insert) {
+                    if (InsertSortUtil<typename Lamp::RemovePtr<itr_type>::type, strat>
+                        ::Compare(*left, *insert)) {
                         // Shift
                         auto i = left;
                         auto j = left;
                         ++j;
-                        auto temp = *i;
+                        auto cache = insert;
 
-                        while (j != _end) {
-                            Lamp::Swap(*j, temp);
+                        while (j != insert) {
+                            Lamp::Swap(*i, *cache);
+                            ++i;
                             ++j;
                         }
-
-                        *left = insert;
+                        Lamp::Swap(*i, *cache);
                         break;
                     }
-
                     ++left;
                 }
-
                 ++right;
             }
+        }
+    };
+
+
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::InsertionAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            InsertSortHelper<itr_type, Lamp::SortStrat::InsertionAscending>::sort(_begin, _end);
+        }
+    };
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::InsertionDescending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            InsertSortHelper<itr_type, Lamp::SortStrat::InsertionDescending>::sort(_begin, _end);
         }
     };
 }
