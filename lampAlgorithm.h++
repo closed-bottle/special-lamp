@@ -210,7 +210,7 @@ namespace {
 
     template<typename itr_type, Lamp::SortStrat strat>
     struct HeapSortHelper {
-        static void sort(itr_type _begin, itr_type _end) {
+        static void sort(itr_type& _begin, itr_type& _end) {
             // For heap sort, it only takes pointer type, because it needs random access.
             // It is possible to implement random accessible iterator, but it will be much slower
             // due to indirection & cache miss.
@@ -271,7 +271,7 @@ namespace {
 
     template<typename itr_type, Lamp::SortStrat strat>
     struct InsertSortHelper {
-        static void sort(itr_type _begin, itr_type _end) {
+        static void sort(itr_type& _begin, itr_type& _end) {
             // Start with _begin instead of ++_begin so we can filter out _begin == _end.
             auto right = _begin;
 
