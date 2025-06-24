@@ -1660,7 +1660,7 @@ int main(int argc, const char * argv[]) {
 
     // Sort comparison
     // Quick should be faster, but it can be slower due to poor implementation.
-    if (false) {
+    if (true) {
         constexpr size_t vcount = 40000000;
         std::cout << "Sort comparison" << std::endl;
 
@@ -1707,6 +1707,21 @@ int main(int argc, const char * argv[]) {
             }
             TimeStamp::Start();
             Lamp::sort<Lamp::SortStrat::HeapAscending>(v.begin(), v.end());
+            TimeStamp::End();
+            auto duration = TimeStamp::Duration();
+            std::cout << duration << std::endl;
+        }
+
+        std::cout << "intro sort : ";
+        {
+            Lamp::Vector<int> v;
+            Lamp::random_device<uint32_t> rand(34567);
+
+            for (size_t i = 0; i < vcount; ++i) {
+                v.push_back(rand.RandIntBetween(-5000, 5000));
+            }
+            TimeStamp::Start();
+            Lamp::sort<Lamp::SortStrat::IntroAscending>(v.begin(), v.end());
             TimeStamp::End();
             auto duration = TimeStamp::Duration();
             std::cout << duration << std::endl;
@@ -1784,7 +1799,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "min : " << v[0] << std::endl;
     }
 
-    if (true) {
+    if (false) {
         std::cout << "Heap sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1808,7 +1823,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true) {
+    if (false) {
         std::cout << "Insertion sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1836,7 +1851,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (true) {
+    if (false) {
         std::cout << "Insertion sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 
@@ -1871,6 +1886,27 @@ int main(int argc, const char * argv[]) {
 
         if (is_all_pass) {
             std::cout << "All pass for insertion sort implementation test." << std::endl;
+        }
+    }
+
+    if (false) {
+        std::cout << "intro sort implementation test" << std::endl;
+        constexpr size_t vcount = 100;
+        Lamp::random_device<uint32_t> rand(34567);
+        Lamp::Vector<int> v;
+
+        for (size_t i = 0; i < vcount; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+        }
+
+        Lamp::sort<Lamp::SortStrat::IntroAscending>(v.begin(), v.end());
+        for (size_t i = 1; i < vcount; ++i) {
+            if (v[i -1] > v[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+
+                break;
+            }
         }
     }
 

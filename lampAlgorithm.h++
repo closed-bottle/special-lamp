@@ -17,6 +17,8 @@ namespace Lamp {
         HeapDescending,
         InsertionAscending,
         InsertionDescending,
+        IntroAscending,
+        IntroDescending,
         Count
     };
 
@@ -303,8 +305,6 @@ namespace {
         }
     };
 
-
-
     template<typename itr_type>
     struct SortHelper<itr_type, Lamp::SortStrat::InsertionAscending> {
         static void sort(itr_type& _begin, itr_type& _end) {
@@ -316,6 +316,62 @@ namespace {
     struct SortHelper<itr_type, Lamp::SortStrat::InsertionDescending> {
         static void sort(itr_type& _begin, itr_type& _end) {
             InsertSortHelper<itr_type, Lamp::SortStrat::InsertionDescending>::sort(_begin, _end);
+        }
+    };
+
+    template<typename itr_type, Lamp::SortStrat insert_strat, Lamp::SortStrat heap_strat, Lamp::SortStrat quick_strat>
+    struct IntroSortHelper {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            size_t count = _end - _begin;
+            size_t depth_limit = std::log(count);
+
+            Lamp::stack<Lamp::pair<itr_type, itr_type>> stck;
+            stck.emplace(_begin, _end);
+
+            while (!stck.empty()) {
+                auto curr = stck.top();
+                stck.pop();
+
+                if (curr.second - curr.first < 16) {
+                    // insertion sort
+                    SortHelper<itr_type, insert_strat>::sort(curr.first, curr.second);
+                }
+                else if (depth_limit == 0) {
+                    // heap sort
+                    SortHelper<itr_type, heap_strat>::sort(curr.first, curr.second);
+                }
+                else {
+                    --depth_limit;
+                    if (curr.first < curr.second) {
+                        itr_type pivot
+                        = QuickPartition<itr_type, quick_strat>(curr.first, curr.second);
+                        stck.emplace(curr.first, pivot);
+                        stck.emplace(++pivot, curr.second);
+                    }
+                }
+            }
+        }
+    };
+
+
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::IntroAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            IntroSortHelper<itr_type,
+            Lamp::SortStrat::InsertionAscending,
+            Lamp::SortStrat::HeapAscending,
+            Lamp::SortStrat::QuickAscending>::sort(_begin, _end);
+        }
+    };
+
+    template<typename itr_type>
+    struct SortHelper<itr_type, Lamp::SortStrat::IntroDescending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            IntroSortHelper<itr_type,
+            Lamp::SortStrat::InsertionDescending,
+            Lamp::SortStrat::HeapDescending,
+            Lamp::SortStrat::QuickDescending>::sort(_begin, _end);
         }
     };
 }
