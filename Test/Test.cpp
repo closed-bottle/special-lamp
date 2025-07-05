@@ -14,6 +14,7 @@
 #include "../lampQueue.h++"
 #include "../lampBinarySearchTree.h++"
 #include "../lampAlgorithm.h++"
+#include "../lampHeap.h++"
 
 #include <vector>
 #include <deque>
