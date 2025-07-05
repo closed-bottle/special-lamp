@@ -15,6 +15,16 @@ namespace Lamp {
             return new T[capacity_ + 1];
         }
 
+        void ReAllocData() {
+            T *new_data = AllocData();
+
+            for (uint64_t i = 0; i < size_; ++i) {
+                new_data[i] = std::move(data_[i]);
+            }
+            delete[] data_;
+            data_ = new_data;
+        }
+
     public:
         Vector() {
         }
@@ -179,17 +189,19 @@ namespace Lamp {
             return size_;
         }
 
+        uint64_t capacity() const {
+            return capacity_;
+        }
+
+        void shrink_to_fit() {
+            capacity_ = size_;
+            ReAllocData();
+        }
+
         void push_back(T const &_value) {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
-
-                T *new_data = AllocData();
-                for (uint64_t i = 0; i < size_; ++i) {
-                    new_data[i] = std::move(data_[i]);
-                }
-
-                delete[] data_;
-                data_ = new_data;
+                ReAllocData();
             }
 
             data_[size_] = _value;
@@ -199,14 +211,7 @@ namespace Lamp {
         void push_back(T &&_value) {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
-
-                T *new_data = AllocData();
-
-                for (uint64_t i = 0; i < size_; ++i) {
-                    new_data[i] = std::move(data_[i]);
-                }
-                delete[] data_;
-                data_ = new_data;
+                ReAllocData();
             }
 
             data_[size_] = std::move(_value);
@@ -217,14 +222,7 @@ namespace Lamp {
         void emplace_back(Args&&... _args) {
             if (capacity_ == size_) {
                 capacity_ = (capacity_ + 1) * 2;
-
-                T *new_data = AllocData();
-
-                for (uint64_t i = 0; i < size_; ++i) {
-                    new_data[i] = std::move(data_[i]);
-                }
-                delete[] data_;
-                data_ = new_data;
+                ReAllocData();
             }
 
             new (data_ + size_) T(static_cast<Args&&>(_args)...);
