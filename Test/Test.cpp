@@ -14,6 +14,7 @@
 #include "../lampQueue.h++"
 #include "../lampBinarySearchTree.h++"
 #include "../lampAlgorithm.h++"
+#include "../lampHeap.h++"
 
 #include <vector>
 #include <deque>
@@ -1906,6 +1907,29 @@ int main(int argc, const char * argv[]) {
                 PrintVector(v);
 
                 break;
+            }
+        }
+    }
+
+    if (true) {
+        std::cout << "vector shrink_to_fit implementation test" << std::endl;
+        constexpr size_t vcount = 100000;
+        Lamp::random_device<uint32_t> rand(34567);
+        Lamp::Vector<int> v;
+        int arr[vcount] = {};
+
+        for (size_t i = 0; i < vcount; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+            arr[i] = v[i];
+        }
+
+        std::cout << "Before shrink_to_fit : size : " << v.size() << " cap : " << v.capacity() << std::endl;
+        v.shrink_to_fit();
+        std::cout << "After  shrink_to_fit : size : " << v.size() << " cap : " << v.capacity() << std::endl;
+
+        for (size_t i = 0; i < vcount; ++i) {
+            if (arr[i] != v[i]) {
+                std::cout << "invalid shrink_to_fit." << std::endl;
             }
         }
     }
