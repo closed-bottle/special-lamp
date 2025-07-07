@@ -193,6 +193,10 @@ namespace Lamp {
             return capacity_;
         }
 
+        bool empty() const {
+            return size_ == 0;
+        }
+
         void shrink_to_fit() {
             capacity_ = size_;
             ReAllocData();
