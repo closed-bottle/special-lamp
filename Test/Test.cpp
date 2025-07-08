@@ -1935,22 +1935,29 @@ int main(int argc, const char * argv[]) {
     }
 
     if (true) {
-        std::cout << "vector shrink_to_fit implementation test" << std::endl;
-        constexpr size_t hcount = 100000;
+        std::cout << "heap implementation test" << std::endl;
+        constexpr size_t hcount = 10000;
         Lamp::random_device<uint32_t> rand(34567);
-        Lamp::Heap<int, Lamp::HeapStrat::Min> h;
-        int arr[hcount] = {};
+        Lamp::Heap<int, Lamp::HeapStrat::Max> h;
+        int arr[hcount +1] = {};
+
 
         for (size_t i = 0; i < hcount; ++i) {
             const auto curr = rand.RandIntBetween(-5000, 5000);
-            h.push(curr);
+            h.emplace(curr);
             arr[i] = curr;
         }
 
-        Lamp::sort<Lamp::SortStrat::QuickAscending>(arr, &arr[hcount -1]);
-
+        Lamp::sort<Lamp::SortStrat::QuickDescending>(arr, &arr[hcount]);
         if (arr[0] != h.top()) {
             std::cout << "Failed heap.top() test." << std::endl;
+        }
+
+        for (size_t i = 0; i < hcount; ++i) {
+            if (arr[i] != h.top()) {
+                std::cout << "Failed heap implementation test." << std::endl;
+            }
+            h.pop();
         }
     }
 

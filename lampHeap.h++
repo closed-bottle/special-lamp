@@ -38,6 +38,48 @@ namespace Lamp {
     class Heap {
         Vector<T> vector;
 
+        // Note that these heapify* is same one from Algorithm.h++ but forced to start with root.
+        // Heapify starting from leaf.
+        void heapifyLeaf() {
+            size_t i = vector.size() - 1;
+            size_t p = (i -1) / 2;
+
+            while (i != 0 && HeapCompareUtil<T, strat>::Compare(vector[p], vector[i])) {
+                Swap(vector[i], vector[p]);
+
+                i = p;
+                p = (i -1) / 2;
+            }
+        }
+
+        // heapify starting from root
+        void heapifyRoot() {
+            bool is_heap = false;
+            size_t i = 0;
+            const size_t count = vector.size();
+
+            while (!is_heap) {
+                auto left = (2 * i) + 1;
+                auto right = (2 * i) + 2;
+                auto peak = i;
+
+
+                if (left < count && HeapCompareUtil<T, strat>::Compare(vector[peak], vector[left])) {
+                    peak = left;
+                }
+                if (right < count && HeapCompareUtil<T, strat>::Compare(vector[peak], vector[right])) {
+                    peak = right;
+                }
+
+
+                is_heap = peak == i;
+                if (!is_heap) {
+                    Lamp::Swap(vector[i], vector[peak]);
+                    i = peak;
+                }
+            }
+        }
+
     public:
         T& top() {
             return vector[0];
@@ -53,22 +95,32 @@ namespace Lamp {
 
         void push(const T& _in) {
             vector.push_back(_in);
-
-            size_t i = vector.size() - 1;
-            size_t p = (i -1) / 2;
-
-            while (i != 0 && HeapCompareUtil<T, strat>::Compare(vector[p], vector[i])) {
-                Swap(vector[i], vector[p]);
-
-                i = p;
-                p = (i -1) / 2;
-            }
+            heapifyLeaf();
         }
 
         template<typename... Args>
-        void push_range(Args&&... _args);
-        void emplace();
-        void pop();
+        void push_range(T _first, Args&&... _args) {
+            push(_first);
+            push_range(_args...);
+        }
+
+        void push_range(T _last) {
+            push(_last);
+        }
+
+        template<typename... Args>
+        void emplace(Args&&... _args) {
+            vector.emplace_back(_args...);
+            heapifyLeaf();
+        }
+
+        void pop() {
+            Swap(vector[0], vector[vector.size() -1]);
+            vector.pop_back();
+
+            if (!vector.empty())
+                heapifyRoot();
+        }
 
         void shrink_to_fit() {
             vector.shrink_to_fit();
