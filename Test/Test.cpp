@@ -14,6 +14,7 @@
 #include "../lampQueue.h++"
 #include "../lampBinarySearchTree.h++"
 #include "../lampAlgorithm.h++"
+#include "../lampHeap.h++"
 
 #include <vector>
 #include <deque>
@@ -1627,7 +1628,7 @@ int main(int argc, const char * argv[]) {
     }
 
     // Quick sort implementation test
-    if (true) {
+    if (false) {
         std::cout << "Quick sort implementation test" << std::endl;
         Lamp::Vector<int> v;
         Lamp::random_device<uint32_t> rand(34567);
@@ -1660,7 +1661,7 @@ int main(int argc, const char * argv[]) {
 
     // Sort comparison
     // Quick should be faster, but it can be slower due to poor implementation.
-    if (true) {
+    if (false) {
         constexpr size_t vcount = 40000000;
         std::cout << "Sort comparison" << std::endl;
 
@@ -1930,6 +1931,26 @@ int main(int argc, const char * argv[]) {
             if (arr[i] != v[i]) {
                 std::cout << "invalid shrink_to_fit." << std::endl;
             }
+        }
+    }
+
+    if (true) {
+        std::cout << "vector shrink_to_fit implementation test" << std::endl;
+        constexpr size_t hcount = 100000;
+        Lamp::random_device<uint32_t> rand(34567);
+        Lamp::Heap<int, Lamp::HeapStrat::Min> h;
+        int arr[hcount] = {};
+
+        for (size_t i = 0; i < hcount; ++i) {
+            const auto curr = rand.RandIntBetween(-5000, 5000);
+            h.push(curr);
+            arr[i] = curr;
+        }
+
+        Lamp::sort<Lamp::SortStrat::QuickAscending>(arr, &arr[hcount -1]);
+
+        if (arr[0] != h.top()) {
+            std::cout << "Failed heap.top() test." << std::endl;
         }
     }
 

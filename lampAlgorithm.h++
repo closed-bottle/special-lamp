@@ -159,21 +159,21 @@ namespace {
 
 
     template<typename T, Lamp::HeapStrat strat = Lamp::HeapStrat::Invalid>
-    struct HeapUtil {
+    struct HeapSortUtil {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             LAMPASSERT(false, "Invalid HeapStrat");
             return false;
         }
     };
     template<typename T>
-    struct HeapUtil<T, Lamp::HeapStrat::Max> {
+    struct HeapSortUtil<T, Lamp::HeapStrat::Max> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs > _rhs;
         }
     };
 
     template<typename T>
-    struct HeapUtil<T, Lamp::HeapStrat::Min> {
+    struct HeapSortUtil<T, Lamp::HeapStrat::Min> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs < _rhs;
         }
@@ -189,10 +189,10 @@ namespace {
             auto peak = _i; // It is Maximum or Minimum basted on strat
 
 
-            if (left < _count && HeapUtil<T, strat>::Compare(_arr[left], _arr[peak])) {
+            if (left < _count && HeapSortUtil<T, strat>::Compare(_arr[left], _arr[peak])) {
                 peak = left;
             }
-            if (right < _count && HeapUtil<T, strat>::Compare(_arr[right], _arr[peak])) {
+            if (right < _count && HeapSortUtil<T, strat>::Compare(_arr[right], _arr[peak])) {
                 peak = right;
             }
 
