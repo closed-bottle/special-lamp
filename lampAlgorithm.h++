@@ -258,14 +258,14 @@ namespace {
     };
 
     template<typename T>
-    struct InsertSortUtil<T, Lamp::SortStrat::InsertionAscending> {
+    struct InsertSortUtil<T, Lamp::SortStrat::InsertionDescending> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs > _rhs;
         }
     };
 
     template<typename T>
-    struct InsertSortUtil<T, Lamp::SortStrat::InsertionDescending> {
+    struct InsertSortUtil<T, Lamp::SortStrat::InsertionAscending> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs < _rhs;
         }
@@ -283,7 +283,7 @@ namespace {
 
                 while (left != right) {
                     if (InsertSortUtil<typename Lamp::RemovePtr<itr_type>::type, strat>
-                        ::Compare(*left, *insert)) {
+                        ::Compare(*insert, *left)) {
                         // Shift
                         auto i = left;
                         auto j = left;

@@ -1824,7 +1824,7 @@ int main(int argc, const char * argv[]) {
         }
     }
 
-    if (false) {
+    if (true) {
         std::cout << "Insertion sort implementation test" << std::endl;
         Lamp::random_device<uint32_t> rand(34567);
 

@@ -19,14 +19,14 @@ namespace {
     };
 
     template<typename T>
-    struct HeapCompareUtil<T, Lamp::HeapStrat::Min> {
+    struct HeapCompareUtil<T, Lamp::HeapStrat::Max> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs > _rhs;
         }
     };
 
     template<typename T>
-    struct HeapCompareUtil<T, Lamp::HeapStrat::Max> {
+    struct HeapCompareUtil<T, Lamp::HeapStrat::Min> {
         constexpr static bool Compare(const T& _lhs, const T& _rhs) {
             return _lhs < _rhs;
         }
@@ -44,7 +44,7 @@ namespace Lamp {
             size_t i = vector.size() - 1;
             size_t p = (i -1) / 2;
 
-            while (i != 0 && HeapCompareUtil<T, strat>::Compare(vector[p], vector[i])) {
+            while (i != 0 && HeapCompareUtil<T, strat>::Compare(vector[i], vector[p])) {
                 Swap(vector[i], vector[p]);
 
                 i = p;
@@ -64,10 +64,10 @@ namespace Lamp {
                 auto peak = i;
 
 
-                if (left < count && HeapCompareUtil<T, strat>::Compare(vector[peak], vector[left])) {
+                if (left < count && HeapCompareUtil<T, strat>::Compare(vector[left], vector[peak])) {
                     peak = left;
                 }
-                if (right < count && HeapCompareUtil<T, strat>::Compare(vector[peak], vector[right])) {
+                if (right < count && HeapCompareUtil<T, strat>::Compare(vector[right], vector[peak])) {
                     peak = right;
                 }
 
