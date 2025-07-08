@@ -2,6 +2,8 @@
 #define LAMPVECTOR_H
 #include <cstdint>
 #include <utility>
+
+#include "lampAssert.h++"
 #include "lampUtility.h++"
 
 namespace Lamp {
@@ -234,6 +236,7 @@ namespace Lamp {
         }
 
         void pop_back() {
+            LAMPASSERT(size_ != 0, "Failed to pop_back. This vector is empty.");
             size_--;
         }
 
