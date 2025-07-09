@@ -73,9 +73,9 @@ namespace Lamp {
 
     template<typename T>
     void Swap(T& _lhs, T& _rhs) {
-        T temp = std::move(_lhs);
-        _lhs = std::move(_rhs);
-        _rhs = std::move(temp);
+        T temp = move(_lhs);
+        _lhs = move(_rhs);
+        _rhs = move(temp);
     }
 }
 
