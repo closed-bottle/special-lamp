@@ -57,6 +57,11 @@ namespace Lamp {
     };
 
     template<typename T>
+    struct RemoveRef<T&&> {
+        typedef T type;
+    };
+
+    template<typename T>
     struct RemovePtr {
         typedef T type;
     };
