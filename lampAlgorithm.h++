@@ -323,7 +323,8 @@ namespace {
     struct IntroSortHelper {
         static void sort(itr_type& _begin, itr_type& _end) {
             size_t count = _end - _begin;
-            size_t depth_limit = std::log(count);
+            //TODO: implement log function?
+            auto depth_limit = static_cast<size_t>(std::log(count));
 
             Lamp::stack<Lamp::pair<itr_type, itr_type>> stck;
             stck.emplace(_begin, _end);
@@ -332,6 +333,7 @@ namespace {
                 auto curr = stck.top();
                 stck.pop();
 
+                //16 is magic number, typically it is faster to use insertion sort if n is less than 16.
                 if (curr.second - curr.first < 16) {
                     // insertion sort
                     SortHelper<itr_type, insert_strat>::sort(curr.first, curr.second);
