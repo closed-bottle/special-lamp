@@ -1938,26 +1938,40 @@ int main(int argc, const char * argv[]) {
         std::cout << "heap implementation test" << std::endl;
         constexpr size_t hcount = 10000;
         Lamp::random_device<uint32_t> rand(34567);
-        Lamp::Heap<int, Lamp::HeapStrat::Max> h;
-        int arr[hcount +1] = {};
+        Lamp::Heap<int, Lamp::HeapStrat::Max> maxh;
+        Lamp::Heap<int, Lamp::HeapStrat::Min> minh;
 
+        int arr[hcount +1] = {};
 
         for (size_t i = 0; i < hcount; ++i) {
             const auto curr = rand.RandIntBetween(-5000, 5000);
-            h.emplace(curr);
+            maxh.emplace(curr);
+            minh.emplace(curr);
             arr[i] = curr;
         }
 
         Lamp::sort<Lamp::SortStrat::QuickDescending>(arr, &arr[hcount]);
-        if (arr[0] != h.top()) {
-            std::cout << "Failed heap.top() test." << std::endl;
+        if (arr[0] != maxh.top()) {
+            std::cout << "Failed max heap.top() test." << std::endl;
         }
 
         for (size_t i = 0; i < hcount; ++i) {
-            if (arr[i] != h.top()) {
-                std::cout << "Failed heap implementation test." << std::endl;
+            if (arr[i] != maxh.top()) {
+                std::cout << "Failed max heap implementation test." << std::endl;
             }
-            h.pop();
+            maxh.pop();
+        }
+
+        Lamp::sort<Lamp::SortStrat::QuickAscending>(arr, &arr[hcount]);
+        if (arr[0] != minh.top()) {
+            std::cout << "Failed min heap.top() test." << std::endl;
+        }
+
+        for (size_t i = 0; i < hcount; ++i) {
+            if (arr[i] != minh.top()) {
+                std::cout << "Failed min heap implementation test." << std::endl;
+            }
+            minh.pop();
         }
     }
 
