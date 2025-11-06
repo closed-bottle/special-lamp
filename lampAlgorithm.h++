@@ -19,6 +19,8 @@ namespace Lamp {
         InsertionDescending,
         IntroAscending,
         IntroDescending,
+        MergeAscending,
+        MergeDescending,
         Count
     };
 
@@ -374,6 +376,42 @@ namespace {
             Lamp::SortStrat::InsertionDescending,
             Lamp::SortStrat::HeapDescending,
             Lamp::SortStrat::QuickDescending>::sort(_begin, _end);
+        }
+    };
+
+    template<typename itr_type>
+        struct SortHelper<itr_type, Lamp::SortStrat::MergeAscending> {
+        static void sort(itr_type& _begin, itr_type& _end) {
+            // Random access required.
+            const size_t count = (_end - _begin);
+            if (count < 2)
+                return;
+
+            Lamp::stack<Lamp::pair<size_t, size_t>> stck;
+            {
+                size_t left = 0;
+                size_t right = count -1;
+                size_t middle = (right / 2);
+
+                stck.emplace(left, middle);
+                stck.emplace(middle +1, right);
+            }
+
+
+            while (!stck.empty()) {
+                auto curr = stck.top();
+                stck.pop();
+
+                size_t left = curr.first;
+                size_t right = curr.second;
+                if (left >= right)
+                    continue;
+
+                size_t middle = left + ((right - left) / 2);
+
+                stck.emplace(left, middle);
+                stck.emplace(middle +1, right);
+            }
         }
     };
 }
