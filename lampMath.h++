@@ -68,6 +68,66 @@ namespace Lamp {
             Vec3 operator-() const {
                 return {-x, -y, -z};
             }
+
+            Vec3 operator+(const T& _rhs) const {
+                Vec3 result = *this;
+                result.x += _rhs;
+                result.y += _rhs;
+                result.z += _rhs;
+                return result;
+            }
+
+            Vec3 operator-(const T& _rhs) const {
+                Vec3 result = *this;
+                result.x -= _rhs;
+                result.y -= _rhs;
+                result.z -= _rhs;
+                return result;
+            }
+
+            Vec3 operator*(const T& _rhs) const {
+                Vec3 result = *this;
+                result.x *= _rhs;
+                result.y *= _rhs;
+                result.z *= _rhs;
+                return result;
+            }
+
+            Vec3 operator/(const T& _rhs) const {
+                Vec3 result = *this;
+                result.x /= _rhs;
+                result.y /= _rhs;
+                result.z /= _rhs;
+                return result;
+            }
+
+            Vec3& operator+=(const T& _rhs) {
+                x += _rhs;
+                y += _rhs;
+                z += _rhs;
+                return *this;
+            }
+
+            Vec3& operator-=(const T& _rhs) {
+                x -= _rhs;
+                y -= _rhs;
+                z -= _rhs;
+                return *this;
+            }
+
+            Vec3& operator*=(const float& _rhs) {
+                x *= _rhs;
+                y *= _rhs;
+                z *= _rhs;
+                return *this;
+            }
+
+            Vec3& operator/=(const float& _rhs) {
+                x /= _rhs;
+                y /= _rhs;
+                z /= _rhs;
+                return *this;
+            }
         };
 
         template<typename T>
@@ -131,6 +191,74 @@ namespace Lamp {
                 Vec4 result = *this;
                 result -= _rhs;
                 return result;
+            }
+
+            Vec4 operator+(const T& _rhs) const {
+                Vec4 result = *this;
+                result.x += _rhs;
+                result.y += _rhs;
+                result.z += _rhs;
+                result.w += _rhs;
+                return result;
+            }
+
+            Vec4 operator-(const T& _rhs) const {
+                Vec4 result = *this;
+                result.x -= _rhs;
+                result.y -= _rhs;
+                result.z -= _rhs;
+                result.w -= _rhs;
+                return result;
+            }
+
+            Vec4 operator*(const T& _rhs) const {
+                Vec4 result = *this;
+                result.x *= _rhs;
+                result.y *= _rhs;
+                result.z *= _rhs;
+                result.w *= _rhs;
+                return result;
+            }
+
+            Vec4 operator/(const T& _rhs) const {
+                Vec4 result = *this;
+                result.x /= _rhs;
+                result.y /= _rhs;
+                result.z /= _rhs;
+                result.w /= _rhs;
+                return result;
+            }
+
+            Vec4& operator+=(const T& _rhs) {
+                x += _rhs;
+                y += _rhs;
+                z += _rhs;
+                w += _rhs;
+                return *this;
+            }
+
+            Vec4& operator-=(const T& _rhs) {
+                x -= _rhs;
+                y -= _rhs;
+                z -= _rhs;
+                w -= _rhs;
+                return *this;
+            }
+
+            Vec4& operator*=(const float& _rhs) {
+                x *= _rhs;
+                y *= _rhs;
+                z *= _rhs;
+                w *= _rhs;
+                return *this;
+            }
+
+            Vec4& operator/=(const float& _rhs) {
+                x /= _rhs;
+                y /= _rhs;
+                z /= _rhs;
+                w /= _rhs;
+                return *this;
             }
         };
 
