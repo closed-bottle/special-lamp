@@ -393,6 +393,10 @@ namespace {
                 size_t right = count -1;
                 size_t middle = (right / 2);
 
+                // if count == 2
+                // left = 0, right = 1, middle = 0
+                // if count == 3
+                // left = 0, right = 2, middle = 1
                 stck.emplace(left, middle);
                 stck.emplace(middle +1, right);
             }

@@ -1975,6 +1975,27 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    if (true) {
+        std::cout << "merge sort implementation test" << std::endl;
+        constexpr size_t vcount = 3;
+        Lamp::random_device<uint32_t> rand(34567);
+        Lamp::Vector<int> v;
+
+        for (size_t i = 0; i < vcount; ++i) {
+            v.push_back(rand.RandIntBetween(-5000, 5000));
+        }
+
+        Lamp::sort<Lamp::SortStrat::MergeAscending>(v.begin(), v.end());
+        for (size_t i = 1; i < vcount; ++i) {
+            if (v[i -1] > v[i]) {
+                std::cout << "Lamp::Vector not sorted properly." << std::endl;
+                PrintVector(v);
+
+                break;
+            }
+        }
+    }
+
 
     std::cout << std::endl;
     return 0;
