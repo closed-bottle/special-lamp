@@ -1,7 +1,6 @@
 ﻿#ifndef LAMPMATH_H
 #define LAMPMATH_H
 #include <complex>
-#include "special-lamp/lampString.h++"
 
 namespace Lamp {
     template<typename T>
