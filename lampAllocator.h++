@@ -326,7 +326,7 @@ namespace {
 
         allocated_unordered_map() {
             bucket_ = (list<pair<T1, T2>>*)malloc(sizeof(list<pair<T1, T2>>) * 8);
-            memset(bucket_, 0, sizeof(list<pair<T1, T2>>) * 8);
+            memset((void*)bucket_, 0, sizeof(list<pair<T1, T2>>) * 8);
             capacity_ = 8;
             size_ = 0;
             max_load_ = 0.5f;
@@ -350,7 +350,7 @@ namespace {
         void clear() {
             free(bucket_);
             bucket_ = (list<pair<void *, bool>> *)malloc(sizeof(list<pair<T1, T2>>) * 8);
-            memset(bucket_, 0, sizeof(list<pair<T1, T2>>) * 8);
+            memset((void*)bucket_, 0, sizeof(list<pair<T1, T2>>) * 8);
 
             capacity_ = 8;
             size_ = 0;
@@ -535,7 +535,7 @@ namespace {
 
         uint64_t new_cap = (capacity_ + 1) * 2;
         list<pair<T1, T2>> *new_bucket = (list<pair<T1, T2>> *)malloc(sizeof(list<pair<T1, T2>>) * (new_cap + 1));
-        memset(new_bucket, 0, sizeof(list<pair<T1, T2>>) * (new_cap + 1));
+        memset((void*)new_bucket, 0, sizeof(list<pair<T1, T2>>) * (new_cap + 1));
 
         for (uint64_t i = 0; i < capacity_; ++i) {
             list<pair<T1, T2>>& curr = bucket_[i];

@@ -67,7 +67,7 @@ namespace Lamp
             size_t new_last = (new_first + old_capacity -1) % segment_capacity_;
 
             Segment* new_segments = new Segment[segment_capacity_];
-            memset(new_segments, 0, sizeof(Segment) * segment_capacity_);
+            memset((void*)new_segments, 0, sizeof(Segment) * segment_capacity_);
 
             size_t i = first_segment_;
             size_t j = new_first;

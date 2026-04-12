@@ -244,7 +244,7 @@ namespace Lamp {
         uint64_t new_cap = (capacity_ + 1) * 2;
         list<pair<T1, T2> > *new_bucket = new list<pair<T1, T2> >[new_cap + 1];
 
-        memset(new_bucket, 0, sizeof(list<pair<T1, T2> >) * new_cap);
+        memset((void*)new_bucket, 0, sizeof(list<pair<T1, T2> >) * new_cap);
 
         for (uint64_t i = 0; i < capacity_; ++i) {
             list<pair<T1, T2> > &curr = bucket_[i];
