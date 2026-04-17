@@ -307,6 +307,18 @@ namespace Lamp {
             return result;
         }
 
+        template<typename T2>
+        Vec4<T2> operator*(const Vec4<T2> &_rhs) const {
+            Vec4<T2> result;
+
+            result.x = (c0.x * _rhs.x) + (c1.x * _rhs.y) + (c2.x * _rhs.z) + (c3.x * _rhs.w);
+            result.y = (c0.y * _rhs.x) + (c1.y * _rhs.y) + (c2.y * _rhs.z) + (c3.y * _rhs.w);;
+            result.z = (c0.z * _rhs.x) + (c1.z * _rhs.y) + (c2.z * _rhs.z) + (c3.z * _rhs.w);;
+            result.w = (c0.w * _rhs.x) + (c1.w * _rhs.y) + (c2.w * _rhs.z) + (c3.w * _rhs.w);;
+
+            return result;
+        }
+
         Mat4 Transpose() {
             Mat4 result = *this;
 
@@ -378,34 +390,30 @@ namespace Lamp {
         static Mat4 LookAt(const Vec3<T> &_eye, const Vec3<T> &_center, const Vec3<T> &_global_up,
                            const bool _is_left_handed = true) {
             Vec3<T> forward;
-            Vec3<T> left;
             Vec3<T> right;
             Vec3<T> up;
 
-
-            forward = (_center - _eye);
+            forward = (_eye - _center);
             forward.Normalize();
 
-            right = forward.Cross(_global_up);
-            right.Normalize();
-            left = _global_up.Cross(forward);
-            left.Normalize();
+            if (_is_left_handed) {
+                right = _global_up.Cross(forward);
+                right.Normalize();
+            }
+            else {
+                right = forward.Cross(_global_up);
+                right.Normalize();
+            }
+
+            up = forward.Cross(right);
+            up.Normalize();
 
             Mat4 t = Mat4::Translate(-_eye);
             Mat4 r;
-            if (_is_left_handed) {
-                up = forward.Cross(left);
+            r.c0.vec3 = {right.x, up.x, -forward.x};
+            r.c1.vec3 = {right.y, up.y, -forward.y};
+            r.c2.vec3 = {right.z, up.z, -forward.z};
 
-                r.c0.vec3 = {left.x, up.x, -forward.x};
-                r.c1.vec3 = {left.y, up.y, -forward.y};
-                r.c2.vec3 = {left.z, up.z, -forward.z};
-            } else {
-                up = forward.Cross(right);
-
-                r.c0.vec3 = {right.x, up.x, -forward.x};
-                r.c1.vec3 = {right.y, up.y, -forward.y};
-                r.c2.vec3 = {right.z, up.z, -forward.z};
-            }
 
             Mat4 result = r * t;
 
