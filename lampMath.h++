@@ -3,6 +3,111 @@
 #include <complex>
 
 namespace Lamp {
+        template<typename T>
+    class Vec2 {
+    public:
+        T x = 0, y = 0;
+
+        T Dot(const Vec2 &_rhs) {
+            return x * _rhs.x + y * _rhs.y;
+        }
+
+        T Length() {
+            return std::sqrt(Dot(*this));
+        }
+
+        Vec2 Normalize() {
+            T length = Length();
+
+            x /= length;
+            y /= length;
+
+            return *this;
+        }
+
+        Vec2 &operator-=(const Vec2 &_rhs) {
+            x -= _rhs.x;
+            y -= _rhs.y;
+
+            return *this;
+        }
+
+        Vec2 operator-(const Vec2 &_rhs) const {
+            Vec2 result = *this;
+            result -= _rhs;
+            return result;
+        }
+
+        Vec2 &operator+=(const Vec2 &_rhs) {
+            x += _rhs.x;
+            y += _rhs.y;
+
+            return *this;
+        }
+
+        Vec2 operator+(const Vec2 &_rhs) const {
+            Vec2 result = *this;
+            result += _rhs;
+            return result;
+        }
+
+        Vec2 operator-() const {
+            return {-x, -y};
+        }
+
+        Vec2 operator+(const T& _rhs) const {
+            Vec2 result = *this;
+            result.x += _rhs;
+            result.y += _rhs;
+            return result;
+        }
+
+        Vec2 operator-(const T& _rhs) const {
+            Vec2 result = *this;
+            result.x -= _rhs;
+            result.y -= _rhs;
+            return result;
+        }
+
+        Vec2 operator*(const T& _rhs) const {
+            Vec2 result = *this;
+            result.x *= _rhs;
+            result.y *= _rhs;
+            return result;
+        }
+
+        Vec2 operator/(const T& _rhs) const {
+            Vec2 result = *this;
+            result.x /= _rhs;
+            result.y /= _rhs;
+            return result;
+        }
+
+        Vec2& operator+=(const T& _rhs) {
+            x += _rhs;
+            y += _rhs;
+            return *this;
+        }
+
+        Vec2& operator-=(const T& _rhs) {
+            x -= _rhs;
+            y -= _rhs;
+            return *this;
+        }
+
+        Vec2& operator*=(const float& _rhs) {
+            x *= _rhs;
+            y *= _rhs;
+            return *this;
+        }
+
+        Vec2& operator/=(const float& _rhs) {
+            x /= _rhs;
+            y /= _rhs;
+            return *this;
+        }
+    };
+
     template<typename T>
     class Vec3 {
     public:
@@ -447,6 +552,8 @@ namespace Lamp {
         }
     };
 
+    using Vec2f = Vec2<float>;
+    using Vec2i = Vec2<int>;
     using Vec3f = Vec3<float>;
     using Vec4f = Vec4<float>;
     using Mat4f = Mat4<float>;
