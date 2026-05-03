@@ -515,9 +515,9 @@ namespace Lamp {
 
             Mat4 t = Mat4::Translate(-_eye);
             Mat4 r;
-            r.c0.vec3 = {right.x, up.x, -forward.x};
-            r.c1.vec3 = {right.y, up.y, -forward.y};
-            r.c2.vec3 = {right.z, up.z, -forward.z};
+            r.c0.vec3 = {right.x, up.x, forward.x};
+            r.c1.vec3 = {right.y, up.y, forward.y};
+            r.c2.vec3 = {right.z, up.z, forward.z};
 
 
             Mat4 result = r * t;
