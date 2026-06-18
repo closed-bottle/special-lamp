@@ -23,14 +23,15 @@ namespace Lamp {
   template <typename T>
   constexpr Endianness CheckEndianness() {
     T end = static_cast<T>(1);
-    uint8_t endianness = reinterpret_cast<uint8_t>(reinterpret_cast<uint8_t*>(&end)[0]);
+    const auto endianness = reinterpret_cast<uint8_t*>(&end)[0];
 
     T if_big_endian = 1 << ((sizeof(T) * 8) - 1);
 
     if (endianness == 1) {
       return Endianness::Little;
     }
-    else if (if_big_endian == 1) {
+
+    if (if_big_endian == 1) {
       return Endianness::Big;
     }
 
@@ -70,8 +71,8 @@ namespace Lamp {
   };
 
   template <typename T>
-  constexpr typename RemoveRef<T>::type&& move(T&& _in) noexcept {
-    return static_cast<typename RemoveRef<T>::type&&>(_in);
+  constexpr RemoveRef<T>::type&& move(T&& _in) noexcept {
+    return static_cast<RemoveRef<T>::type&&>(_in);
   }
 
   template <typename T>
