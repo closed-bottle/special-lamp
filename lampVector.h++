@@ -260,19 +260,20 @@ namespace Lamp {
       return false;
     }
 
-    void reserve(const uint64_t _size) {
-      if (_size == 0) {
+    /* Reserve:
+     * 1. Does not change the size of the vector.
+     * 2. If new capacity is smaller than current, nothing should happen.
+     */
+    void reserve(const uint64_t _new_cap) {
+      if (_new_cap == 0) {
         return;
       }
 
-      if (capacity_ > _size) {
-        if (size_ < _size) {
-          size_ = _size;
-        }
+      if (capacity_ > _new_cap) {
+        /*nothing*/
       }
       else {
-        capacity_ = _size;
-        size_ = _size;
+        capacity_ = _new_cap;
 
         T* new_data = AllocData();
         if (data_) {
@@ -284,6 +285,24 @@ namespace Lamp {
         delete[] data_;
         data_ = new_data;
       }
+    }
+
+    void resize(const uint64_t _new_size) {
+      if (_new_size > capacity_) {
+        ReAllocIfNeeded();
+      }
+      else {
+        T* new_data = AllocData();
+        if (data_) {
+          for (uint64_t i = 0; i < size_; ++i) {
+            new_data[i] = Lamp::move(data_[i]);
+          }
+        }
+        delete[] data_;
+        data_ = new_data;
+      }
+
+      size_ = _new_size;
     }
 
     void clear() {
