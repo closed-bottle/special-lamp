@@ -115,9 +115,8 @@ namespace Lamp {
 
 
     Vector& operator=(const Vector& _rhs) {
-      if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
+      if (this == &_rhs)
         return *this;
-      }
 
       if (capacity_ < _rhs.size_) {
         delete[] data_;
