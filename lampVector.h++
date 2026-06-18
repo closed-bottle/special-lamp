@@ -1,8 +1,5 @@
 ﻿#ifndef LAMPVECTOR_H
 #define LAMPVECTOR_H
-#include <cstdint>
-#include <utility>
-
 #include "lampAssert.h++"
 #include "lampUtility.h++"
 
@@ -19,7 +16,7 @@ namespace Lamp {
       T* new_data = AllocData();
 
       for (uint64_t i = 0; i < size_; ++i) {
-        new_data[i] = std::move(data_[i]);
+        new_data[i] = Lamp::move(data_[i]);
       }
       delete[] data_;
       data_ = new_data;
@@ -195,7 +192,7 @@ namespace Lamp {
         ReAllocData();
       }
 
-      data_[size_] = std::move(_value);
+      data_[size_] = Lamp::move(_value);
       size_++;
     }
 
@@ -286,7 +283,7 @@ namespace Lamp {
         T* new_data = AllocData();
         if (data_) {
           for (uint64_t i = 0; i < size_; ++i) {
-            new_data[i] = std::move(data_[i]);
+            new_data[i] = Lamp::move(data_[i]);
           }
         }
 
