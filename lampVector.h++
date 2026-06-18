@@ -12,7 +12,8 @@ namespace Lamp {
 
     T* AllocData() { return new T[capacity_ + 1]; }
 
-    void ReAllocData() {
+    void ReAllocData(const uint64_t _new_capacity) {
+      capacity_ = _new_capacity;
       T* new_data = AllocData();
 
       for (uint64_t i = 0; i < size_; ++i) {
@@ -20,6 +21,12 @@ namespace Lamp {
       }
       delete[] data_;
       data_ = new_data;
+    }
+
+    void ReAllocIfNeeded() {
+      if (capacity_ == size_) {
+        ReAllocData((capacity_ + 1) * 2);
+      }
     }
 
   public:
@@ -133,9 +140,8 @@ namespace Lamp {
     }
 
     Vector& operator=(Vector&& _rhs) noexcept {
-      if (size_ == _rhs.size_ && capacity_ == _rhs.capacity_ && data_ == _rhs.data_) {
+      if (this == &_rhs)
         return *this;
-      }
 
 
       size_ = _rhs.size_;
@@ -171,26 +177,17 @@ namespace Lamp {
 
     [[nodiscard]] bool empty() const { return size_ == 0; }
 
-    void shrink_to_fit() {
-      capacity_ = size_;
-      ReAllocData();
-    }
+    void shrink_to_fit() { ReAllocData(size_); }
 
     void push_back(T const& _value) {
-      if (capacity_ == size_) {
-        capacity_ = (capacity_ + 1) * 2;
-        ReAllocData();
-      }
+      ReAllocIfNeeded();
 
       data_[size_] = _value;
       size_++;
     }
 
     void push_back(T&& _value) {
-      if (capacity_ == size_) {
-        capacity_ = (capacity_ + 1) * 2;
-        ReAllocData();
-      }
+      ReAllocIfNeeded();
 
       data_[size_] = Lamp::move(_value);
       size_++;
@@ -198,10 +195,7 @@ namespace Lamp {
 
     template <typename... Args>
     void emplace_back(Args&&... _args) {
-      if (capacity_ == size_) {
-        capacity_ = (capacity_ + 1) * 2;
-        ReAllocData();
-      }
+      ReAllocIfNeeded();
 
       new (data_ + size_) T(static_cast<Args&&>(_args)...);
       size_++;
