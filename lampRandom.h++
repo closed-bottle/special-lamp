@@ -1,8 +1,4 @@
-﻿//
-// Created by JJ on 5/30/2025.
-//
-
-#ifndef LAMPRANDOM_H
+﻿#ifndef LAMPRANDOM_H
 #define LAMPRANDOM_H
 
 #pragma GCC diagnostic push

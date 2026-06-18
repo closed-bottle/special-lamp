@@ -1,7 +1,3 @@
-//
-// Created by JJ on 6/9/2025.
-//
-
 #ifndef LAMPQUEUE_H
 #define LAMPQUEUE_H
 

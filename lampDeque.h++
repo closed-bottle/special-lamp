@@ -1,8 +1,4 @@
-﻿//
-// Created by JJ on 5/24/2025.
-//
-
-#ifndef LAMPDEQUE_H
+﻿#ifndef LAMPDEQUE_H
 #define LAMPDEQUE_H
 
 #include "lampAssert.h++"

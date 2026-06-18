@@ -1,8 +1,4 @@
-﻿//
-// Created by JJ on 6/6/2025.
-//
-
-#ifndef LAMPALLOCATOR_H
+﻿#ifndef LAMPALLOCATOR_H
 #define LAMPALLOCATOR_H
 
 #include <cstdlib>

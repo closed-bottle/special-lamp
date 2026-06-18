@@ -1,8 +1,4 @@
-﻿//
-// Created by JJ on 5/27/2025.
-//
-
-#ifndef LAMPASSERT_H
+﻿#ifndef LAMPASSERT_H
 #define LAMPASSERT_H
 
 #include <iostream>

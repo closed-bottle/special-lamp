@@ -1,8 +1,4 @@
-﻿//
-// Created by JJ on 6/5/2025.
-//
-
-#ifndef LAMPSTACK_H
+﻿#ifndef LAMPSTACK_H
 #define LAMPSTACK_H
 
 #include "lampDeque.h++"

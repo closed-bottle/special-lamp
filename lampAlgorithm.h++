@@ -1,7 +1,3 @@
-//
-// Created by JJ on 6/15/2025.
-//
-
 #ifndef LAMPALGORITHM_H
 #define LAMPALGORITHM_H
 

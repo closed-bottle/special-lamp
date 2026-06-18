@@ -1,7 +1,3 @@
-//
-// Created by JJ on 7/5/2025.
-//
-
 #ifndef LAMPHEAP_H
 #define LAMPHEAP_H
 
